@@ -9,6 +9,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import frc.team4276.frc2026.constants.FieldConstants;
+import frc.team4276.frc2026.constants.ShooterConstants;
+import frc.team4276.frc2026.constants.ShooterConstants.ShooterState;
 
 import static frc.team4276.frc2026.subsystems.drive.DriveConstants.kinematics;
 
@@ -85,6 +88,12 @@ public class RobotState {
 
     poseEstimator.addVisionMeasurement(
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+  }
+
+  public ShooterState getHubShooterState(){
+    double distanceToHub = poseEstimator.getEstimatedPosition().getTranslation().getDistance(FieldConstants.tempHubCenter);
+
+    return ShooterConstants.getHubShooterStateFromDistance(distanceToHub);
   }
 
   @AutoLogOutput(key = "RobotState/EstimatedPose")

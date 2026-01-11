@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.frc2026.Constants;
-import frc.team4276.frc2026.field.FieldConstants;
+import frc.team4276.frc2026.constants.FieldConstants;
 
 public class AllianceFlipUtil {
   static {

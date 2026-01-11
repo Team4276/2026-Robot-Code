@@ -224,6 +224,19 @@ public class Drive extends SubsystemBase {
         break;
 
       case HEADING_ALIGN:
+        double headingAlignError = MathUtil.angleModulus(
+            currentPose.getRotation().minus(desiredHeadingAlignRotation).getRadians());
+        double headingAlignOmega = Math.min(
+            headingAlignController.calculate(headingAlignError, 0.0),
+            maxAutoAlignDriveRotationOutput);
+
+        if (headingAlignController.atSetpoint()) {
+          headingAlignOmega = 0.0;
+        }
+
+        requestedSpeeds = getJoystickRequestedSpeeds();
+        requestedSpeeds.omegaRadiansPerSecond = headingAlignOmega;
+
         break;
 
       case AUTO_ALIGN:

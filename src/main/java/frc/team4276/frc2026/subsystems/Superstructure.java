@@ -18,7 +18,8 @@ public class Superstructure extends SubsystemBase {
   private final ViXController controller;
 
   public enum WantedSuperState {
-    STOW
+    STOW,
+    SHOOT
   }
 
   public enum CurrentSuperState {
@@ -47,6 +48,8 @@ public class Superstructure extends SubsystemBase {
   private CurrentSuperState handleStateTransition() {
     return switch (wantedSuperState) {
       case STOW:
+        yield CurrentSuperState.STOWED;
+      case SHOOT:
         yield CurrentSuperState.STOWED;
     };
   }
