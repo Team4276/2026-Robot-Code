@@ -15,4 +15,5 @@ public class FieldConstants {
             Units.inchesToMeters(158.5));
 
     public static final Translation2d tempHubCenter = Translation2d.kZero;
+    public static final Translation2d tempFerryTarget = Translation2d.kZero;
 }

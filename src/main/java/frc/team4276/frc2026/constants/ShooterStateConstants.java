@@ -2,7 +2,7 @@ package frc.team4276.frc2026.constants;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 
-public class ShooterConstants {
+public class ShooterStateConstants {
     public static record ShooterState(double rpm) {
     }
 
@@ -21,4 +21,10 @@ public class ShooterConstants {
         flywheelFerryMap.put(1.0, 1000.0);
         flywheelFerryMap.put(10.0, 5000.0);
     }
+
+    public static ShooterState getFerryShooterStateFromDistance(double distance){
+        return new ShooterState(flywheelHubMap.get(distance));
+    }
+
+    // Passing?
 }
