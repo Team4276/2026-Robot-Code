@@ -1,0 +1,55 @@
+{
+  "hubs": [
+    {
+      "x": -8,
+      "y": -8,
+      "width": 1552,
+      "height": 832,
+      "state": {
+        "sidebar": {
+          "width": 300,
+          "expanded": []
+        },
+        "tabs": {
+          "selected": 1,
+          "tabs": [
+            {
+              "type": 0,
+              "title": "",
+              "controller": null,
+              "controllerUUID": "o5lchhdpe3a8cw5hjccv3t0ukpryczri",
+              "renderer": "",
+              "controlsHeight": 0
+            },
+            {
+              "type": 3,
+              "title": "3D Field",
+              "controller": {
+                "sources": [],
+                "game": "FRC:2026 Field"
+              },
+              "controllerUUID": "pmg8o5wi69q7wuugcyvygdx08rty63av",
+              "renderer": {
+                "cameraIndex": -1,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  1.4695761589768238e-15,
+                  5.999999999999999,
+                  -12
+                ],
+                "cameraTarget": [
+                  0,
+                  0.5,
+                  0
+                ]
+              },
+              "controlsHeight": 200
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "satellites": [],
+  "version": "26.0.0"
+}
