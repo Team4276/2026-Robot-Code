@@ -28,7 +28,7 @@ import frc.team4276.lib.hid.JoystickOutputController;
 public class Drive extends SubsystemBase {
   public enum WantedState {
     TELEOP,
-    TRAJECTORY,
+    PATH,
     HEADING_ALIGN,
     AUTO_ALIGN,
     IDLE,
@@ -37,7 +37,7 @@ public class Drive extends SubsystemBase {
 
   public enum SystemState {
     TELEOP,
-    TRAJECTORY,
+    PATH,
     HEADING_ALIGN,
     AUTO_ALIGN,
     IDLE,
@@ -193,7 +193,7 @@ public class Drive extends SubsystemBase {
   private SystemState handleStateTransition() {
     return switch (wantedState) {
       case TELEOP -> SystemState.TELEOP;
-      case TRAJECTORY -> SystemState.TRAJECTORY;
+      case PATH -> SystemState.PATH;
       case HEADING_ALIGN -> SystemState.HEADING_ALIGN;
       case AUTO_ALIGN -> SystemState.AUTO_ALIGN;
       case CHARACTERIZATION -> SystemState.CHARACTERIZATION;
@@ -219,7 +219,7 @@ public class Drive extends SubsystemBase {
 
         break;
 
-      case TRAJECTORY:
+      case PATH:
 
         break;
 
