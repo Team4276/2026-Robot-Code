@@ -51,7 +51,6 @@ public class VisionIOPhotonVision implements VisionIO {
     this.robotPoseSupplier = robotPoseSupplier;
 
     poseEstimator = new PhotonPoseEstimator(aprilTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
-    poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
   }
 
   @Override
@@ -74,7 +73,11 @@ public class VisionIOPhotonVision implements VisionIO {
         inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
       }
 
-      Optional<EstimatedRobotPose> estimate = poseEstimator.update(result);
+      Optional<EstimatedRobotPose> estimate = poseEstimator.estimateCoprocMultiTagPose(result); //TODO: Impl in vision subsystem
+
+      if(estimate.isEmpty()){
+        estimate = poseEstimator.estimateLowestAmbiguityPose(result);
+      }
 
       estimate.ifPresent(
           (poseEstimate) -> {
