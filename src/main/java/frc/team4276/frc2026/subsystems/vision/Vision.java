@@ -17,42 +17,26 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.team4276.frc2026.RobotState;
+import frc.team4276.frc2026.constants.FieldConstants;
 import frc.team4276.frc2026.subsystems.vision.VisionIO.PoseObservation;
 
 import static frc.team4276.frc2026.subsystems.vision.VisionConstants.*;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.littletonrobotics.junction.AutoLogOutput;
+import java.util.Optional;
+
 import org.littletonrobotics.junction.Logger;
 
-// TODO
+// TODO multicamera fusion
 /*
- * pass full result data to vision subsystem class
- * 
- * impl 2 passes: 2 tag estimation; gyro estimation
- * 
- * 2 tag; hueristic filtering; kalman; reset gyro;
- * 
- * follow poofs flow: 
- * 
- * 1 tag initial: filter ambiguity, tag area, and yaw diff;
- *   fail = gyro checks
- * 
- * 2 tag: filter 2d dist, z coord, 
- * 
- * gyro single tag: filter highest omega in set time period; 
- *  use robot to tag 2d translation transformed by gyro angle; fuse with gyro angle
- *  enter high variance for yaw
- * 
- * test first then try multi-camera fusion
- * 
  * multicamera fusion: idk what else to say; its just inverse variance weighting lol
  * put rot into vector form for fusion
  * 
@@ -63,8 +47,6 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
-
-  private double lastTargetSeenTime = 0;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -79,9 +61,8 @@ public class Vision extends SubsystemBase {
     // Initialize disconnected alerts
     this.disconnectedAlerts = new Alert[io.length];
     for (int i = 0; i < inputs.length; i++) {
-      disconnectedAlerts[i] =
-          new Alert(
-              "Vision camera " + Integer.toString(i) + " is disconnected.", AlertType.kWarning);
+      disconnectedAlerts[i] = new Alert(
+          "Vision camera " + Integer.toString(i) + " is disconnected.", AlertType.kWarning);
     }
   }
 
@@ -121,20 +102,25 @@ public class Vision extends SubsystemBase {
       for (var observation : inputs[cameraIndex].poseObservations) {
         robotPoses.add(observation.pose());
 
-        lastTargetSeenTime = observation.timestamp();
+        var estimate = processPoseObservation(observation);
+
+        if(estimate.isEmpty()){
+          estimate = fuseGyro(observation);
+        }
 
         // Add pose to log
-        if (shouldRejectPoseObservation(observation)) {
+        if (estimate.isEmpty()) {
           robotPosesRejected.add(observation.pose());
-          
+
           continue;
         }
-        
+
         robotPosesAccepted.add(observation.pose());
-        
+
         // Calculate standard deviations
-        double stdDevFactor =
-            Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+        // TODO: test poofs stdev factor method
+        double stdDevFactor = Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+        // = observation.tagCount() > 1 ? 1.0 : 1.0 / (1.0 - observation.ambiguity());
         double linearStdDev = linearStdDevBaseline * stdDevFactor;
         double angularStdDev = angularStdDevBaseline * stdDevFactor;
         if (cameraIndex < cameraStdDevFactors.length) {
@@ -142,8 +128,8 @@ public class Vision extends SubsystemBase {
           angularStdDev *= cameraStdDevFactors[cameraIndex];
         }
 
-        if (!useVisionRotation || (observation.tagCount() == 1 && !useVisionRotationSingleTag)) {
-          angularStdDev = 1000.0;
+        if (!useVisionRotation || (observation.tagCount() == 1)) {
+          angularStdDev = kLargeVariance;
         }
 
         // Send vision observation
@@ -153,7 +139,7 @@ public class Vision extends SubsystemBase {
             VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
       }
 
-      if(enableInstanceLogging){
+      if (enableInstanceLogging) {
         // Log camera datadata
         Logger.recordOutput(
             "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
@@ -188,40 +174,80 @@ public class Vision extends SubsystemBase {
   }
 
   /** All criteria to reject a post returned by the vision system */
-  private boolean shouldRejectPoseObservation(PoseObservation observation) {
+  private Optional<VisionFieldPoseEstimate> processPoseObservation(PoseObservation observation) {
     // Should have at least one tag
     if (observation.tagCount() <= 0) {
-      return true;
+      return Optional.empty();
     }
 
     // Single tag results can provide more errors than multi-tag
     if (observation.tagCount() == 1) {
       if (observation.ambiguity() > maxAmbiguity) {
-        return true;
+        return Optional.empty();
       }
 
       // Results get worse with a single tag at distance
       if (observation.averageTagDistance() > maxSingleTagDistanceMeters) {
-        return true;
+        return Optional.empty();
       }
     }
 
-    // Must have realistic Z coordinate, i.e. reject poses which think the robot is hoving above
+    // Must have realistic Z coordinate, i.e. reject poses which think the robot is
+    // hoving above
     // or below the floor.
     if (Math.abs(observation.pose().getZ()) > maxZError) {
-      return true;
+      return Optional.empty();
     }
 
-    // Must be within the field boundaries
-    return observation.pose().getX() < 0.0
+    if(observation.pose().getX() < 0.0
         || observation.pose().getX() > aprilTagLayout.getFieldLength()
         || observation.pose().getY() < 0.0
-        || observation.pose().getY() > aprilTagLayout.getFieldWidth();
+        || observation.pose().getY() > aprilTagLayout.getFieldWidth()){
+      return Optional.empty();
+    }
+
+    return Optional.of(
+      new VisionFieldPoseEstimate(
+      observation.pose().toPose2d(), 
+      observation.timestamp(), 
+      VecBuilder.fill(0.0, 0.0, 0.0), 
+      observation.tagCount()));
   }
 
-  @AutoLogOutput
-  public double timeSinceLastTargetSeen() {
-    return Timer.getFPGATimestamp() - lastTargetSeenTime;
+  private Optional<VisionFieldPoseEstimate> fuseGyro(PoseObservation observation) {
+    if (observation.timestamp() < RobotState.getInstance().getLastUsedVisionPoseEstimateTimestamp()) {
+      return Optional.empty();
+    }
+
+    var priorPose = RobotState.getInstance().getEstimatedOdomPoseAtTime(observation.timestamp());
+    if (priorPose.isEmpty()) {
+      return Optional.empty();
+    }
+
+    var maybeFieldToTag = FieldConstants.apriltagLayout.getTagPose(observation.firstTagId());
+    if (maybeFieldToTag.isEmpty()) {
+      return Optional.empty();
+    }
+
+    Pose2d fieldToTag = new Pose2d(maybeFieldToTag.get().toPose2d().getTranslation(), Rotation2d.kZero);
+
+    Pose2d robotToTag = fieldToTag.relativeTo(observation.pose().toPose2d());
+
+    Pose2d posteriorPose = new Pose2d(
+        fieldToTag
+            .getTranslation()
+            .minus(
+                robotToTag
+                    .getTranslation()
+                    .rotateBy(priorPose.get().getRotation())),
+        priorPose.get().getRotation());
+
+    return Optional.of(
+        new VisionFieldPoseEstimate(
+            posteriorPose,
+            observation.timestamp(),
+            VecBuilder.fill(0.0, 0.0, 0.0),
+            observation.tagCount()));
   }
 
   @FunctionalInterface

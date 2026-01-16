@@ -82,6 +82,7 @@ public class VisionIOPhotonVision implements VisionIO {
                     poseEstimate.estimatedPose, // 3D pose estimate
                     poseEstimate.targetsUsed.get(0).poseAmbiguity, // Ambiguity
                     poseEstimate.targetsUsed.size(), // Tag count
+                    poseEstimate.targetsUsed.get(0).fiducialId, // 1st tag id for single tag gyro fusion
                     totalTagDistance / poseEstimate.targetsUsed.size(), // Average tag distance
                     PoseObservationType.PHOTONVISION)); // Observation type
           });

@@ -40,53 +40,33 @@ public class VisionConstants {
       Units.inchesToMeters(8.0),
       new Rotation3d(0.0, Units.degreesToRadians(-20.0), Units.degreesToRadians(-20.0)));
 
-  public static final Transform3d ov2311RobotToCamera = new Transform3d(
-      Units.inchesToMeters(11.0),
-      Units.inchesToMeters(9.0) * -1.0,
-      Units.inchesToMeters(8.0),
-      new Rotation3d(0.0, Units.degreesToRadians(-20.0), Units.degreesToRadians(20.0)));
-
   public static final CameraConfig[] configs = new CameraConfig[] {
-      new CameraConfig("Arducam_OV9281_USB_Camera", ov9281RobotToCamera),
-      new CameraConfig("Arducam_OV2311_USB_Camera", ov2311RobotToCamera)
+      new CameraConfig("Arducam_OV9281_USB_Camera", ov9281RobotToCamera)
   };
 
   // Basic filtering thresholds
-  public static double maxAmbiguity = 0.05;
-  public static double maxZError = 0.75;
-  public static double maxSingleTagDistanceMeters = 3.0;
+  public static final double maxAmbiguity = 0.19;
+  public static final double maxZError = 0.3;
+  public static final double maxSingleTagDistanceMeters = 3.0;
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
-  public static double linearStdDevBaseline = 0.02; // Meters
-  public static double angularStdDevBaseline = 0.06; // Radians
+  public static final double linearStdDevBaseline = 0.02; // Meters
+  public static final double angularStdDevBaseline = 0.06; // Radians
 
   // Vision can sometimes provide bad rotation updates
-  public static boolean useVisionRotation = true;
-  public static boolean useVisionRotationSingleTag = false;
+  public static final boolean useVisionRotation = true;
 
   // Standard deviation multipliers for each camera
   // (Adjust to trust some cameras more than others)
-  public static double[] cameraStdDevFactors = new double[] {
-      1.0, // Camera 0
-      1.0 // Camera 1
+  public static final double[] cameraStdDevFactors = new double[] {
+      1.0 // Camera 0
   };
 
-  public static final List<Integer> singleTagIdsToReject = new ArrayList<>() {
-    {
-      // Red Side
-      add(1); // Feeder Station
-      add(2); // Feeder Station
-      add(3); // Processor
-      add(4); // Blue Barge
-      add(5); // Red Barge
+  public static final double kLargeVariance = 1e6;
 
-      // Blue Side
-      add(12); // Feeder Station
-      add(13); // Feeder Station
-      add(14); // Blue Barge
-      add(15); // Red Barge
-      add(16); // Red Processor
+  public static final List<Integer> singleTagIdsToReject = new ArrayList<>() {
+    {//TODO figure this out later lol; filter in subsystem instead of in the hardware impl
     }
   };
 }
