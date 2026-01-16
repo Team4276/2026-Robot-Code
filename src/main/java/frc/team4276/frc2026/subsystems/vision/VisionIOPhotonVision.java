@@ -13,8 +13,6 @@
 
 package frc.team4276.frc2026.subsystems.vision;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 
 import static frc.team4276.frc2026.subsystems.vision.VisionConstants.*;
@@ -24,19 +22,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
   protected final PhotonCamera camera;
   protected final Transform3d robotToCamera;
 
-  private final Supplier<Pose2d> robotPoseSupplier;
   private final PhotonPoseEstimator poseEstimator;
 
   /**
@@ -45,35 +40,22 @@ public class VisionIOPhotonVision implements VisionIO {
    * @param name             The configured name of the camera.
    * @param rotationSupplier The 3D position of the camera relative to the robot.
    */
-  public VisionIOPhotonVision(int index, Supplier<Pose2d> robotPoseSupplier) {
+  public VisionIOPhotonVision(int index) {
     camera = new PhotonCamera(configs[index].name);
     this.robotToCamera = configs[index].robotToCamera;
-    this.robotPoseSupplier = robotPoseSupplier;
 
-    poseEstimator = new PhotonPoseEstimator(aprilTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
+    poseEstimator = new PhotonPoseEstimator(aprilTagLayout, robotToCamera);
   }
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
     inputs.connected = camera.isConnected();
 
-    // For single tag ambiguity correct, feed in full estimated pose
-    poseEstimator.setReferencePose(robotPoseSupplier.get());
-
     // Read new camera observations
     Set<Short> tagIds = new HashSet<>();
     List<PoseObservation> poseObservations = new LinkedList<>();
     for (var result : camera.getAllUnreadResults()) {
-      // Update latest target observation
-      if (result.hasTargets()) {
-        inputs.latestTargetObservation = new TargetObservation(
-            Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
-            Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
-      } else {
-        inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
-      }
-
-      Optional<EstimatedRobotPose> estimate = poseEstimator.estimateCoprocMultiTagPose(result); //TODO: Impl in vision subsystem
+      Optional<EstimatedRobotPose> estimate = poseEstimator.estimateCoprocMultiTagPose(result);
 
       if(estimate.isEmpty()){
         estimate = poseEstimator.estimateLowestAmbiguityPose(result);

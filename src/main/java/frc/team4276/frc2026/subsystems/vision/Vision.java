@@ -32,6 +32,32 @@ import java.util.List;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+// TODO
+/*
+ * pass full result data to vision subsystem class
+ * 
+ * impl 2 passes: 2 tag estimation; gyro estimation
+ * 
+ * 2 tag; hueristic filtering; kalman; reset gyro;
+ * 
+ * follow poofs flow: 
+ * 
+ * 1 tag initial: filter ambiguity, tag area, and yaw diff;
+ *   fail = gyro checks
+ * 
+ * 2 tag: filter 2d dist, z coord, 
+ * 
+ * gyro single tag: filter highest omega in set time period; 
+ *  use robot to tag 2d translation transformed by gyro angle; fuse with gyro angle
+ *  enter high variance for yaw
+ * 
+ * test first then try multi-camera fusion
+ * 
+ * multicamera fusion: idk what else to say; its just inverse variance weighting lol
+ * put rot into vector form for fusion
+ * 
+ */
+
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
   private final VisionIO[] io;
