@@ -25,6 +25,4 @@ public class ShooterStateConstants {
     public static ShooterState getFerryShooterStateFromDistance(double distance){
         return new ShooterState(flywheelHubMap.get(distance));
     }
-
-    // Passing?
 }
