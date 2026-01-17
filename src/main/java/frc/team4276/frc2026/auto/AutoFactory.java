@@ -19,8 +19,6 @@ import java.util.function.Supplier;
 public class AutoFactory {
   private RobotContainer robotContainer;
 
-  private final double distanceToScoreElevatorRaise = 2.0;
-
   public AutoFactory(RobotContainer robotContainer) {
     this.robotContainer = robotContainer;
   }

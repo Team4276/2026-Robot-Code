@@ -7,7 +7,7 @@ import edu.wpi.first.math.util.Units;
 
 public class FieldConstants {
     public static final AprilTagFieldLayout apriltagLayout = AprilTagFieldLayout
-            .loadField(AprilTagFields.k2025ReefscapeWelded);
+            .loadField(AprilTagFields.k2026RebuiltWelded);
 
     public static final double fieldLength = Units.inchesToMeters(690.875958);
     public static final double fieldWidth = Units.inchesToMeters(317);
