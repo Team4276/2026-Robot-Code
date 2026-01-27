@@ -13,6 +13,7 @@ import frc.team4276.frc2026.subsystems.Superstructure;
 import frc.team4276.frc2026.subsystems.drive.Drive;
 import frc.team4276.frc2026.subsystems.drive.GyroIO;
 import frc.team4276.frc2026.subsystems.drive.GyroIOADIS;
+import frc.team4276.frc2026.subsystems.drive.GyroIPigeon2;
 import frc.team4276.frc2026.subsystems.drive.ModuleIO;
 import frc.team4276.frc2026.subsystems.drive.ModuleIOSim;
 import frc.team4276.frc2026.subsystems.drive.ModuleIOSpark;
@@ -38,7 +39,7 @@ public class RobotContainer {
           // Real robot, instantiate hardware IO implementations
           drive = new Drive(
               Constants.isDemo ? demoController : driver,
-              new GyroIOADIS(),
+              new GyroIPigeon2(),
               new ModuleIOSpark(0),
               new ModuleIOSpark(1),
               new ModuleIOSpark(2),

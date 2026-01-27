@@ -229,7 +229,8 @@ public class ModuleIOSpark implements ModuleIO {
       ffVolts = feedforward.calculateWithVelocities(lastVelocity, velocityRadPerSec);
 
     } else {
-      ffVolts = feedforward.calculate(velocityRadPerSec);
+      ffVolts = 0.0;
+      // feedforward.calculate(velocityRadPerSec);
     }
     lastVelocity = velocityRadPerSec;
 
