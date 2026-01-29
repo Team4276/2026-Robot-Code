@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.team4276.frc2026.subsystems.Superstructure;
 import frc.team4276.frc2026.subsystems.drive.Drive;
 import frc.team4276.frc2026.subsystems.drive.GyroIO;
-import frc.team4276.frc2026.subsystems.drive.GyroIOADIS;
 import frc.team4276.frc2026.subsystems.drive.GyroIPigeon2;
 import frc.team4276.frc2026.subsystems.drive.ModuleIO;
 import frc.team4276.frc2026.subsystems.drive.ModuleIOSim;

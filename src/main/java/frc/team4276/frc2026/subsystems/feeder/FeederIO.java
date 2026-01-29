@@ -1,15 +1,15 @@
-package frc.team4276.frc2026.subsystems.hopper;
+package frc.team4276.frc2026.subsystems.feeder;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface HopperIO {
+public interface FeederIO {
   @AutoLog
-  public static class HopperIOInputs {
+  public static class FeederIOInputs {
     public boolean connected = true;
     public double appliedVoltage = 0.0;
     public double supplyCurrentAmps = 0.0;
     public double tempCelsius = 0.0;
   }
 
-  public default void updateInputs(HopperIOInputs inputs) {}
+  public default void updateInputs(FeederIOInputs inputs) {}
 }

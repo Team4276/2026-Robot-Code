@@ -1,9 +1,9 @@
-package frc.team4276.frc2026.subsystems.hopper;
+package frc.team4276.frc2026.subsystems.feeder;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Hopper extends SubsystemBase {
-    public Hopper(){
+public class Feeder extends SubsystemBase {
+    public Feeder(){
 
     }
 
