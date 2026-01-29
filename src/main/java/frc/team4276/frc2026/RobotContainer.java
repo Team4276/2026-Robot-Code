@@ -17,7 +17,11 @@ import frc.team4276.frc2026.subsystems.drive.GyroIPigeon2;
 import frc.team4276.frc2026.subsystems.drive.ModuleIO;
 import frc.team4276.frc2026.subsystems.drive.ModuleIOSim;
 import frc.team4276.frc2026.subsystems.drive.ModuleIOSpark;
+import frc.team4276.frc2026.subsystems.drive.Drive.WantedState;
 import frc.team4276.frc2026.subsystems.vision.Vision;
+import frc.team4276.frc2026.subsystems.vision.VisionConstants;
+import frc.team4276.frc2026.subsystems.vision.VisionIO;
+import frc.team4276.frc2026.subsystems.vision.VisionIOPhotonVision;
 import frc.team4276.lib.AllianceFlipUtil;
 import frc.team4276.lib.hid.CowsController;
 import frc.team4276.lib.hid.ViXController;
@@ -44,7 +48,8 @@ public class RobotContainer {
               new ModuleIOSpark(1),
               new ModuleIOSpark(2),
               new ModuleIOSpark(3));
-          vision = new Vision(RobotState.getInstance()::addVisionMeasurement);
+          vision = new Vision(RobotState.getInstance()::addVisionMeasurement, new VisionIOPhotonVision(0),
+              new VisionIOPhotonVision(1));
         }
 
         case SIMBOT -> {
@@ -79,10 +84,10 @@ public class RobotContainer {
     }
 
     if (vision == null) {
-      vision = new Vision(RobotState.getInstance()::addVisionMeasurement);
+      vision = new Vision(RobotState.getInstance()::addVisionMeasurement, new VisionIO() {
+      }, new VisionIO() {
+      });
     }
-
-    
 
     superstructure = new Superstructure(drive, vision, driver);
 
@@ -102,6 +107,11 @@ public class RobotContainer {
                             RobotState.getInstance().getEstimatedPose().getTranslation(),
                             AllianceFlipUtil.apply(Rotation2d.kZero))))
                 .ignoringDisable(true));
+
+    driver
+        .rightTrigger()
+        .whileTrue(Commands.run(() -> drive.alignToHub()))
+        .onFalse(Commands.runOnce(() -> drive.setWantedState(WantedState.TELEOP)));
   }
 
   /**

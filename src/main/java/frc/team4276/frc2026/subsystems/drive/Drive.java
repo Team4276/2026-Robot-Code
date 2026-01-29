@@ -352,4 +352,13 @@ public class Drive extends SubsystemBase {
     setWantedState(WantedState.AUTO_ALIGN);
     desiredAutoAlignPose = pose;
   }
+
+  public void setHeadingAlignRotation(Rotation2d rotation){
+    setWantedState(WantedState.HEADING_ALIGN);
+    desiredHeadingAlignRotation = rotation;
+  }
+
+  public void alignToHub(){
+    setHeadingAlignRotation(RobotState.getInstance().getHubAlignHeading());
+  }
 }

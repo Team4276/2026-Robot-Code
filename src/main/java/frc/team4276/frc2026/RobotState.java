@@ -111,6 +111,10 @@ public class RobotState {
     return ShooterStateConstants.getFerryShooterStateFromDistance(distanceToTarget);
   }
 
+  public Rotation2d getHubAlignHeading(){
+    return FieldConstants.tempHubCenter.minus(getEstimatedPose().getTranslation()).getAngle();
+  }
+
   @AutoLogOutput(key = "RobotState/EstimatedPose")
   public Pose2d getEstimatedPose() {
     return poseEstimator.getEstimatedPosition();

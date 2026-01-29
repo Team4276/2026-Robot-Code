@@ -9,11 +9,9 @@ public class FieldConstants {
     public static final AprilTagFieldLayout apriltagLayout = AprilTagFieldLayout
             .loadField(AprilTagFields.k2026RebuiltWelded);
 
-    public static final double fieldLength = Units.inchesToMeters(690.875958);
-    public static final double fieldWidth = Units.inchesToMeters(317);
-    public static final Translation2d fieldCenter = new Translation2d(Units.inchesToMeters(345.437979),
-            Units.inchesToMeters(158.5));
+    public static final double fieldLength = apriltagLayout.getFieldLength();
+    public static final double fieldWidth = apriltagLayout.getFieldWidth();
 
-    public static final Translation2d tempHubCenter = Translation2d.kZero;
+    public static final Translation2d tempHubCenter = new Translation2d(apriltagLayout.getTagPose(26).get().getX() + Units.inchesToMeters(47.0) / 2.0, fieldWidth / 2);
     public static final Translation2d tempFerryTarget = Translation2d.kZero;
 }
