@@ -5,9 +5,9 @@ import static frc.team4276.frc2026.subsystems.shooter.ShooterConstants.*;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.team4276.frc2026.RobotState;
-import frc.team4276.frc2026.constants.ShooterStateConstants.ShooterState;
+import frc.team4276.frc2026.subsystems.shooter.ShotCalculator.ShootingParameters;
 import frc.team4276.frc2026.subsystems.shooter.flywheel.FlywheelIO;
 import frc.team4276.frc2026.subsystems.shooter.flywheel.FlywheelIOInputsAutoLogged;
 
@@ -30,7 +30,13 @@ public class Shooter extends SubsystemBase {
     private WantedState wantedState = WantedState.IDLE;
     private SystemState systemState = SystemState.IDLING;
 
-    private ShooterState requestedShooterState = new ShooterState(0);
+    private ShootingParameters requestedShooterState = new ShootingParameters(
+                        true,
+                        Rotation2d.kZero,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0);
 
     public Shooter(FlywheelIO flywheelIO) {
         this.flywheelIO = flywheelIO;
@@ -59,27 +65,39 @@ public class Shooter extends SubsystemBase {
     private void applyState() {
         switch (systemState) {
             case IDLING:
-                requestedShooterState = new ShooterState(0);
+                requestedShooterState = new ShootingParameters(
+                        true,
+                        Rotation2d.kZero,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0);
 
                 break;
             case SHOOTING:
-                requestedShooterState = RobotState.getInstance().getHubShooterState();
+                requestedShooterState = ShotCalculator.getInstance().getHubParameters();
 
                 break;
             case FERRYING:
-                requestedShooterState = RobotState.getInstance().getFerryShooterState();
+                requestedShooterState = new ShootingParameters(
+                        true,
+                        Rotation2d.kZero,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0);
 
                 break;
         }
 
-        flywheelIO.setRpm(requestedShooterState.rpm());
+        flywheelIO.setRpm(requestedShooterState.flywheelSpeed());
     }
 
     public void setWantedState(WantedState state) {
         wantedState = state;
     }
 
-    public boolean atGoal(){
-        return MathUtil.isNear(requestedShooterState.rpm(), flywheelInputs.velocity, tolerance);
+    public boolean atGoal() {
+        return MathUtil.isNear(requestedShooterState.flywheelSpeed(), flywheelInputs.velocity, tolerance);
     }
 }

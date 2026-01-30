@@ -1,6 +1,6 @@
 package frc.team4276.lib.path;
 
-import static frc.team4276.frc2026.constants.FieldConstants.*;
+import static frc.team4276.frc2026.FieldConstants.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;

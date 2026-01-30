@@ -1,4 +1,4 @@
-package frc.team4276.lib;
+package frc.team4276.lib.geometry;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.frc2026.Constants;
-import frc.team4276.frc2026.constants.FieldConstants;
+import frc.team4276.frc2026.FieldConstants;
 
 public class AllianceFlipUtil {
   static {

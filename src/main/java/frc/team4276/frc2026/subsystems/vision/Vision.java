@@ -23,8 +23,8 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.team4276.frc2026.FieldConstants;
 import frc.team4276.frc2026.RobotState;
-import frc.team4276.frc2026.constants.FieldConstants;
 import frc.team4276.frc2026.subsystems.vision.VisionIO.PoseObservation;
 
 import static frc.team4276.frc2026.subsystems.vision.VisionConstants.*;

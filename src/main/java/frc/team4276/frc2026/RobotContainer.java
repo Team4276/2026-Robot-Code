@@ -21,7 +21,7 @@ import frc.team4276.frc2026.subsystems.vision.Vision;
 import frc.team4276.frc2026.subsystems.vision.VisionConstants;
 import frc.team4276.frc2026.subsystems.vision.VisionIO;
 import frc.team4276.frc2026.subsystems.vision.VisionIOPhotonVision;
-import frc.team4276.lib.AllianceFlipUtil;
+import frc.team4276.lib.geometry.AllianceFlipUtil;
 import frc.team4276.lib.hid.CowsController;
 import frc.team4276.lib.hid.ViXController;
 

@@ -9,9 +9,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import frc.team4276.frc2026.constants.FieldConstants;
-import frc.team4276.frc2026.constants.ShooterStateConstants;
-import frc.team4276.frc2026.constants.ShooterStateConstants.ShooterState;
 
 import static frc.team4276.frc2026.subsystems.drive.DriveConstants.kinematics;
 
@@ -98,21 +95,8 @@ public class RobotState {
     return lastUsedVisionPoseEstimateTimestamp;
   }
 
-  public ShooterState getHubShooterState(){
-    double distanceToHub = poseEstimator.getEstimatedPosition().getTranslation().getDistance(FieldConstants.tempHubCenter);
-
-    return ShooterStateConstants.getHubShooterStateFromDistance(distanceToHub);
-  }
-
-  public ShooterState getFerryShooterState(){
-    double distanceToTarget = poseEstimator.getEstimatedPosition().getTranslation().getDistance(FieldConstants.tempFerryTarget);
-
-    // Switch target depending on field position
-    return ShooterStateConstants.getFerryShooterStateFromDistance(distanceToTarget);
-  }
-
   public Rotation2d getHubAlignHeading(){
-    return FieldConstants.tempHubCenter.minus(getEstimatedPose().getTranslation()).getAngle();
+    return FieldConstants.Hub.innerCenterPoint.toTranslation2d().minus(getEstimatedPose().getTranslation()).getAngle();
   }
 
   @AutoLogOutput(key = "RobotState/EstimatedPose")
