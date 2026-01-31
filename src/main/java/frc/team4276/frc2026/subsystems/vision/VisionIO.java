@@ -22,6 +22,9 @@ public interface VisionIO {
     public boolean connected = false;
     public PoseObservation[] poseObservations = new PoseObservation[0];
     public int[] tagIds = new int[0];
+
+    public double[] objectTimestamps = new double[0];
+    public double[][] objectFrames = new double[0][];
   }
 
   /** Represents a robot pose sample used for pose estimation. */
@@ -35,9 +38,12 @@ public interface VisionIO {
       PoseObservationType type) {}
 
   public static enum PoseObservationType {
-    MEGATAG_1,
-    MEGATAG_2,
     PHOTONVISION
+  }
+
+  public static enum VisionObservationType {
+    APRILTAG,
+    FUEL
   }
 
   public default void updateInputs(VisionIOInputs inputs) {}

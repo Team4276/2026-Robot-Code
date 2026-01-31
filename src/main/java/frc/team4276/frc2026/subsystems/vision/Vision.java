@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team4276.frc2026.FieldConstants;
 import frc.team4276.frc2026.RobotState;
+import frc.team4276.frc2026.RobotState.FuelTxTyObservation;
 import frc.team4276.frc2026.subsystems.vision.VisionIO.PoseObservation;
 
 import static frc.team4276.frc2026.subsystems.vision.VisionConstants.*;
@@ -104,7 +105,7 @@ public class Vision extends SubsystemBase {
 
         var estimate = processPoseObservation(observation);
 
-        if(estimate.isEmpty()){
+        if (estimate.isEmpty()) {
           estimate = fuseGyro(observation);
         }
 
@@ -119,8 +120,8 @@ public class Vision extends SubsystemBase {
 
         // Calculate standard deviations
         // TODO: test poofs stdev factor method
-        double stdDevFactor = Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
-        // = observation.tagCount() > 1 ? 1.0 : 1.0 / (1.0 - observation.ambiguity());
+        // double stdDevFactor = Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+        double stdDevFactor = observation.tagCount() > 1 ? 1.0 : 1.0 / (1.0 - observation.ambiguity());
         double linearStdDev = linearStdDevBaseline * stdDevFactor;
         double angularStdDev = angularStdDevBaseline * stdDevFactor;
         if (cameraIndex < cameraStdDevFactors.length) {
@@ -137,6 +138,22 @@ public class Vision extends SubsystemBase {
             observation.pose().toPose2d(),
             observation.timestamp(),
             VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+      }
+
+      for (int i = 0; i < inputs[cameraIndex].objectFrames.length; i++) {
+        double[] x = new double[4];
+        double[] y = new double[4];
+
+        for (int j = 0; j < 4; j++) {
+          x[j] = inputs[cameraIndex].objectFrames[i][j];
+          y[j] = inputs[cameraIndex].objectFrames[i][j + 4];
+        }
+
+        RobotState.getInstance().addObjectMeasurement(
+            new FuelTxTyObservation(cameraIndex,
+                x,
+                y,
+                inputs[cameraIndex].objectTimestamps[i]));
       }
 
       if (enableInstanceLogging) {
@@ -199,19 +216,19 @@ public class Vision extends SubsystemBase {
       return Optional.empty();
     }
 
-    if(observation.pose().getX() < 0.0
+    if (observation.pose().getX() < 0.0
         || observation.pose().getX() > aprilTagLayout.getFieldLength()
         || observation.pose().getY() < 0.0
-        || observation.pose().getY() > aprilTagLayout.getFieldWidth()){
+        || observation.pose().getY() > aprilTagLayout.getFieldWidth()) {
       return Optional.empty();
     }
 
     return Optional.of(
-      new VisionFieldPoseEstimate(
-      observation.pose().toPose2d(), 
-      observation.timestamp(), 
-      VecBuilder.fill(0.0, 0.0, 0.0), 
-      observation.tagCount()));
+        new VisionFieldPoseEstimate(
+            observation.pose().toPose2d(),
+            observation.timestamp(),
+            VecBuilder.fill(0.0, 0.0, 0.0),
+            observation.tagCount()));
   }
 
   private Optional<VisionFieldPoseEstimate> fuseGyro(PoseObservation observation) {

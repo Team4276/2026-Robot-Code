@@ -18,7 +18,6 @@ import frc.team4276.frc2026.subsystems.drive.ModuleIOSim;
 import frc.team4276.frc2026.subsystems.drive.ModuleIOSpark;
 import frc.team4276.frc2026.subsystems.drive.Drive.WantedState;
 import frc.team4276.frc2026.subsystems.vision.Vision;
-import frc.team4276.frc2026.subsystems.vision.VisionConstants;
 import frc.team4276.frc2026.subsystems.vision.VisionIO;
 import frc.team4276.frc2026.subsystems.vision.VisionIOPhotonVision;
 import frc.team4276.lib.geometry.AllianceFlipUtil;
@@ -110,6 +109,11 @@ public class RobotContainer {
     driver
         .rightTrigger()
         .whileTrue(Commands.run(() -> drive.alignToHub()))
+        .onFalse(Commands.runOnce(() -> drive.setWantedState(WantedState.TELEOP)));
+
+    driver
+        .a()
+        .whileTrue(Commands.run(() -> drive.setAutoAlignCustom()))
         .onFalse(Commands.runOnce(() -> drive.setWantedState(WantedState.TELEOP)));
   }
 

@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import frc.team4276.frc2026.Constants;
 import frc.team4276.frc2026.Constants.Mode;
+import frc.team4276.frc2026.subsystems.vision.VisionIO.VisionObservationType;
 import frc.team4276.lib.CameraConfig;
 
 import java.util.ArrayList;
@@ -47,8 +48,8 @@ public class VisionConstants {
       new Rotation3d(0.0, Units.degreesToRadians(-20.0), Units.degreesToRadians(20.0)));
 
   public static final CameraConfig[] configs = new CameraConfig[] {
-      new CameraConfig("Arducam_OV9281_USB_Camera", ov9281RobotToCamera),
-      new CameraConfig("Arducam_OV2311_USB_Camera", ov2311RobotToCamera)
+      new CameraConfig("Arducam_OV9281_USB_Camera", ov9281RobotToCamera, VisionObservationType.APRILTAG),
+      new CameraConfig("Arducam_OV2311_USB_Camera", ov2311RobotToCamera, VisionObservationType.APRILTAG)
   };
 
   // Basic filtering thresholds

@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team4276.frc2026.Constants;
 import frc.team4276.frc2026.RobotState;
@@ -51,7 +52,7 @@ public class Drive extends SubsystemBase {
       3.0, 0, 0.1, Units.inchesToMeters(1.0), "Drive/AutoAlign/TeleopTranslation");
   private final LoggedTunablePID autoAutoAlignController = new LoggedTunablePID(
       3.0, 0, 0.1, Units.inchesToMeters(1.0), "Drive/AutoAlign/AutoTranslation");
-  private final LoggedTunablePID headingAlignController = new LoggedTunablePID(5.0, 0, 0, Math.toRadians(1.0),
+  private final LoggedTunablePID headingAlignController = new LoggedTunablePID(20.0, 0, 0, Math.toRadians(1.0),
       "Drive/HeadingAlign");
 
   private Pose2d desiredAutoAlignPose = Pose2d.kZero;
@@ -60,7 +61,7 @@ public class Drive extends SubsystemBase {
   private Rotation2d desiredHeadingAlignRotation = Rotation2d.kZero;
 
   private double maxAutoAlignDriveTranslationOutput = maxVelocityMPS * 0.67;
-  private double maxAutoAlignDriveRotationOutput = maxAngularVelocity * 0.67;
+  private double maxAutoAlignDriveRotationOutput = maxAngularVelocity;
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
@@ -112,6 +113,10 @@ public class Drive extends SubsystemBase {
     // Start odometry thread
     SparkOdometryThread.getInstance().start();
     PhoenixOdometryThread.getInstance().start();
+
+    SmartDashboard.putNumber("CustomAlignX", Double.NaN);
+    SmartDashboard.putNumber("CustomAlignY", Double.NaN);
+    SmartDashboard.putNumber("CustomAlignRot", Double.NaN);
   }
 
   @Override
@@ -353,12 +358,22 @@ public class Drive extends SubsystemBase {
     desiredAutoAlignPose = pose;
   }
 
-  public void setHeadingAlignRotation(Rotation2d rotation){
+  public void setAutoAlignCustom() {
+    double x = SmartDashboard.getNumber("CustomAlignX", Double.NaN);
+    double y = SmartDashboard.getNumber("CustomAlignY", Double.NaN);
+    double rot = SmartDashboard.getNumber("CustomAlignRot", Double.NaN);
+
+    if (x != Double.NaN && y != Double.NaN && rot != Double.NaN) {
+      setAutoAlignPose(new Pose2d(x, y, Rotation2d.fromDegrees(rot)));
+    }
+  }
+
+  public void setHeadingAlignRotation(Rotation2d rotation) {
     setWantedState(WantedState.HEADING_ALIGN);
     desiredHeadingAlignRotation = rotation;
   }
 
-  public void alignToHub(){
+  public void alignToHub() {
     setHeadingAlignRotation(RobotState.getInstance().getHubAlignHeading());
   }
 }

@@ -31,6 +31,7 @@ import org.photonvision.PhotonPoseEstimator;
 public class VisionIOPhotonVision implements VisionIO {
   protected final PhotonCamera camera;
   protected final Transform3d robotToCamera;
+  protected final VisionObservationType observationType;
 
   private final PhotonPoseEstimator poseEstimator;
 
@@ -43,6 +44,7 @@ public class VisionIOPhotonVision implements VisionIO {
   public VisionIOPhotonVision(int index) {
     camera = new PhotonCamera(configs[index].name);
     this.robotToCamera = configs[index].robotToCamera;
+    this.observationType = configs[index].observationType;
 
     poseEstimator = new PhotonPoseEstimator(aprilTagLayout, robotToCamera);
   }
@@ -55,37 +57,50 @@ public class VisionIOPhotonVision implements VisionIO {
     Set<Short> tagIds = new HashSet<>();
     List<PoseObservation> poseObservations = new LinkedList<>();
     for (var result : camera.getAllUnreadResults()) {
-      Optional<EstimatedRobotPose> estimate = poseEstimator.estimateCoprocMultiTagPose(result);
+      if (observationType == VisionObservationType.FUEL) {
+        inputs.objectFrames = new double[result.targets.size()][];
+        
+        for (int i = 0; i < result.targets.size(); i++) {
+          inputs.objectFrames[i] = new double[8];
+          for (int j = 0; j < 4; j++) {
+            inputs.objectFrames[i][j] = result.targets.get(i).getDetectedCorners().get(j).x;
+            inputs.objectFrames[i][j + 4] = result.targets.get(i).getDetectedCorners().get(j).y;
+          }
+        }
 
-      if(estimate.isEmpty()){
-        estimate = poseEstimator.estimateLowestAmbiguityPose(result);
+      } else if (observationType == VisionObservationType.APRILTAG) {
+        Optional<EstimatedRobotPose> estimate = poseEstimator.estimateCoprocMultiTagPose(result);
+
+        if (estimate.isEmpty()) {
+          estimate = poseEstimator.estimateLowestAmbiguityPose(result);
+        }
+
+        estimate.ifPresent(
+            (poseEstimate) -> {
+              if (rejectEstimate(poseEstimate)) {
+                return;
+              }
+
+              // Calculate average tag distance
+              double totalTagDistance = 0.0;
+              for (var target : poseEstimate.targetsUsed) {
+                // Add tag IDs
+                tagIds.add((short) target.fiducialId);
+                totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
+              }
+
+              // Add observation
+              poseObservations.add(
+                  new PoseObservation(
+                      poseEstimate.timestampSeconds, // Timestamp
+                      poseEstimate.estimatedPose, // 3D pose estimate
+                      poseEstimate.targetsUsed.get(0).poseAmbiguity, // Ambiguity
+                      poseEstimate.targetsUsed.size(), // Tag count
+                      poseEstimate.targetsUsed.get(0).fiducialId, // 1st tag id for single tag gyro fusion
+                      totalTagDistance / poseEstimate.targetsUsed.size(), // Average tag distance
+                      PoseObservationType.PHOTONVISION)); // Observation type
+            });
       }
-
-      estimate.ifPresent(
-          (poseEstimate) -> {
-            if (rejectEstimate(poseEstimate)) {
-              return;
-            }
-
-            // Calculate average tag distance
-            double totalTagDistance = 0.0;
-            for (var target : poseEstimate.targetsUsed) {
-              // Add tag IDs
-              tagIds.add((short) target.fiducialId);
-              totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
-            }
-
-            // Add observation
-            poseObservations.add(
-                new PoseObservation(
-                    poseEstimate.timestampSeconds, // Timestamp
-                    poseEstimate.estimatedPose, // 3D pose estimate
-                    poseEstimate.targetsUsed.get(0).poseAmbiguity, // Ambiguity
-                    poseEstimate.targetsUsed.size(), // Tag count
-                    poseEstimate.targetsUsed.get(0).fiducialId, // 1st tag id for single tag gyro fusion
-                    totalTagDistance / poseEstimate.targetsUsed.size(), // Average tag distance
-                    PoseObservationType.PHOTONVISION)); // Observation type
-          });
     }
 
     // Save pose observations to inputs object
