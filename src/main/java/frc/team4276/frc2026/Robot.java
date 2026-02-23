@@ -20,7 +20,7 @@ public class Robot extends LoggedRobot {
   private final RobotContainer robotContainer;
 
   public Robot() {
-    Logger.recordMetadata("ProjectName", "kickoff2026"); // Set a metadata value
+    Logger.recordMetadata("ProjectName", "Backlash"); // Set a metadata value
 
     // Set up data receivers & replay source
     switch (Constants.getMode()) {
