@@ -55,23 +55,23 @@ public class Intake extends SubsystemBase {
     private void applyState() {
         switch (systemState) {
             case IDLING:
-                io.setVoltage(idleVolts);
+                io.setOpenLoop(idleVolts);
 
                 break;
 
             case RETRACTED:
-                io.setVoltage(idleVolts);
+                io.setOpenLoop(idleVolts);
                 io.setPosition(retractPosition);
 
                 break;
             
             case INTAKING:
-                io.setVoltage(intakeVolts);
+                io.setOpenLoop(intakeVolts);
                 io.setPosition(deployPosition);
 
                 break;
             case EXHAUSTING:
-                io.setVoltage(exhaustVolts);
+                io.setOpenLoop(exhaustVolts);
                 io.setPosition(deployPosition);
 
                 break;

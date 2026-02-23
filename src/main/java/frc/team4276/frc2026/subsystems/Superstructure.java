@@ -103,6 +103,7 @@ public class Superstructure extends SubsystemBase {
   public Command turtle() { // go under trench
     return Commands.runOnce(() -> {
       intake.setWantedState(Intake.WantedState.INTAKE);
+      shootingParams = ParamPreset.TURTLE::getParams;
     });
   }
 }
