@@ -2,10 +2,16 @@ package frc.team4276.frc2026.subsystems;
 
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.team4276.frc2026.RobotState;
+import frc.team4276.frc2026.FieldConstants.FieldZone;
 import frc.team4276.frc2026.shooter.ShotCalculator;
 import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.frc2026.shooter.ShotCalculator.ShootingParameters;
@@ -33,7 +39,20 @@ public class Superstructure extends SubsystemBase {
 
   private final ViXController controller;
 
+  private boolean isFirstActive = false;
+
   private Supplier<ShootingParameters> shootingParams = ParamPreset.STOW::getParams;
+  private ParamPreset currPreset = ParamPreset.STOW;
+
+  private enum FeedState {
+    NO,
+    FERRY,
+    ACTIVE
+  }
+
+  private FeedState feedState = FeedState.NO;
+
+  private Trigger activeRumble = new Trigger(this::isHubActive);
 
   public Superstructure(
       Drive drive,
@@ -54,14 +73,41 @@ public class Superstructure extends SubsystemBase {
     this.flywheel = flywheel;
     this.vision = vision;
     this.controller = controller;
+
+    activeRumble
+        .onTrue(this.controller.rumbleCommand(RumbleType.kBothRumble, 0.5, 0.25, 3))
+        .onFalse(this.controller.rumbleCommand(RumbleType.kBothRumble, 0.5, 1.0, 1));
   }
 
   @Override
   public void periodic() {
+    if (shooterAtSetpoint()) {
+      if (feedState == FeedState.ACTIVE && isHubActive()) {
+        feeder.setSystemState(Feeder.SystemState.FEED);
+        spindexer.setSystemState(Spindexer.SystemState.GOGOGO);
+
+      } else if (feedState == FeedState.FERRY) {
+        feeder.setSystemState(Feeder.SystemState.FEED);
+        spindexer.setSystemState(Spindexer.SystemState.GOGOGO);
+      }
+
+    } else {
+      feeder.setSystemState(Feeder.SystemState.IDLE);
+      spindexer.setSystemState(Spindexer.SystemState.IDLE);
+
+    }
+
+    turret.setPositionVelocity(shootingParams.get().turretAngle(), shootingParams.get().turretVelocity());
+    hood.setPositionVelocity(shootingParams.get().hoodAngle(), shootingParams.get().hoodVelocity());
+    flywheel.setVelocity(shootingParams.get().flywheelSpeed());
+
+    Logger.recordOutput("Superstructure/IsFirstActive", isFirstActive);
+    Logger.recordOutput("Superstructure/IsHubActive", isHubActive());
+    Logger.recordOutput("Superstructure/FeedState", feedState);
+    Logger.recordOutput("Superstructure/ShooterAtSetpoint", shooterAtSetpoint());
+    Logger.recordOutput("Superstructure/ParamPreset", currPreset);
 
   }
-
-  private boolean isFirstActive = false;
 
   public void setIsFirstActive(boolean isFirstActive) {
     this.isFirstActive = isFirstActive;
@@ -81,6 +127,10 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
+  public boolean shooterAtSetpoint() {
+    return turret.atSetpoint() && hood.atSetpoint() && flywheel.atSetpoint();
+  }
+
   public Command deployIntake() {
     return Commands.runOnce(() -> intake.setWantedState(Intake.WantedState.INTAKE));
   }
@@ -90,21 +140,56 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command enableShooter() { // auto aim
-    return Commands.none();
+    return Commands.runOnce(() -> {
+      if (RobotState.getInstance().getCurrentFieldZone() == FieldZone.ALLIANCE) {
+        shootingParams = ShotCalculator.getInstance()::getHubParameters;
+
+        feedState = FeedState.ACTIVE;
+
+      } else {
+        shootingParams = ShotCalculator.getInstance()::getFerryParameters;
+
+        feedState = FeedState.FERRY;
+
+      }
+    });
   }
 
   public Command disableShooter() { // stop feeding; keep inertia and target
-    return Commands.none();
+    return Commands.runOnce(() -> {
+      if (RobotState.getInstance().getCurrentFieldZone() == FieldZone.ALLIANCE) {
+        shootingParams = ShotCalculator.getInstance()::getHubParameters;
+
+      } else {
+        shootingParams = ShotCalculator.getInstance()::getFerryParameters;
+
+      }
+
+      feedState = FeedState.NO;
+
+    });
   }
 
   public Command shootPreset(ParamPreset preset) { // rev up a few secs before active period; auto shoots once it begins
-    return Commands.runOnce(() -> shootingParams = preset::getParams);
+    return Commands.runOnce(() -> {
+      currPreset = preset;
+      shootingParams = currPreset::getParams;
+
+      if (preset == ParamPreset.SHOWER || preset == ParamPreset.SHUB) {
+        feedState = FeedState.ACTIVE;
+
+      } else if (preset == ParamPreset.SHERRY) {
+        feedState = FeedState.FERRY;
+      }
+    });
   }
 
   public Command turtle() { // go under trench
     return Commands.runOnce(() -> {
       intake.setWantedState(Intake.WantedState.INTAKE);
-      shootingParams = ParamPreset.TURTLE::getParams;
+      currPreset = ParamPreset.TURTLE;
+      shootingParams = currPreset::getParams;
+      feedState = FeedState.NO;
     });
   }
 }

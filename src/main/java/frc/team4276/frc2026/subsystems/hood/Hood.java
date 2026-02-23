@@ -22,8 +22,12 @@ public class Hood extends SubsystemBase {
     public void setPositionVelocity(double position, double velocity){ // TODO: add software limit; add backup homing sequence
         io.setPositionVelocity(position, velocity);
     }
-    
+
     public void setBrakeMode(boolean enabled){
         io.setBrakeMode(enabled);
+    }
+
+    public boolean atSetpoint(){ // TODO: impl
+        return false;
     }
 }

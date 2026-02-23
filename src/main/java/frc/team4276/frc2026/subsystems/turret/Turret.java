@@ -2,6 +2,7 @@ package frc.team4276.frc2026.subsystems.turret;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Turret extends SubsystemBase {
@@ -20,11 +21,19 @@ public class Turret extends SubsystemBase {
         
     }
 
-    public void setPositionVelocity(double position, double velocity){
-        io.setPositionVelocity(position, velocity);
+    public void setPositionVelocity(Rotation2d rotation, double velocity){
+        io.setPositionVelocity(toPosition(rotation), velocity);
+    }
+
+    private double toPosition(Rotation2d rotation){
+        return 0.0;
     }
 
     public void setBrakeMode(boolean enabled){
         io.setBrakeMode(enabled);
+    }
+
+    public boolean atSetpoint(){ // TODO: impl
+        return false;
     }
 }

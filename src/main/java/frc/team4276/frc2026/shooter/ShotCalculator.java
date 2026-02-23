@@ -166,7 +166,21 @@ public class ShotCalculator {
     return latestHubParameters;
   }
 
-  public void clearHubShootingParameters() {
+  public void clearHubParameters() {
     latestHubParameters = null;
+  }
+
+  public ShootingParameters getFerryParameters(){
+    if(latestFerryParameters != null){
+        return latestFerryParameters;
+    }
+
+    latestFerryParameters = ParamPreset.SHERRY.getParams();
+
+    return latestFerryParameters;
+  }
+
+  public void clearFerryParameters(){
+    latestFerryParameters = null;
   }
 }
