@@ -1,4 +1,4 @@
-package frc.team4276.frc2026.subsystems.shooter.flywheel;
+package frc.team4276.frc2026.subsystems.flywheel;
 
 import org.littletonrobotics.junction.AutoLog;
 

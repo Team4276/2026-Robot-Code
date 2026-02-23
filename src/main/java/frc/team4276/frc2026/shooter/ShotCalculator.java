@@ -1,7 +1,5 @@
 // Copyright (c) 2025-2026 Littleton Robotics
-package frc.team4276.frc2026.subsystems.shooter;
-
-import static frc.team4276.frc2026.subsystems.shooter.ShooterConstants.*;
+package frc.team4276.frc2026.shooter;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,6 +14,8 @@ import frc.team4276.frc2026.FieldConstants;
 import frc.team4276.frc2026.RobotState;
 import frc.team4276.lib.geometry.AllianceFlipUtil;
 import frc.team4276.lib.geometry.GeomUtil;
+
+import static frc.team4276.frc2026.shooter.ShooterConstants.*;
 
 import org.littletonrobotics.junction.Logger;
 

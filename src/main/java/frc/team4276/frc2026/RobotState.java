@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import frc.team4276.frc2026.FieldConstants.FieldZone;
 import frc.team4276.frc2026.subsystems.vision.VisionConstants;
 import frc.team4276.lib.dashboard.LoggedTunableNumber;
 import frc.team4276.lib.geometry.GeomUtil;
@@ -150,6 +151,21 @@ public class RobotState {
 
   public Rotation2d getHubAlignHeading() {
     return FieldConstants.Hub.innerCenterPoint.toTranslation2d().minus(getEstimatedPose().getTranslation()).getAngle();
+  }
+
+  public FieldZone getCurrentFieldZone(){
+    double x = getEstimatedPose().getX();
+
+    if(x < FieldConstants.LinesVertical.allianceZone){
+      return FieldZone.ALLIANCE;
+
+    } else if(x < FieldConstants.LinesVertical.neutralZoneFar){
+      return FieldZone.MIDDLE;
+
+    } else {
+      return FieldZone.OPPOSING;
+
+    }
   }
 
   @AutoLogOutput(key = "RobotState/EstimatedPose")

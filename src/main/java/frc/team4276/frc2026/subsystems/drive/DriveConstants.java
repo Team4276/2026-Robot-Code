@@ -10,10 +10,8 @@ import frc.team4276.frc2026.Ports;
 
 public class DriveConstants {
   public static final int odometryFrequency = 200;
-  // public static final double trackWidth = Units.inchesToMeters(19.5);
-  // public static final double wheelBase = Units.inchesToMeters(27.5);
-  public static final double trackWidth = Units.inchesToMeters(26.0);
-  public static final double wheelBase = Units.inchesToMeters(26.0);
+  public static final double trackWidth = Units.inchesToMeters(19.5);
+  public static final double wheelBase = Units.inchesToMeters(27.5);
   public static final Translation2d[] moduleTranslations = new Translation2d[] {
       new Translation2d(trackWidth / 2.0, wheelBase / 2.0),
       new Translation2d(trackWidth / 2.0, -wheelBase / 2.0),
@@ -54,7 +52,7 @@ public class DriveConstants {
   public static final double drivingMotorPinionTeeth = 12.0;
   public static final double driveMotorReduction = (45.0 * 22.0) / (drivingMotorPinionTeeth * 15.0);
 
-  public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
+  public static final DCMotor driveGearbox = DCMotor.getKrakenX60(1);
   public static final double maxSteerVelocity = driveGearbox.freeSpeedRadPerSec / driveMotorReduction;
 
   public static final double driveEncoderPositionFactor = 2 * Math.PI / driveMotorReduction;

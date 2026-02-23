@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.team4276.frc2026.FieldConstants;
 import frc.team4276.frc2026.RobotContainer;
 import frc.team4276.frc2026.RobotState;
-import frc.team4276.frc2026.subsystems.Superstructure.WantedSuperState;
 import frc.team4276.lib.dashboard.Elastic;
 import frc.team4276.lib.dashboard.Elastic.Notification;
 import frc.team4276.lib.dashboard.Elastic.Notification.NotificationLevel;

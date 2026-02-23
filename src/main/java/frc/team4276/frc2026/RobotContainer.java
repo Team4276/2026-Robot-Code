@@ -9,14 +9,32 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.frc2026.subsystems.Superstructure;
 import frc.team4276.frc2026.subsystems.drive.Drive;
 import frc.team4276.frc2026.subsystems.drive.GyroIO;
 import frc.team4276.frc2026.subsystems.drive.GyroIPigeon2;
 import frc.team4276.frc2026.subsystems.drive.ModuleIO;
+import frc.team4276.frc2026.subsystems.drive.ModuleIOKreo;
 import frc.team4276.frc2026.subsystems.drive.ModuleIOSim;
-import frc.team4276.frc2026.subsystems.drive.ModuleIOSpark;
-import frc.team4276.frc2026.subsystems.drive.Drive.WantedState;
+import frc.team4276.frc2026.subsystems.feeder.Feeder;
+import frc.team4276.frc2026.subsystems.feeder.FeederIO;
+import frc.team4276.frc2026.subsystems.feeder.FeederIOTalonFX;
+import frc.team4276.frc2026.subsystems.flywheel.Flywheel;
+import frc.team4276.frc2026.subsystems.flywheel.FlywheelIO;
+import frc.team4276.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
+import frc.team4276.frc2026.subsystems.hood.Hood;
+import frc.team4276.frc2026.subsystems.hood.HoodIO;
+import frc.team4276.frc2026.subsystems.hood.HoodIOTalonFX;
+import frc.team4276.frc2026.subsystems.intake.Intake;
+import frc.team4276.frc2026.subsystems.intake.IntakeIO;
+import frc.team4276.frc2026.subsystems.intake.IntakeIOSpark;
+import frc.team4276.frc2026.subsystems.spindexer.Spindexer;
+import frc.team4276.frc2026.subsystems.spindexer.SpindexerIO;
+import frc.team4276.frc2026.subsystems.spindexer.SpindexerIOSpark;
+import frc.team4276.frc2026.subsystems.turret.Turret;
+import frc.team4276.frc2026.subsystems.turret.TurretIO;
+import frc.team4276.frc2026.subsystems.turret.TurretIOTalonFX;
 import frc.team4276.frc2026.subsystems.vision.Vision;
 import frc.team4276.frc2026.subsystems.vision.VisionIO;
 import frc.team4276.frc2026.subsystems.vision.VisionIOPhotonVision;
@@ -26,6 +44,12 @@ import frc.team4276.lib.hid.ViXController;
 
 public class RobotContainer {
   private Drive drive;
+  private Intake intake;
+  private Spindexer spindexer;
+  private Feeder feeder;
+  private Turret turret;
+  private Hood hood;
+  private Flywheel flywheel;
   private Vision vision;
 
   private final Superstructure superstructure;
@@ -42,10 +66,16 @@ public class RobotContainer {
           drive = new Drive(
               Constants.isDemo ? demoController : driver,
               new GyroIPigeon2(),
-              new ModuleIOSpark(0),
-              new ModuleIOSpark(1),
-              new ModuleIOSpark(2),
-              new ModuleIOSpark(3));
+              new ModuleIOKreo(0),
+              new ModuleIOKreo(1),
+              new ModuleIOKreo(2),
+              new ModuleIOKreo(3));
+          intake = new Intake(new IntakeIOSpark());
+          spindexer = new Spindexer(new SpindexerIOSpark());
+          feeder = new Feeder(new FeederIOTalonFX());
+          turret = new Turret(new TurretIOTalonFX());
+          hood = new Hood(new HoodIOTalonFX());
+          flywheel = new Flywheel(new FlywheelIOTalonFX());
           vision = new Vision(RobotState.getInstance()::addVisionMeasurement, new VisionIOPhotonVision(0),
               new VisionIOPhotonVision(1));
         }
@@ -60,6 +90,18 @@ public class RobotContainer {
               new ModuleIOSim(),
               new ModuleIOSim(),
               new ModuleIOSim());
+          intake = new Intake(new IntakeIO() {
+          });
+          spindexer = new Spindexer(new SpindexerIO() {
+          });
+          feeder = new Feeder(new FeederIO() {
+          });
+          turret = new Turret(new TurretIO() {
+          });
+          hood = new Hood(new HoodIO() {
+          });
+          flywheel = new Flywheel(new FlywheelIO() {
+          });
           vision = new Vision(RobotState.getInstance()::addVisionMeasurement);
         }
       }
@@ -81,13 +123,43 @@ public class RobotContainer {
           });
     }
 
+    if (intake == null) {
+      intake = new Intake(new IntakeIO() {
+      });
+    }
+
+    if (spindexer == null) {
+      spindexer = new Spindexer(new SpindexerIO() {
+      });
+    }
+
+    if (feeder == null) {
+      feeder = new Feeder(new FeederIO() {
+      });
+    }
+
+    if (turret == null) {
+      turret = new Turret(new TurretIO() {
+      });
+    }
+
+    if (hood == null) {
+      hood = new Hood(new HoodIO() {
+      });
+    }
+
+    if (flywheel == null) {
+      flywheel = new Flywheel(new FlywheelIO() {
+      });
+    }
+
     if (vision == null) {
       vision = new Vision(RobotState.getInstance()::addVisionMeasurement, new VisionIO() {
       }, new VisionIO() {
       });
     }
 
-    superstructure = new Superstructure(drive, vision, driver);
+    superstructure = new Superstructure(drive, intake, spindexer, feeder, turret, hood, flywheel, vision, driver);
 
     configureBindings();
 
@@ -108,13 +180,43 @@ public class RobotContainer {
 
     driver
         .rightTrigger()
-        .whileTrue(Commands.run(() -> drive.alignToHub()))
-        .onFalse(Commands.runOnce(() -> drive.setWantedState(WantedState.TELEOP)));
+        .onTrue(superstructure.enableShooter());
+
+    driver
+        .rightBumper()
+        .onTrue(superstructure.disableShooter());
+
+    driver
+        .leftTrigger()
+        .onTrue(superstructure.deployIntake());
+
+    driver
+        .leftBumper()
+        .onTrue(superstructure.retractIntake());
+
+    driver
+        .y()
+        .onTrue(superstructure.shootPreset(ParamPreset.SHUB));
 
     driver
         .a()
-        .whileTrue(Commands.run(() -> drive.setAutoAlignCustom()))
-        .onFalse(Commands.runOnce(() -> drive.setWantedState(WantedState.TELEOP)));
+        .onTrue(superstructure.shootPreset(ParamPreset.SHOWER));
+
+    driver
+        .x()
+        .onTrue(superstructure.shootPreset(ParamPreset.SHERRY));
+
+    driver
+        .b()
+        .onTrue(superstructure.turtle());
+
+    driver
+        .povUp()
+        .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(true)));
+
+    driver
+        .povDown()
+        .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(false)));
   }
 
   /**

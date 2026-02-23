@@ -1,5 +1,7 @@
 package frc.team4276.frc2026.subsystems.intake;
 
+import static frc.team4276.frc2026.subsystems.intake.IntakeConstants.*;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -10,20 +12,16 @@ public class Intake extends SubsystemBase {
 
     public enum WantedState {
         IDLE,
+        RETRACT,
         INTAKE,
         EXHAUST
     }
 
     public enum SystemState {
-        IDLING(0.0),
-        INTAKING(10.0),
-        EXHAUSTING(-5.0);
-
-        final double volts;
-
-        SystemState(double volts){
-            this.volts = volts;
-        }
+        IDLING,
+        RETRACTED,
+        INTAKING,
+        EXHAUSTING
     }
 
     private WantedState wantedState = WantedState.IDLE;
@@ -48,6 +46,7 @@ public class Intake extends SubsystemBase {
     private SystemState handleStateTransition() {
         return switch (wantedState) {
             case IDLE -> SystemState.IDLING;
+            case RETRACT -> SystemState.RETRACTED;
             case INTAKE -> SystemState.INTAKING;
             case EXHAUST -> SystemState.EXHAUSTING;
         };
@@ -56,17 +55,30 @@ public class Intake extends SubsystemBase {
     private void applyState() {
         switch (systemState) {
             case IDLING:
-                io.setVoltage(systemState.volts);
+                io.setVoltage(idleVolts);
 
                 break;
+
+            case RETRACTED:
+                io.setVoltage(idleVolts);
+                io.setPosition(retractPosition);
+
+                break;
+            
             case INTAKING:
-                io.setVoltage(systemState.volts);
+                io.setVoltage(intakeVolts);
+                io.setPosition(deployPosition);
 
                 break;
             case EXHAUSTING:
-                io.setVoltage(systemState.volts);
+                io.setVoltage(exhaustVolts);
+                io.setPosition(deployPosition);
 
                 break;
         }
+    }
+
+    public void setWantedState(WantedState state){
+        wantedState = state;
     }
 }

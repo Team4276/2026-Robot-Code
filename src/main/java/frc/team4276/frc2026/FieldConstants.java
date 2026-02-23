@@ -14,6 +14,12 @@ public class FieldConstants {
     public static final double fieldLength = apriltagLayout.getFieldLength();
     public static final double fieldWidth = apriltagLayout.getFieldWidth();
 
+    public enum FieldZone {
+        ALLIANCE,
+        MIDDLE,
+        OPPOSING
+    }
+
     /**
      * Officially defined and relevant vertical lines found on the field (defined by
      * X-axis offset)
