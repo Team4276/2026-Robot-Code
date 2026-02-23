@@ -81,4 +81,8 @@ public class Intake extends SubsystemBase {
     public void setWantedState(WantedState state){
         wantedState = state;
     }
+    
+    public void setBrakeMode(boolean enabled){
+        io.setBrakeMode(enabled);
+    }
 }

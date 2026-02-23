@@ -1,7 +1,28 @@
 package frc.team4276.frc2026.subsystems.flywheel;
 
-public class Flywheel {
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Flywheel extends SubsystemBase {
+    private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
+    private final FlywheelIO io;
     public Flywheel(FlywheelIO io){
+        this.io = io;
+    }
+
+    @Override
+    public void periodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs("Flywheel", inputs);
         
+    }
+
+    public void setVelocities(double primaryRPM, double hoodRPM){
+        io.setRpm(primaryRPM, hoodRPM);
+    }
+    
+    public void setBrakeMode(boolean enabled){
+        io.setBrakeMode(enabled);
     }
 }
