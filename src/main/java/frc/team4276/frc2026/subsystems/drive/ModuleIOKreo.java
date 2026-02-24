@@ -6,6 +6,10 @@ import static frc.team4276.lib.SparkUtil.*;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -26,21 +30,20 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Angle;
 
 public class ModuleIOKreo implements ModuleIO {
   private final Rotation2d zeroRotation;
   private final Rotation2d zeroHelperRotation;
 
   // Hardware objects
-  private final SparkFlex driveSpark;
+  private final TalonFX driveTalon;
   private final SparkMax turnSpark;
-  private final RelativeEncoder driveEncoder;
+  private final StatusSignal<Angle> drivePositionSignal;
   private final AbsoluteEncoder turnEncoder;
-  private final SparkFlexConfig driveConfig;
   private final SparkMaxConfig turnConfig;
 
   // Closed loop controllers
-  private final SparkClosedLoopController driveController;
   private final SparkClosedLoopController turnController;
 
   // Queue inputs from odometry thread
@@ -69,15 +72,14 @@ public class ModuleIOKreo implements ModuleIO {
       case 3 -> backRightZeroHelperRotation;
       default -> Rotation2d.kZero;
     };
-    driveSpark = new SparkFlex(
+    driveTalon = new TalonFX(
         switch (module) {
           case 0 -> frontLeftDriveCanId;
           case 1 -> frontRightDriveCanId;
           case 2 -> backLeftDriveCanId;
           case 3 -> backRightDriveCanId;
           default -> 0;
-        },
-        MotorType.kBrushless);
+        });
     turnSpark = new SparkMax(
         switch (module) {
           case 0 -> frontLeftTurnCanId;
@@ -87,44 +89,35 @@ public class ModuleIOKreo implements ModuleIO {
           default -> 0;
         },
         MotorType.kBrushless);
-    driveEncoder = driveSpark.getEncoder();
+    drivePositionSignal = driveTalon.getPosition();
     turnEncoder = turnSpark.getAbsoluteEncoder();
-    driveController = driveSpark.getClosedLoopController();
     turnController = turnSpark.getClosedLoopController();
 
     // Configure drive motor
-    driveConfig = new SparkFlexConfig();
-    driveConfig
-        .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(driveMotorCurrentLimit)
-        .voltageCompensation(12.0);
-    driveConfig.encoder
-        .positionConversionFactor(driveEncoderPositionFactor)
-        .velocityConversionFactor(driveEncoderVelocityFactor)
-        .uvwMeasurementPeriod(10)
-        .uvwAverageDepth(2);
-    driveConfig.closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(
-            driveKp,
-            0.0,
-            driveKd);
-    driveConfig.signals
-        .primaryEncoderPositionAlwaysOn(true)
-        .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
-        .primaryEncoderVelocityAlwaysOn(true)
-        .primaryEncoderVelocityPeriodMs(20)
-        .appliedOutputPeriodMs(20)
-        .busVoltagePeriodMs(20)
-        .outputCurrentPeriodMs(20);
-    tryUntilOk(
-        driveSpark,
-        5,
-        () -> driveSpark.configure(
-            driveConfig,
-            ResetMode.kNoResetSafeParameters,
-            PersistMode.kNoPersistParameters));
-    tryUntilOk(driveSpark, 5, () -> driveEncoder.setPosition(0.0));
+    var driveConfig = new TalonFXConfiguration();
+    // driveConfig
+    //     .idleMode(IdleMode.kBrake)
+    //     .smartCurrentLimit(driveMotorCurrentLimit)
+    //     .voltageCompensation(12.0);
+    // driveConfig.encoder
+    //     .positionConversionFactor(driveEncoderPositionFactor)
+    //     .velocityConversionFactor(driveEncoderVelocityFactor)
+    //     .uvwMeasurementPeriod(10)
+    //     .uvwAverageDepth(2);
+    // driveConfig.closedLoop
+    //     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+    //     .pid(
+    //         driveKp,
+    //         0.0,
+    //         driveKd);
+    // driveConfig.signals
+    //     .primaryEncoderPositionAlwaysOn(true)
+    //     .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
+    //     .primaryEncoderVelocityAlwaysOn(true)
+    //     .primaryEncoderVelocityPeriodMs(20)
+    //     .appliedOutputPeriodMs(20)
+    //     .busVoltagePeriodMs(20)
+    //     .outputCurrentPeriodMs(20);
 
     // Configure turn motor
     turnConfig = new SparkMaxConfig();
@@ -159,7 +152,7 @@ public class ModuleIOKreo implements ModuleIO {
 
     // Create odometry queues
     timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
-    drivePositionQueue = SparkOdometryThread.getInstance().registerSignal(driveSpark, driveEncoder::getPosition);
+    drivePositionQueue = PhoenixOdometryThread.getInstance().registerSignal(drivePositionSignal);
     turnPositionQueue = SparkOdometryThread.getInstance().registerSignal(turnSpark, turnEncoder::getPosition);
   }
 
@@ -167,13 +160,13 @@ public class ModuleIOKreo implements ModuleIO {
   public void updateInputs(ModuleIOInputs inputs) {
     // Update drive inputs
     sparkStickyFault = false;
-    ifOk(driveSpark, driveEncoder::getPosition, (value) -> inputs.drivePositionRad = value);
-    ifOk(driveSpark, driveEncoder::getVelocity, (value) -> inputs.driveVelocityRadPerSec = value);
-    ifOk(
-        driveSpark,
-        new DoubleSupplier[] { driveSpark::getAppliedOutput, driveSpark::getBusVoltage },
-        (values) -> inputs.driveAppliedVolts = values[0] * values[1]);
-    ifOk(driveSpark, driveSpark::getOutputCurrent, (value) -> inputs.driveCurrentAmps = value);
+    // ifOk(driveSpark, drivePositionSignal::getPosition, (value) -> inputs.drivePositionRad = value);
+    // ifOk(driveSpark, drivePositionSignal::getVelocity, (value) -> inputs.driveVelocityRadPerSec = value);
+    // ifOk(
+    //     driveSpark,
+    //     new DoubleSupplier[] { driveSpark::getAppliedOutput, driveSpark::getBusVoltage },
+    //     (values) -> inputs.driveAppliedVolts = values[0] * values[1]);
+    // ifOk(driveSpark, driveSpark::getOutputCurrent, (value) -> inputs.driveCurrentAmps = value);
     inputs.driveConnected = driveConnectedDebounce.calculate(!sparkStickyFault);
 
     // Update turn inputs
@@ -204,7 +197,7 @@ public class ModuleIOKreo implements ModuleIO {
 
   @Override
   public void setDriveOpenLoop(double output) {
-    driveSpark.setVoltage(output);
+    driveTalon.setControl(new VoltageOut(output));
   }
 
   @Override
@@ -231,12 +224,12 @@ public class ModuleIOKreo implements ModuleIO {
     }
     lastVelocity = velocityRadPerSec;
 
-    driveController.setSetpoint(
-        velocityRadPerSec,
-        ControlType.kVelocity,
-        ClosedLoopSlot.kSlot0,
-        ffVolts,
-        ArbFFUnits.kVoltage);
+    // driveController.setSetpoint(
+    //     velocityRadPerSec,
+    //     ControlType.kVelocity,
+    //     ClosedLoopSlot.kSlot0,
+    //     ffVolts,
+    //     ArbFFUnits.kVoltage);
   }
 
   @Override
@@ -251,20 +244,20 @@ public class ModuleIOKreo implements ModuleIO {
     if (brakeModeEnabled == enabled)
       return;
     brakeModeEnabled = enabled;
-    new Thread(
-        () -> {
-          tryUntilOk(
-              driveSpark,
-              5,
-              () -> driveSpark.configure(
-                  driveConfig.idleMode(
-                      brakeModeEnabled
-                          ? SparkBaseConfig.IdleMode.kBrake
-                          : SparkBaseConfig.IdleMode.kCoast),
-                  ResetMode.kNoResetSafeParameters,
-                  PersistMode.kNoPersistParameters));
-        })
-        .start();
+    // new Thread(
+    //     () -> {
+    //       tryUntilOk(
+    //           driveSpark,
+    //           5,
+    //           () -> driveSpark.configure(
+    //               driveConfig.idleMode(
+    //                   brakeModeEnabled
+    //                       ? SparkBaseConfig.IdleMode.kBrake
+    //                       : SparkBaseConfig.IdleMode.kCoast),
+    //               ResetMode.kNoResetSafeParameters,
+    //               PersistMode.kNoPersistParameters));
+    //     })
+    //     .start();
   }
     
 }

@@ -180,7 +180,7 @@ public class RobotContainer {
 
     driver
         .rightTrigger()
-        .onTrue(superstructure.enableShooter());
+        .whileTrue(superstructure.enableShooter());
 
     driver
         .rightBumper()
@@ -217,6 +217,9 @@ public class RobotContainer {
     driver
         .povDown()
         .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(false)));
+
+    // POV RIGHT/LEFT: adjust turret manually for zeroing
+    // dashboard: zero turret
   }
 
   /**

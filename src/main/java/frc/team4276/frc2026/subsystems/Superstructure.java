@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,6 +17,7 @@ import frc.team4276.frc2026.shooter.ShotCalculator;
 import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.frc2026.shooter.ShotCalculator.ShootingParameters;
 import frc.team4276.frc2026.subsystems.drive.Drive;
+import frc.team4276.frc2026.subsystems.drive.Drive.DriveSpeedScalar;
 import frc.team4276.frc2026.subsystems.feeder.Feeder;
 import frc.team4276.frc2026.subsystems.flywheel.Flywheel;
 import frc.team4276.frc2026.subsystems.hood.Hood;
@@ -23,6 +25,7 @@ import frc.team4276.frc2026.subsystems.intake.Intake;
 import frc.team4276.frc2026.subsystems.spindexer.Spindexer;
 import frc.team4276.frc2026.subsystems.turret.Turret;
 import frc.team4276.frc2026.subsystems.vision.Vision;
+import frc.team4276.lib.geometry.AllianceFlipUtil;
 import frc.team4276.lib.hid.ViXController;
 
 public class Superstructure extends SubsystemBase {
@@ -152,7 +155,12 @@ public class Superstructure extends SubsystemBase {
         feedState = FeedState.FERRY;
 
       }
-    });
+    })
+    // .alongWith(
+    //     Commands.waitSeconds(1.0)
+    //         .andThen(Commands.runOnce(() -> drive.setVelocityScalar(DriveSpeedScalar.DEFAULT)))
+    //         .finallyDo(() -> drive.setVelocityScalar(DriveSpeedScalar.CRAWL)))
+            ;
   }
 
   public Command disableShooter() { // stop feeding; keep inertia and target
@@ -178,8 +186,13 @@ public class Superstructure extends SubsystemBase {
       if (preset == ParamPreset.SHOWER || preset == ParamPreset.SHUB) {
         feedState = FeedState.ACTIVE;
 
+        // drive.setHeadingAlignRotation(AllianceFlipUtil.apply(Rotation2d.kPi));
+
       } else if (preset == ParamPreset.SHERRY) {
         feedState = FeedState.FERRY;
+
+        // drive.setHeadingAlignRotation(AllianceFlipUtil.apply(Rotation2d.kZero));
+
       }
     });
   }

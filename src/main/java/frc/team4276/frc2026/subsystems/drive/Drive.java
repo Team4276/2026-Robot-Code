@@ -75,6 +75,7 @@ public class Drive extends SubsystemBase {
 
   public enum DriveSpeedScalar {
     DEFAULT(1.0, 0.65),
+    CRAWL(0.5, 0.65),
     DEMO(0.1, 0.1);
 
     private final double linearVelocityScalar;
@@ -375,5 +376,9 @@ public class Drive extends SubsystemBase {
 
   public void alignToHub() {
     setHeadingAlignRotation(RobotState.getInstance().getHubAlignHeading());
+  }
+
+  public void setVelocityScalar(DriveSpeedScalar scalar){
+    driveSpeedScalar = scalar;
   }
 }
