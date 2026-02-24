@@ -17,20 +17,12 @@ public class Ports {
   public static final int INTAKE_DEPLOY = 10;
   public static final int INTAKE_ROLLERS = 11;
 
-  /* Spindexer */
-  public static final int SPINDEXER = 12;
-
   /* Feeder */
-  public static final int FEEDER = 13;
+  public static final int FEEDER = 12;
 
   /* Shooter */
-  public static final int TURRET = 14;
-
-  public static final int FLYWHEEL_FRONT = 15;
-  public static final int FLYWHEEL_BACK = 16;
-
-  /* Climber */
-  public static final int CLIMBER = 17;
+  public static final int FLYWHEEL_FRONT = 13;
+  public static final int FLYWHEEL_BACK = 14;
 
   /* Inputs */
   public static final int DRIVER_CONTROLLER = 0;

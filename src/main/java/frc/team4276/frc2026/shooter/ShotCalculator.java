@@ -7,8 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
-import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.team4276.frc2026.FieldConstants;
 import frc.team4276.frc2026.RobotState;
@@ -22,17 +20,12 @@ import org.littletonrobotics.junction.Logger;
 public class ShotCalculator {
   private static ShotCalculator instance;
 
-  private final LinearFilter turretAngleFilter =
-      LinearFilter.movingAverage((int) (0.1 / 0.02));
-  private final LinearFilter hoodAngleFilter =
+  private final LinearFilter robotHeadingFilter =
       LinearFilter.movingAverage((int) (0.1 / 0.02));
 
   private Rotation2d lastTurretAngle;
-  private double lastHoodAngle;
   private Rotation2d turretAngle;
-  private double hoodAngle = Double.NaN;
   private double turretVelocity;
-  private double hoodVelocity;
 
   public static ShotCalculator getInstance() {
     if (instance == null) instance = new ShotCalculator();
@@ -41,10 +34,8 @@ public class ShotCalculator {
 
   public record ShootingParameters(
       boolean isValid,
-      Rotation2d turretAngle,
-      double turretVelocity,
-      double hoodAngle,
-      double hoodVelocity,
+      Rotation2d robotHeading,
+      double robotOmega,
       double flywheelSpeed) {}
 
   // Cache parameters
@@ -54,8 +45,6 @@ public class ShotCalculator {
   private static double minDistance;
   private static double maxDistance;
   private static double phaseDelay;
-  private static final InterpolatingTreeMap<Double, Rotation2d> shotHoodAngleMap =
-      new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
   private static final InterpolatingDoubleTreeMap shotFlywheelSpeedMap =
       new InterpolatingDoubleTreeMap();
   private static final InterpolatingDoubleTreeMap timeOfFlightMap =
@@ -65,17 +54,6 @@ public class ShotCalculator {
     minDistance = 1.34;
     maxDistance = 5.60;
     phaseDelay = 0.03;
-
-    shotHoodAngleMap.put(1.34, Rotation2d.fromDegrees(19.0));
-    shotHoodAngleMap.put(1.78, Rotation2d.fromDegrees(19.0));
-    shotHoodAngleMap.put(2.17, Rotation2d.fromDegrees(24.0));
-    shotHoodAngleMap.put(2.81, Rotation2d.fromDegrees(27.0));
-    shotHoodAngleMap.put(3.82, Rotation2d.fromDegrees(29.0));
-    shotHoodAngleMap.put(4.09, Rotation2d.fromDegrees(30.0));
-    shotHoodAngleMap.put(4.40, Rotation2d.fromDegrees(31.0));
-    shotHoodAngleMap.put(4.77, Rotation2d.fromDegrees(32.0));
-    shotHoodAngleMap.put(5.57, Rotation2d.fromDegrees(32.0));
-    shotHoodAngleMap.put(5.60, Rotation2d.fromDegrees(35.0));
 
     shotFlywheelSpeedMap.put(1.34, 1000.0);
     shotFlywheelSpeedMap.put(5.60, 5000.0);
@@ -139,24 +117,18 @@ public class ShotCalculator {
 
     // Calculate parameters accounted for imparted velocity
     turretAngle = target.minus(lookaheadPose.getTranslation()).getAngle();
-    hoodAngle = shotHoodAngleMap.get(lookaheadTurretToTargetDistance).getRadians();
     if (lastTurretAngle == null) lastTurretAngle = turretAngle;
-    if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
     turretVelocity =
-        turretAngleFilter.calculate(
+        robotHeadingFilter.calculate(
             turretAngle.minus(lastTurretAngle).getRadians() / 0.02);
-    hoodVelocity =
-        hoodAngleFilter.calculate((hoodAngle - lastHoodAngle) / 0.02);
+    
     lastTurretAngle = turretAngle;
-    lastHoodAngle = hoodAngle;
     latestHubParameters =
         new ShootingParameters(
             lookaheadTurretToTargetDistance >= minDistance
                 && lookaheadTurretToTargetDistance <= maxDistance,
             turretAngle,
             turretVelocity,
-            hoodAngle,
-            hoodVelocity,
             shotFlywheelSpeedMap.get(lookaheadTurretToTargetDistance));
 
     // Log calculated values

@@ -20,10 +20,10 @@ public interface FlywheelIO {
   public default void updateInputs(FlywheelIOInputs inputs) {
   }
 
-  public default void setRpm(double primary, double hood) {
+  public default void setRpm(double rpm) {
   }
 
-  public default void setOpenLoop(double primaryVolts, double hoodVolts) {
+  public default void setOpenLoop(double voltage) {
   }
 
   public default void setBrakeMode(boolean enable) {

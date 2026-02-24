@@ -100,6 +100,10 @@ public class Superstructure extends SubsystemBase {
   }
 
   public boolean isHubActive() {
+    if(!DriverStation.isFMSAttached()){
+      return true;
+    }
+    
     double matchTime = DriverStation.getMatchTime();
 
     if (DriverStation.isAutonomous() || matchTime > 130 || matchTime < 30) {

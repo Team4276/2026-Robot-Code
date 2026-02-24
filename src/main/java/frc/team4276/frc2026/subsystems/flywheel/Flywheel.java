@@ -3,11 +3,8 @@ package frc.team4276.frc2026.subsystems.flywheel;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.team4276.lib.dashboard.LoggedTunableNumber;
 
-public class Flywheel extends SubsystemBase {
-    private final LoggedTunableNumber hoodRatio = new LoggedTunableNumber("Flywheel/HoodRatio", 1.0);
-
+public class Flywheel extends SubsystemBase { 
     private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
     private final FlywheelIO io;
     public Flywheel(FlywheelIO io){
@@ -21,12 +18,8 @@ public class Flywheel extends SubsystemBase {
         
     }
 
-    public void setVelocities(double primaryRPM, double hoodRPM){
-        io.setRpm(primaryRPM, hoodRPM);
-    }
-
     public void setVelocity(double RPM){
-        io.setRpm(RPM, RPM * hoodRatio.getAsDouble());
+        io.setRpm(RPM);
     }
 
     public void setBrakeMode(boolean enabled){

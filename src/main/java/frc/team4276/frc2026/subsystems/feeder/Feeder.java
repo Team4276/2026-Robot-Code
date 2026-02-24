@@ -8,7 +8,7 @@ public class Feeder extends SubsystemBase {
     public enum SystemState {
         IDLE(-2.0),
         STOPPED(0.0),
-        FEED(5.0);
+        FEED(12.0);
 
         private final double voltage;
 

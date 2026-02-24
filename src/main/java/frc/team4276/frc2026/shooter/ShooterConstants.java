@@ -13,16 +13,16 @@ public class ShooterConstants {
         // Shooting Presets
         SHOWER(Rotation2d.kZero,
                         0.0,
-                        0.0),
+                        5000.0),
         SHUB(Rotation2d.kZero,
                         0.0,
-                        0.0),
+                        5000.0),
         SHERRY(Rotation2d.kZero,
                         0.0,
-                        0.0),
+                        5000.0),
         SHTEAL(Rotation2d.kZero,
                         0.0,
-                        0.0),
+                        5000.0),
                         
         // Other
         STOW(Rotation2d.kZero,
@@ -34,8 +34,8 @@ public class ShooterConstants {
 
         private final ShootingParameters params;
 
-        ParamPreset(Rotation2d turretAngle, double hoodAngle, double flywheelSpeed){
-            this.params = new ShootingParameters(true, turretAngle, 0.0, hoodAngle, 0.0, flywheelSpeed);
+        ParamPreset(Rotation2d robotHeading, double robotOmega, double flywheelSpeed){
+            this.params = new ShootingParameters(true, robotHeading, robotOmega, flywheelSpeed);
         }
 
         public ShootingParameters getParams(){
