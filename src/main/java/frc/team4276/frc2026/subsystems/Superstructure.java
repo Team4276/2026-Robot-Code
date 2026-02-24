@@ -20,10 +20,7 @@ import frc.team4276.frc2026.subsystems.drive.Drive;
 import frc.team4276.frc2026.subsystems.drive.Drive.DriveSpeedScalar;
 import frc.team4276.frc2026.subsystems.feeder.Feeder;
 import frc.team4276.frc2026.subsystems.flywheel.Flywheel;
-import frc.team4276.frc2026.subsystems.hood.Hood;
 import frc.team4276.frc2026.subsystems.intake.Intake;
-import frc.team4276.frc2026.subsystems.spindexer.Spindexer;
-import frc.team4276.frc2026.subsystems.turret.Turret;
 import frc.team4276.frc2026.subsystems.vision.Vision;
 import frc.team4276.lib.geometry.AllianceFlipUtil;
 import frc.team4276.lib.hid.ViXController;
@@ -31,10 +28,7 @@ import frc.team4276.lib.hid.ViXController;
 public class Superstructure extends SubsystemBase {
   private final Drive drive;
   private final Intake intake;
-  private final Spindexer spindexer;
   private final Feeder feeder;
-  private final Turret turret;
-  private final Hood hood;
   private final Flywheel flywheel;
 
   @SuppressWarnings("unused")
@@ -60,19 +54,13 @@ public class Superstructure extends SubsystemBase {
   public Superstructure(
       Drive drive,
       Intake intake,
-      Spindexer spindexer,
       Feeder feeder,
-      Turret turret,
-      Hood hood,
       Flywheel flywheel,
       Vision vision,
       ViXController controller) {
     this.drive = drive;
     this.intake = intake;
-    this.spindexer = spindexer;
     this.feeder = feeder;
-    this.turret = turret;
-    this.hood = hood;
     this.flywheel = flywheel;
     this.vision = vision;
     this.controller = controller;
@@ -87,21 +75,16 @@ public class Superstructure extends SubsystemBase {
     if (shooterAtSetpoint()) {
       if (feedState == FeedState.ACTIVE && isHubActive()) {
         feeder.setSystemState(Feeder.SystemState.FEED);
-        spindexer.setSystemState(Spindexer.SystemState.GOGOGO);
 
       } else if (feedState == FeedState.FERRY) {
         feeder.setSystemState(Feeder.SystemState.FEED);
-        spindexer.setSystemState(Spindexer.SystemState.GOGOGO);
       }
 
     } else {
       feeder.setSystemState(Feeder.SystemState.IDLE);
-      spindexer.setSystemState(Spindexer.SystemState.IDLE);
 
     }
 
-    turret.setPositionVelocity(shootingParams.get().turretAngle(), shootingParams.get().turretVelocity());
-    hood.setPositionVelocity(shootingParams.get().hoodAngle(), shootingParams.get().hoodVelocity());
     flywheel.setVelocity(shootingParams.get().flywheelSpeed());
 
     Logger.recordOutput("Superstructure/IsFirstActive", isFirstActive);
@@ -131,7 +114,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public boolean shooterAtSetpoint() {
-    return turret.atSetpoint() && hood.atSetpoint() && flywheel.atSetpoint();
+    return flywheel.atSetpoint();
   }
 
   public Command deployIntake() {

@@ -23,18 +23,9 @@ import frc.team4276.frc2026.subsystems.feeder.FeederIOTalonFX;
 import frc.team4276.frc2026.subsystems.flywheel.Flywheel;
 import frc.team4276.frc2026.subsystems.flywheel.FlywheelIO;
 import frc.team4276.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
-import frc.team4276.frc2026.subsystems.hood.Hood;
-import frc.team4276.frc2026.subsystems.hood.HoodIO;
-import frc.team4276.frc2026.subsystems.hood.HoodIOTalonFX;
 import frc.team4276.frc2026.subsystems.intake.Intake;
 import frc.team4276.frc2026.subsystems.intake.IntakeIO;
 import frc.team4276.frc2026.subsystems.intake.IntakeIOSpark;
-import frc.team4276.frc2026.subsystems.spindexer.Spindexer;
-import frc.team4276.frc2026.subsystems.spindexer.SpindexerIO;
-import frc.team4276.frc2026.subsystems.spindexer.SpindexerIOSpark;
-import frc.team4276.frc2026.subsystems.turret.Turret;
-import frc.team4276.frc2026.subsystems.turret.TurretIO;
-import frc.team4276.frc2026.subsystems.turret.TurretIOTalonFX;
 import frc.team4276.frc2026.subsystems.vision.Vision;
 import frc.team4276.frc2026.subsystems.vision.VisionIO;
 import frc.team4276.frc2026.subsystems.vision.VisionIOPhotonVision;
@@ -45,10 +36,7 @@ import frc.team4276.lib.hid.ViXController;
 public class RobotContainer {
   private Drive drive;
   private Intake intake;
-  private Spindexer spindexer;
   private Feeder feeder;
-  private Turret turret;
-  private Hood hood;
   private Flywheel flywheel;
   private Vision vision;
 
@@ -71,10 +59,7 @@ public class RobotContainer {
               new ModuleIOKreo(2),
               new ModuleIOKreo(3));
           intake = new Intake(new IntakeIOSpark());
-          spindexer = new Spindexer(new SpindexerIOSpark());
           feeder = new Feeder(new FeederIOTalonFX());
-          turret = new Turret(new TurretIOTalonFX());
-          hood = new Hood(new HoodIOTalonFX());
           flywheel = new Flywheel(new FlywheelIOTalonFX());
           vision = new Vision(RobotState.getInstance()::addVisionMeasurement, new VisionIOPhotonVision(0),
               new VisionIOPhotonVision(1));
@@ -92,13 +77,7 @@ public class RobotContainer {
               new ModuleIOSim());
           intake = new Intake(new IntakeIO() {
           });
-          spindexer = new Spindexer(new SpindexerIO() {
-          });
           feeder = new Feeder(new FeederIO() {
-          });
-          turret = new Turret(new TurretIO() {
-          });
-          hood = new Hood(new HoodIO() {
           });
           flywheel = new Flywheel(new FlywheelIO() {
           });
@@ -128,23 +107,8 @@ public class RobotContainer {
       });
     }
 
-    if (spindexer == null) {
-      spindexer = new Spindexer(new SpindexerIO() {
-      });
-    }
-
     if (feeder == null) {
       feeder = new Feeder(new FeederIO() {
-      });
-    }
-
-    if (turret == null) {
-      turret = new Turret(new TurretIO() {
-      });
-    }
-
-    if (hood == null) {
-      hood = new Hood(new HoodIO() {
       });
     }
 
@@ -159,7 +123,7 @@ public class RobotContainer {
       });
     }
 
-    superstructure = new Superstructure(drive, intake, spindexer, feeder, turret, hood, flywheel, vision, driver);
+    superstructure = new Superstructure(drive, intake, feeder, flywheel, vision, driver);
 
     configureBindings();
 
