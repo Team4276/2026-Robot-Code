@@ -18,10 +18,10 @@ public class Ports {
   public static final int INTAKE_ROLLERS = 11;
 
   /* Feeder */
-  public static final int FEEDER = 12;
+  public static final int FEEDER = 13;
 
   /* Shooter */
-  public static final int FLYWHEEL_FRONT = 13;
+  public static final int FLYWHEEL_FRONT = 12;
   public static final int FLYWHEEL_BACK = 14;
 
   /* Inputs */

@@ -13,16 +13,16 @@ public class ShooterConstants {
         // Shooting Presets
         SHOWER(Rotation2d.kZero,
                         0.0,
-                        5000.0),
+                        3000.0),
         SHUB(Rotation2d.kZero,
                         0.0,
-                        5000.0),
+                        3000.0),
         SHERRY(Rotation2d.kZero,
                         0.0,
-                        5000.0),
+                        3000.0),
         SHTEAL(Rotation2d.kZero,
                         0.0,
-                        5000.0),
+                        3000.0),
                         
         // Other
         STOW(Rotation2d.kZero,

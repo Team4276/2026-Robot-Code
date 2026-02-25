@@ -21,9 +21,11 @@ import frc.team4276.frc2026.subsystems.drive.ModuleIOSim;
 import frc.team4276.frc2026.subsystems.drive.ModuleIOSpark;
 import frc.team4276.frc2026.subsystems.feeder.Feeder;
 import frc.team4276.frc2026.subsystems.feeder.FeederIO;
+import frc.team4276.frc2026.subsystems.feeder.FeederIOSpark;
 import frc.team4276.frc2026.subsystems.feeder.FeederIOTalonFX;
 import frc.team4276.frc2026.subsystems.flywheel.Flywheel;
 import frc.team4276.frc2026.subsystems.flywheel.FlywheelIO;
+import frc.team4276.frc2026.subsystems.flywheel.FlywheelIOSpark;
 import frc.team4276.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
 import frc.team4276.frc2026.subsystems.intake.Intake;
 import frc.team4276.frc2026.subsystems.intake.IntakeIO;
@@ -56,13 +58,18 @@ public class RobotContainer {
           drive = new Drive(
               Constants.isDemo ? demoController : driver,
               new GyroIOADIS(),
-              new ModuleIOSpark(0),
-              new ModuleIOSpark(1),
-              new ModuleIOSpark(2),
-              new ModuleIOSpark(3));
+              // new ModuleIOSpark(0),
+              // new ModuleIOSpark(1),
+              // new ModuleIOSpark(2),
+              // new ModuleIOSpark(3)
+              new ModuleIO(){},
+              new ModuleIO(){},
+              new ModuleIO(){},
+              new ModuleIO(){}
+              );
           // intake = new Intake(new IntakeIOSpark());
-          feeder = new Feeder(new FeederIOTalonFX());
-          flywheel = new Flywheel(new FlywheelIOTalonFX());
+          feeder = new Feeder(new FeederIOSpark());
+          flywheel = new Flywheel(new FlywheelIOSpark());
           vision = new Vision(RobotState.getInstance()::addVisionMeasurement);
         }
 

@@ -17,11 +17,13 @@ public class FeederIOSpark implements FeederIO {
 
     public FeederIOSpark() {
         spark = new SparkMax(Ports.FEEDER, MotorType.kBrushless);
+        
 
         var config = new SparkMaxConfig();
-        config.idleMode(IdleMode.kBrake)
-                .smartCurrentLimit(40)
-                .voltageCompensation(12.0);
+        config.idleMode(IdleMode.kCoast)
+                .smartCurrentLimit(60)
+                .voltageCompensation(12.0)
+                .inverted(true);
         config.signals
                 .appliedOutputPeriodMs(20)
                 .busVoltagePeriodMs(20)

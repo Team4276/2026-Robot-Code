@@ -27,9 +27,10 @@ public class FlywheelIOSpark implements FlywheelIO {
 
         var config = new SparkMaxConfig();
         config
-                .idleMode(IdleMode.kBrake)
-                .smartCurrentLimit(40)
-                .voltageCompensation(12.0);
+                .idleMode(IdleMode.kCoast)
+                .smartCurrentLimit(60)
+                .voltageCompensation(12.0)
+                .inverted(false);
         config.encoder
                 .positionConversionFactor(1.0)
                 .velocityConversionFactor(1.0 / 60)
@@ -38,7 +39,7 @@ public class FlywheelIOSpark implements FlywheelIO {
         config.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .pid(
-                        1.0,
+                        0.001,
                         0.0,
                         0.0);
         config.signals
@@ -59,7 +60,8 @@ public class FlywheelIOSpark implements FlywheelIO {
 
     @Override
     public void updateInputs(FlywheelIOInputs inputs) {
-
+        inputs.velocityRPS = new double[]{encoder.getVelocity(), 0};
+        inputs.appliedVolts = new double[]{spark.getBusVoltage() * spark.getAppliedOutput(), 0};
     }
 
     @Override
@@ -69,8 +71,9 @@ public class FlywheelIOSpark implements FlywheelIO {
 
     @Override
     public void setRpm(double rpm) {
-        controller.setSetpoint(rpm, ControlType.kVelocity);
-        
+        // controller.setSetpoint(rpm, ControlType.kVelocity);
+
+        spark.setVoltage(12*rpm/5000);        
     }
 
     @Override

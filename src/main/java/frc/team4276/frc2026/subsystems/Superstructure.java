@@ -78,6 +78,9 @@ public class Superstructure extends SubsystemBase {
 
       } else if (feedState == FeedState.FERRY) {
         feeder.setSystemState(Feeder.SystemState.FEED);
+      } else {
+        feeder.setSystemState(Feeder.SystemState.IDLE);
+
       }
 
     } else {
@@ -100,10 +103,10 @@ public class Superstructure extends SubsystemBase {
   }
 
   public boolean isHubActive() {
-    if(!DriverStation.isFMSAttached()){
+    if (!DriverStation.isFMSAttached()) {
       return true;
     }
-    
+
     double matchTime = DriverStation.getMatchTime();
 
     if (DriverStation.isAutonomous() || matchTime > 130 || matchTime < 30) {
@@ -144,10 +147,11 @@ public class Superstructure extends SubsystemBase {
       }
     })
     // .alongWith(
-    //     Commands.waitSeconds(1.0)
-    //         .andThen(Commands.runOnce(() -> drive.setVelocityScalar(DriveSpeedScalar.DEFAULT)))
-    //         .finallyDo(() -> drive.setVelocityScalar(DriveSpeedScalar.CRAWL)))
-            ;
+    // Commands.waitSeconds(1.0)
+    // .andThen(Commands.runOnce(() ->
+    // drive.setVelocityScalar(DriveSpeedScalar.DEFAULT)))
+    // .finallyDo(() -> drive.setVelocityScalar(DriveSpeedScalar.CRAWL)))
+    ;
   }
 
   public Command disableShooter() { // stop feeding; keep inertia and target

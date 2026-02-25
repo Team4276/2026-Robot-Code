@@ -27,6 +27,6 @@ public class Flywheel extends SubsystemBase {
     }
 
     public boolean atSetpoint(){ // TODO: impl
-        return false;
+        return true;
     }
 }
