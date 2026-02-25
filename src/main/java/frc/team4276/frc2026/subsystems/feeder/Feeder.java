@@ -1,23 +1,27 @@
 package frc.team4276.frc2026.subsystems.feeder;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.team4276.lib.dashboard.LoggedTunableNumber;
+
 public class Feeder extends SubsystemBase {
     public enum SystemState {
-        IDLE(-2.0),
-        STOPPED(0.0),
-        FEED(12.0);
+        IDLE(new LoggedTunableNumber("Feeder/IdleVolts", -2.0)),
+        STOPPED(() -> 0.0),
+        FEED(new LoggedTunableNumber("Feeder/FeedVolts", 12.0));
 
-        private final double voltage;
+        private final DoubleSupplier voltage;
 
-        SystemState(double voltage) {
+        SystemState(DoubleSupplier voltage) {
             this.voltage = voltage;
         }
 
         public double getVoltage() {
-            return voltage;
+            return voltage.getAsDouble();
         }
     }
 

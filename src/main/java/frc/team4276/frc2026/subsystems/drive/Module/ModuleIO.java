@@ -1,4 +1,4 @@
-package frc.team4276.frc2026.subsystems.drive;
+package frc.team4276.frc2026.subsystems.drive.Module;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;

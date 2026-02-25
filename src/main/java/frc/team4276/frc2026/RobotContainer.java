@@ -12,23 +12,21 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.frc2026.subsystems.Superstructure;
 import frc.team4276.frc2026.subsystems.drive.Drive;
-import frc.team4276.frc2026.subsystems.drive.GyroIO;
-import frc.team4276.frc2026.subsystems.drive.GyroIOADIS;
-import frc.team4276.frc2026.subsystems.drive.GyroIPigeon2;
-import frc.team4276.frc2026.subsystems.drive.ModuleIO;
-import frc.team4276.frc2026.subsystems.drive.ModuleIOKreo;
-import frc.team4276.frc2026.subsystems.drive.ModuleIOSim;
-import frc.team4276.frc2026.subsystems.drive.ModuleIOSpark;
+import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIO;
+import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIOADIS;
+import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIPigeon2;
+import frc.team4276.frc2026.subsystems.drive.Module.ModuleIO;
+import frc.team4276.frc2026.subsystems.drive.Module.ModuleIOKreo;
+import frc.team4276.frc2026.subsystems.drive.Module.ModuleIOSim;
+import frc.team4276.frc2026.subsystems.drive.Module.ModuleIOSpark;
 import frc.team4276.frc2026.subsystems.feeder.Feeder;
 import frc.team4276.frc2026.subsystems.feeder.FeederIO;
 import frc.team4276.frc2026.subsystems.feeder.FeederIOSpark;
-import frc.team4276.frc2026.subsystems.feeder.FeederIOTalonFX;
 import frc.team4276.frc2026.subsystems.flywheel.Flywheel;
 import frc.team4276.frc2026.subsystems.flywheel.FlywheelIO;
 import frc.team4276.frc2026.subsystems.flywheel.FlywheelIOSpark;
-import frc.team4276.frc2026.subsystems.flywheel.FlywheelIOTalonFX;
 import frc.team4276.frc2026.subsystems.intake.Intake;
-import frc.team4276.frc2026.subsystems.intake.IntakeIO;
+import frc.team4276.frc2026.subsystems.intake.IntakeDeployIO;
 import frc.team4276.frc2026.subsystems.intake.IntakeIOSpark;
 import frc.team4276.frc2026.subsystems.vision.Vision;
 import frc.team4276.frc2026.subsystems.vision.VisionIO;
@@ -83,7 +81,7 @@ public class RobotContainer {
               new ModuleIOSim(),
               new ModuleIOSim(),
               new ModuleIOSim());
-          intake = new Intake(new IntakeIO() {
+          intake = new Intake(new IntakeDeployIO() {
           });
           feeder = new Feeder(new FeederIO() {
           });
@@ -111,7 +109,7 @@ public class RobotContainer {
     }
 
     if (intake == null) {
-      intake = new Intake(new IntakeIO() {
+      intake = new Intake(new IntakeDeployIO() {
       });
     }
 

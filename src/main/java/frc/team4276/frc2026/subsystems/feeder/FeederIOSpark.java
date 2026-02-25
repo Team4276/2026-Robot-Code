@@ -21,7 +21,7 @@ public class FeederIOSpark implements FeederIO {
 
         var config = new SparkMaxConfig();
         config.idleMode(IdleMode.kCoast)
-                .smartCurrentLimit(60)
+                .smartCurrentLimit(80)
                 .voltageCompensation(12.0)
                 .inverted(true);
         config.signals

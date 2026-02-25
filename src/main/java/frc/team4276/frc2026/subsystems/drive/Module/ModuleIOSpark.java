@@ -1,4 +1,4 @@
-package frc.team4276.frc2026.subsystems.drive;
+package frc.team4276.frc2026.subsystems.drive.Module;
 
 import static frc.team4276.frc2026.subsystems.drive.DriveConstants.*;
 import static frc.team4276.lib.SparkUtil.*;
@@ -22,6 +22,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.team4276.frc2026.subsystems.drive.SparkOdometryThread;
+
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
 

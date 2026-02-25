@@ -1,10 +1,11 @@
-package frc.team4276.frc2026.subsystems.drive;
+package frc.team4276.frc2026.subsystems.drive.Gyro;
 
 import java.util.Queue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import frc.team4276.frc2026.subsystems.drive.SparkOdometryThread;
 
 public class GyroIOADIS implements GyroIO {
   private final ADIS16470_IMU gyro = new ADIS16470_IMU();

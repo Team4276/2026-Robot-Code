@@ -1,4 +1,4 @@
-package frc.team4276.frc2026.subsystems.drive;
+package frc.team4276.frc2026.subsystems.drive.Gyro;
 
 import static frc.team4276.lib.PhoenixUtil.*;
 
@@ -14,6 +14,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.team4276.frc2026.Ports;
+import frc.team4276.frc2026.subsystems.drive.DriveConstants;
+import frc.team4276.frc2026.subsystems.drive.PhoenixOdometryThread;
 
 public class GyroIPigeon2 implements GyroIO {
   private final Pigeon2 gyro = new Pigeon2(Ports.PIGEON);

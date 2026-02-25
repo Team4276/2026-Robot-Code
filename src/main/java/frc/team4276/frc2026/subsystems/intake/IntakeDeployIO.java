@@ -2,9 +2,9 @@ package frc.team4276.frc2026.subsystems.intake;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface IntakeIO {
+public interface IntakeDeployIO {
   @AutoLog
-  public static class IntakeIOInputs {
+  public static class IntakeDeployIOInputs {
     public boolean connected = true;
 
     public double positionRev = 0.0;
@@ -17,7 +17,7 @@ public interface IntakeIO {
     public double tempCelsius = 0.0;
   }
 
-  public default void updateInputs(IntakeIOInputs inputs) {
+  public default void updateInputs(IntakeDeployIOInputs inputs) {
   }
 
   public default void setOpenLoop(double volts) {

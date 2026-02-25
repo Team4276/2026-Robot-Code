@@ -7,8 +7,8 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-    private IntakeIO io;
-    private IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+    private IntakeDeployIO deployIo;
+    private IntakeDeployIOInputsAutoLogged deployInputs = new IntakeDeployIOInputsAutoLogged();
 
     public enum WantedState {
         IDLE,
@@ -27,14 +27,14 @@ public class Intake extends SubsystemBase {
     private WantedState wantedState = WantedState.IDLE;
     private SystemState systemState = SystemState.IDLING;
 
-    public Intake(IntakeIO io){
-        this.io = io;
+    public Intake(IntakeDeployIO deployIo){
+        this.deployIo = deployIo;
     }
 
     @Override
     public void periodic() {
-        io.updateInputs(inputs);
-        Logger.processInputs("Intake", inputs);
+        deployIo.updateInputs(deployInputs);
+        Logger.processInputs("Intake/Deploy", deployInputs);
 
         systemState = handleStateTransition();
         applyState();
@@ -55,24 +55,24 @@ public class Intake extends SubsystemBase {
     private void applyState() {
         switch (systemState) {
             case IDLING:
-                io.setOpenLoop(idleVolts);
+                deployIo.setOpenLoop(idleVolts);
 
                 break;
 
             case RETRACTED:
-                io.setOpenLoop(idleVolts);
-                io.setPosition(retractPosition);
+                deployIo.setOpenLoop(idleVolts);
+                deployIo.setPosition(retractPosition);
 
                 break;
             
             case INTAKING:
-                io.setOpenLoop(intakeVolts);
-                io.setPosition(deployPosition);
+                deployIo.setOpenLoop(intakeVolts);
+                deployIo.setPosition(deployPosition);
 
                 break;
             case EXHAUSTING:
-                io.setOpenLoop(exhaustVolts);
-                io.setPosition(deployPosition);
+                deployIo.setOpenLoop(exhaustVolts);
+                deployIo.setPosition(deployPosition);
 
                 break;
         }
@@ -83,6 +83,6 @@ public class Intake extends SubsystemBase {
     }
     
     public void setBrakeMode(boolean enabled){
-        io.setBrakeMode(enabled);
+        deployIo.setBrakeMode(enabled);
     }
 }

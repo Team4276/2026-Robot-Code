@@ -1,4 +1,4 @@
-package frc.team4276.frc2026.subsystems.drive;
+package frc.team4276.frc2026.subsystems.drive.Module;
 
 import static frc.team4276.frc2026.subsystems.drive.DriveConstants.*;
 import static frc.team4276.lib.SparkUtil.*;
@@ -31,6 +31,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
+import frc.team4276.frc2026.subsystems.drive.PhoenixOdometryThread;
+import frc.team4276.frc2026.subsystems.drive.SparkOdometryThread;
 
 public class ModuleIOKreo implements ModuleIO {
   private final Rotation2d zeroRotation;
