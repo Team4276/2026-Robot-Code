@@ -437,6 +437,10 @@ public class Drive extends SubsystemBase {
         RobotState.getInstance().getEstimatedPose().getRotation().minus(heading).getRadians()) < tolerance;
   }
 
+  public boolean isAtHeading(){
+    return isAtHeading(desiredHeadingAlignRotation);
+  }
+
   /**
    * Returns the module states (turn angles and drive velocities) for all of the
    * modules.

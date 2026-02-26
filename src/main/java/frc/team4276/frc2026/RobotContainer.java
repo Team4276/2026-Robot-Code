@@ -127,7 +127,6 @@ public class RobotContainer {
 
     if (vision == null) {
       vision = new Vision(RobotState.getInstance()::addVisionMeasurement, new VisionIO() {
-      }, new VisionIO() {
       });
     }
 
@@ -188,6 +187,14 @@ public class RobotContainer {
 
     driver
         .povDown()
+        .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(false)));
+
+    driver
+        .povRight()
+        .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(false)));
+        
+    driver
+        .povLeft()
         .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(false)));
   }
 

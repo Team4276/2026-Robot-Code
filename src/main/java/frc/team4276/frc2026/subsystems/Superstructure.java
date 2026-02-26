@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,6 +49,9 @@ public class Superstructure extends SubsystemBase {
 
   private Trigger activeRumble = new Trigger(this::isHubActive);
 
+  private boolean isActiveOverride = false;
+  private Debouncer inShootingToleranceDebounce = new Debouncer(0.25);
+
   public Superstructure(
       Drive drive,
       Intake intake,
@@ -69,12 +73,15 @@ public class Superstructure extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    
     if (shooterAtSetpoint()) {
-      if (feedState == FeedState.ACTIVE && isHubActive()) {
+      if (feedState == FeedState.ACTIVE && isHubActive() && drive.isAtHeading()) {
         feeder.setSystemState(Feeder.SystemState.FEED);
 
       } else if (feedState == FeedState.FERRY) {
         feeder.setSystemState(Feeder.SystemState.FEED);
+
       } else {
         feeder.setSystemState(Feeder.SystemState.IDLE);
 
@@ -85,11 +92,8 @@ public class Superstructure extends SubsystemBase {
 
     }
 
-    if(feedState == FeedState.ACTIVE){
-      drive.setHeadingAlignRotation(shootingParams.get().robotHeading());
-    }
-
     flywheel.setVelocity(shootingParams.get().flywheelSpeed());
+    drive.setHeadingAlignRotation(shootingParams.get().robotHeading());
 
     Logger.recordOutput("Superstructure/IsFirstActive", isFirstActive);
     Logger.recordOutput("Superstructure/IsHubActive", isHubActive());
@@ -97,6 +101,10 @@ public class Superstructure extends SubsystemBase {
     Logger.recordOutput("Superstructure/ShooterAtSetpoint", shooterAtSetpoint());
     Logger.recordOutput("Superstructure/ParamPreset", currPreset);
 
+  }
+
+  public void setOverrideActive(boolean isActive) {
+    isActiveOverride = isActive;
   }
 
   public void setIsFirstActive(boolean isFirstActive) {
