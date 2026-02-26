@@ -1,35 +1,68 @@
-package frc.team4276.frc2026.subsystems.feeder;
-
-import com.revrobotics.spark.SparkMax;
+package frc.team4276.frc2026.subsystems.intake;
 
 import static frc.team4276.lib.SparkUtil.*;
 
 import java.util.function.DoubleSupplier;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import frc.team4276.frc2026.Ports;
 
-public class FeederIOSpark implements FeederIO {
+public class IntakeDeployIOSpark implements IntakeDeployIO {
     private final SparkMax spark;
+    private final RelativeEncoder encoder;
+    private final AbsoluteEncoder absoluteEncoder;
+    private final SparkClosedLoopController controller;
+
     private final SparkMaxConfig config;
 
     private boolean brakeModeEnabled = false;
 
-    public FeederIOSpark() {
-        spark = new SparkMax(Ports.FEEDER, MotorType.kBrushless);
+    public IntakeDeployIOSpark() {
+        spark = new SparkMax(Ports.FLYWHEEL_FRONT, MotorType.kBrushless);
+        encoder = spark.getEncoder();
+        absoluteEncoder = spark.getAbsoluteEncoder();
+        controller = spark.getClosedLoopController();
 
         config = new SparkMaxConfig();
-        config.idleMode(IdleMode.kCoast)
-                .smartCurrentLimit(80)
+        config
+                .idleMode(IdleMode.kBrake)
+                .smartCurrentLimit(40)
                 .voltageCompensation(12.0)
-                .inverted(true);
+                .inverted(false);
+        config.encoder
+                .inverted(false)
+                .positionConversionFactor(1.0)
+                .velocityConversionFactor(1.0 / 60)
+                .uvwMeasurementPeriod(10)
+                .uvwAverageDepth(2);
+        config.absoluteEncoder
+                .inverted(false)
+                .positionConversionFactor(2 * Math.PI)
+                .velocityConversionFactor(2 * Math.PI / 60)
+                .averageDepth(2);
+        config.closedLoop
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                .pid(
+                        0.001,
+                        0.0,
+                        0.0);
         config.signals
+                .primaryEncoderVelocityAlwaysOn(true)
+                .primaryEncoderVelocityPeriodMs(20)
                 .appliedOutputPeriodMs(20)
                 .busVoltagePeriodMs(20)
                 .outputCurrentPeriodMs(20);
@@ -40,19 +73,28 @@ public class FeederIOSpark implements FeederIO {
                         config,
                         ResetMode.kNoResetSafeParameters,
                         PersistMode.kNoPersistParameters));
+
     }
 
     @Override
-    public void updateInputs(FeederIOInputs inputs) {
+    public void updateInputs(IntakeDeployIOInputs inputs) {
         ifOk(spark, new DoubleSupplier[] { spark::getAppliedOutput, spark::getBusVoltage },
                 (values) -> inputs.appliedVolts = values[0] * values[1]);
         ifOk(spark, spark::getOutputCurrent, (values) -> inputs.statorCurrent = values);
         ifOk(spark, spark::getMotorTemperature, (values) -> inputs.tempCelsius = values);
+
+        ifOk(spark, encoder::getPosition, (values) -> inputs.positionRev = values);
+        ifOk(spark, absoluteEncoder::getPosition, (values) -> inputs.absolutePositionRad = values);
     }
 
     @Override
     public void setOpenLoop(double voltage) {
         spark.setVoltage(voltage);
+    }
+
+    @Override
+    public void setPositionSetpoint(double position) {
+        controller.setSetpoint(position, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0, 0.0, ArbFFUnits.kVoltage);
     }
 
     @Override
@@ -74,5 +116,6 @@ public class FeederIOSpark implements FeederIO {
                                     PersistMode.kNoPersistParameters));
                 })
                 .start();
+
     }
 }

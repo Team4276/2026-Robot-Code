@@ -60,38 +60,11 @@ public class ModuleIOSpark implements ModuleIO {
   private boolean brakeModeEnabled = true;
 
   public ModuleIOSpark(int module) {
-    zeroRotation = switch (module) {
-      case 0 -> frontLeftZeroRotation;
-      case 1 -> frontRightZeroRotation;
-      case 2 -> backLeftZeroRotation;
-      case 3 -> backRightZeroRotation;
-      default -> Rotation2d.kZero;
-    };
-    zeroHelperRotation = switch (module) {
-      case 0 -> frontLeftZeroHelperRotation;
-      case 1 -> frontRightZeroHelperRotation;
-      case 2 -> backLeftZeroHelperRotation;
-      case 3 -> backRightZeroHelperRotation;
-      default -> Rotation2d.kZero;
-    };
-    driveSpark = new SparkFlex(
-        switch (module) {
-          case 0 -> frontLeftDriveCanId;
-          case 1 -> frontRightDriveCanId;
-          case 2 -> backLeftDriveCanId;
-          case 3 -> backRightDriveCanId;
-          default -> 0;
-        },
-        MotorType.kBrushless);
-    turnSpark = new SparkMax(
-        switch (module) {
-          case 0 -> frontLeftTurnCanId;
-          case 1 -> frontRightTurnCanId;
-          case 2 -> backLeftTurnCanId;
-          case 3 -> backRightTurnCanId;
-          default -> 0;
-        },
-        MotorType.kBrushless);
+    zeroRotation = zeroRotations[module];
+    zeroHelperRotation = zeroHelperRotations[module];
+
+    driveSpark = new SparkFlex(canIds[module][0], MotorType.kBrushless);
+    turnSpark = new SparkMax(canIds[module][1], MotorType.kBrushless);
     driveEncoder = driveSpark.getEncoder();
     turnEncoder = turnSpark.getAbsoluteEncoder();
     driveController = driveSpark.getClosedLoopController();

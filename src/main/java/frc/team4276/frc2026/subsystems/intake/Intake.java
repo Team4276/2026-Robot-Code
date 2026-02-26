@@ -7,8 +7,10 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-    private IntakeDeployIO deployIo;
-    private IntakeDeployIOInputsAutoLogged deployInputs = new IntakeDeployIOInputsAutoLogged();
+    private final IntakeDeployIO deployIo;
+    private final IntakeRollerIO rollerIo;
+    private final IntakeDeployIOInputsAutoLogged deployInputs = new IntakeDeployIOInputsAutoLogged();
+    private final IntakeRollerIOInputsAutoLogged rollerInputs = new IntakeRollerIOInputsAutoLogged();
 
     public enum WantedState {
         IDLE,
@@ -27,14 +29,17 @@ public class Intake extends SubsystemBase {
     private WantedState wantedState = WantedState.IDLE;
     private SystemState systemState = SystemState.IDLING;
 
-    public Intake(IntakeDeployIO deployIo){
+    public Intake(IntakeDeployIO deployIo, IntakeRollerIO rollerIo){
         this.deployIo = deployIo;
+        this.rollerIo = rollerIo;
     }
 
     @Override
     public void periodic() {
         deployIo.updateInputs(deployInputs);
+        rollerIo.updateInputs(rollerInputs);
         Logger.processInputs("Intake/Deploy", deployInputs);
+        Logger.processInputs("Intake/Roller", rollerInputs);
 
         systemState = handleStateTransition();
         applyState();
@@ -55,24 +60,24 @@ public class Intake extends SubsystemBase {
     private void applyState() {
         switch (systemState) {
             case IDLING:
-                deployIo.setOpenLoop(idleVolts);
+                rollerIo.setOpenLoop(idleVolts.getAsDouble());
 
                 break;
 
             case RETRACTED:
-                deployIo.setOpenLoop(idleVolts);
-                deployIo.setPosition(retractPosition);
+                rollerIo.setOpenLoop(idleVolts.getAsDouble());
+                deployIo.setPositionSetpoint(retractPosition.getAsDouble());
 
                 break;
             
             case INTAKING:
-                deployIo.setOpenLoop(intakeVolts);
-                deployIo.setPosition(deployPosition);
+                rollerIo.setOpenLoop(intakeVolts.getAsDouble());
+                deployIo.setPositionSetpoint(deployPosition.getAsDouble());
 
                 break;
             case EXHAUSTING:
-                deployIo.setOpenLoop(exhaustVolts);
-                deployIo.setPosition(deployPosition);
+                rollerIo.setOpenLoop(exhaustVolts.getAsDouble());
+                deployIo.setPositionSetpoint(deployPosition.getAsDouble());
 
                 break;
         }

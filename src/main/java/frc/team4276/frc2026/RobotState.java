@@ -42,7 +42,7 @@ public class RobotState {
       lastYaw,
       lastWheelPositions,
       Pose2d.kZero,
-      VecBuilder.fill(0.1, 0.1, 0.1), // TODO tune
+      VecBuilder.fill(0.1, 0.1, 0.1),
       VecBuilder.fill(.9, .9, 2.0));
 
   private SwerveDrivePoseEstimator odomPoseEstimator = new SwerveDrivePoseEstimator(kinematics, lastYaw,

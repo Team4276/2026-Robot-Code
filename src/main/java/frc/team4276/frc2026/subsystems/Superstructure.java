@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,12 +16,10 @@ import frc.team4276.frc2026.shooter.ShotCalculator;
 import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.frc2026.shooter.ShotCalculator.ShootingParameters;
 import frc.team4276.frc2026.subsystems.drive.Drive;
-import frc.team4276.frc2026.subsystems.drive.Drive.DriveSpeedScalar;
 import frc.team4276.frc2026.subsystems.feeder.Feeder;
 import frc.team4276.frc2026.subsystems.flywheel.Flywheel;
 import frc.team4276.frc2026.subsystems.intake.Intake;
 import frc.team4276.frc2026.subsystems.vision.Vision;
-import frc.team4276.lib.geometry.AllianceFlipUtil;
 import frc.team4276.lib.hid.ViXController;
 
 public class Superstructure extends SubsystemBase {
@@ -88,6 +85,10 @@ public class Superstructure extends SubsystemBase {
 
     }
 
+    if(feedState == FeedState.ACTIVE){
+      drive.setHeadingAlignRotation(shootingParams.get().robotHeading());
+    }
+
     flywheel.setVelocity(shootingParams.get().flywheelSpeed());
 
     Logger.recordOutput("Superstructure/IsFirstActive", isFirstActive);
@@ -145,25 +146,13 @@ public class Superstructure extends SubsystemBase {
         feedState = FeedState.FERRY;
 
       }
-    })
-    // .alongWith(
-    // Commands.waitSeconds(1.0)
-    // .andThen(Commands.runOnce(() ->
-    // drive.setVelocityScalar(DriveSpeedScalar.DEFAULT)))
-    // .finallyDo(() -> drive.setVelocityScalar(DriveSpeedScalar.CRAWL)))
-    ;
+    });
   }
 
   public Command disableShooter() { // stop feeding; keep inertia and target
     return Commands.runOnce(() -> {
-      if (RobotState.getInstance().getCurrentFieldZone() == FieldZone.ALLIANCE) {
-        shootingParams = ShotCalculator.getInstance()::getHubParameters;
-
-      } else {
-        shootingParams = ShotCalculator.getInstance()::getFerryParameters;
-
-      }
-
+      shootingParams = ParamPreset.STOW::getParams;
+      currPreset = ParamPreset.STOW;
       feedState = FeedState.NO;
 
     });

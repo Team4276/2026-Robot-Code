@@ -1,4 +1,4 @@
-package frc.team4276.frc2026.subsystems.feeder;
+package frc.team4276.frc2026.subsystems.intake;
 
 import com.revrobotics.spark.SparkMax;
 
@@ -15,18 +15,18 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import frc.team4276.frc2026.Ports;
 
-public class FeederIOSpark implements FeederIO {
+public class IntakeRollerIOSpark implements IntakeRollerIO {
     private final SparkMax spark;
     private final SparkMaxConfig config;
 
     private boolean brakeModeEnabled = false;
 
-    public FeederIOSpark() {
-        spark = new SparkMax(Ports.FEEDER, MotorType.kBrushless);
+    public IntakeRollerIOSpark() {
+        spark = new SparkMax(Ports.INTAKE_ROLLERS, MotorType.kBrushless);
 
         config = new SparkMaxConfig();
         config.idleMode(IdleMode.kCoast)
-                .smartCurrentLimit(80)
+                .smartCurrentLimit(40)
                 .voltageCompensation(12.0)
                 .inverted(true);
         config.signals
@@ -43,7 +43,7 @@ public class FeederIOSpark implements FeederIO {
     }
 
     @Override
-    public void updateInputs(FeederIOInputs inputs) {
+    public void updateInputs(IntakeRollerIOInputs inputs) {
         ifOk(spark, new DoubleSupplier[] { spark::getAppliedOutput, spark::getBusVoltage },
                 (values) -> inputs.appliedVolts = values[0] * values[1]);
         ifOk(spark, spark::getOutputCurrent, (values) -> inputs.statorCurrent = values);

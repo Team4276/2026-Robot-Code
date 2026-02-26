@@ -36,7 +36,6 @@ import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
 
-// TODO multicamera fusion
 /*
  * multicamera fusion: idk what else to say; its just inverse variance weighting lol
  * put rot into vector form for fusion

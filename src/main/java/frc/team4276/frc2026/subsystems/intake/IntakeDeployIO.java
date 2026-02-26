@@ -23,7 +23,7 @@ public interface IntakeDeployIO {
   public default void setOpenLoop(double volts) {
   }
 
-  public default void setPosition(double position) {
+  public default void setPositionSetpoint(double position) {
   }
 
   public default void setBrakeMode(boolean enable) {

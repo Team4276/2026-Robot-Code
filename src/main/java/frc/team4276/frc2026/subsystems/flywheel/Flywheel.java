@@ -2,11 +2,17 @@ package frc.team4276.frc2026.subsystems.flywheel;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.team4276.lib.dashboard.LoggedTunableNumber;
 
-public class Flywheel extends SubsystemBase { 
+public class Flywheel extends SubsystemBase {
+    private final LoggedTunableNumber tolerance = new LoggedTunableNumber("Flywheel/ToleranceRPM", 300);
+
     private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
     private final FlywheelIO io;
+
+    private double rpmSetpoint = 0.0;
     public Flywheel(FlywheelIO io){
         this.io = io;
     }
@@ -20,13 +26,14 @@ public class Flywheel extends SubsystemBase {
 
     public void setVelocity(double RPM){
         io.setRpm(RPM);
+        rpmSetpoint = RPM;
     }
 
     public void setBrakeMode(boolean enabled){
         io.setBrakeMode(enabled);
     }
 
-    public boolean atSetpoint(){ // TODO: impl
-        return true;
+    public boolean atSetpoint(){
+        return MathUtil.isNear(rpmSetpoint, inputs.velocityRPS * 60, tolerance.getAsDouble());
     }
 }

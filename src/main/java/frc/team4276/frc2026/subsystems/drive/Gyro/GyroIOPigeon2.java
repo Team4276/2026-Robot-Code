@@ -17,7 +17,7 @@ import frc.team4276.frc2026.Ports;
 import frc.team4276.frc2026.subsystems.drive.DriveConstants;
 import frc.team4276.frc2026.subsystems.drive.PhoenixOdometryThread;
 
-public class GyroIPigeon2 implements GyroIO {
+public class GyroIOPigeon2 implements GyroIO {
   private final Pigeon2 gyro = new Pigeon2(Ports.PIGEON);
 
   private final StatusSignal<Angle> yawStatusSignal = gyro.getYaw();
@@ -26,7 +26,7 @@ public class GyroIPigeon2 implements GyroIO {
   private final StatusSignal<AngularVelocity> yawVelocityStatusSignal = gyro.getAngularVelocityZWorld();
 
 
-  public GyroIPigeon2() {
+  public GyroIOPigeon2() {
     gyro.getConfigurator().apply(new Pigeon2Configuration());
     gyro.getConfigurator().setYaw(0.0);
     yawStatusSignal.setUpdateFrequency(DriveConstants.odometryFrequency);

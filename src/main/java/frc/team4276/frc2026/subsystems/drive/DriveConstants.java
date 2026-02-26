@@ -9,11 +9,9 @@ import edu.wpi.first.math.util.Units;
 import frc.team4276.frc2026.Ports;
 
 public class DriveConstants {
-  public static final int odometryFrequency = 200;
-  // public static final double trackWidth = Units.inchesToMeters(19.5);
-  // public static final double wheelBase = Units.inchesToMeters(27.5);
-  public static final double trackWidth = Units.inchesToMeters(26.0);
-  public static final double wheelBase = Units.inchesToMeters(26.0);
+  public static final int odometryFrequency = 100;
+  public static final double trackWidth = Units.inchesToMeters(19.5);
+  public static final double wheelBase = Units.inchesToMeters(27.5);
   public static final Translation2d[] moduleTranslations = new Translation2d[] {
       new Translation2d(trackWidth / 2.0, wheelBase / 2.0),
       new Translation2d(trackWidth / 2.0, -wheelBase / 2.0),
@@ -23,35 +21,35 @@ public class DriveConstants {
 
   public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
 
-  public static final double maxVelocityMPS = 4.92;
-  public static final double maxAngularVelocity = 10.54;
+  public static final double maxVelocityMPS = 5.632;
+  public static final double maxAngularVelocity = 13.154;
 
   // Zeroed rotation values for each module, see setup instructions
-  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(1.52507);
-  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.0318);
-  public static final Rotation2d backLeftZeroRotation = new Rotation2d(0.034);
-  public static final Rotation2d backRightZeroRotation = new Rotation2d(2.5579);
+  public static final Rotation2d[] zeroRotations = {
+      new Rotation2d(1.52507), // FL
+      new Rotation2d(0.0318), // FR
+      new Rotation2d(0.034), // BL
+      new Rotation2d(2.5579) // BR
+  };
 
-  public static final Rotation2d frontLeftZeroHelperRotation = Rotation2d.kCCW_90deg;
-  public static final Rotation2d frontRightZeroHelperRotation = Rotation2d.kZero;
-  public static final Rotation2d backLeftZeroHelperRotation = Rotation2d.k180deg;
-  public static final Rotation2d backRightZeroHelperRotation = Rotation2d.kCW_90deg;
+  public static final Rotation2d[] zeroHelperRotations = {
+      Rotation2d.kCCW_90deg, // FL
+      Rotation2d.kZero, // FR
+      Rotation2d.k180deg, // BL
+      Rotation2d.kCW_90deg // BR
+  };
 
   // Device CAN IDs
-  public static final int frontLeftDriveCanId = Ports.FRONT_LEFT_DRIVE;
-  public static final int frontRightDriveCanId = Ports.FRONT_RIGHT_DRIVE;
-  public static final int backLeftDriveCanId = Ports.BACK_LEFT_DRIVE;
-  public static final int backRightDriveCanId = Ports.BACK_RIGHT_DRIVE;
-
-  public static final int frontLeftTurnCanId = Ports.FRONT_LEFT_TURN;
-  public static final int frontRightTurnCanId = Ports.FRONT_RIGHT_TURN;
-  public static final int backLeftTurnCanId = Ports.BACK_LEFT_TURN;
-  public static final int backRightTurnCanId = Ports.BACK_RIGHT_TURN;
+  public static final int[][] canIds = {
+      { Ports.FRONT_LEFT_DRIVE, Ports.FRONT_LEFT_TURN }, 
+      { Ports.FRONT_RIGHT_DRIVE, Ports.FRONT_RIGHT_TURN }, 
+      { Ports.BACK_LEFT_DRIVE, Ports.BACK_LEFT_TURN }, 
+      { Ports.BACK_RIGHT_DRIVE, Ports.BACK_RIGHT_TURN }};
 
   // Drive motor configuration
-  public static final int driveMotorCurrentLimit = 40;
+  public static final int driveMotorCurrentLimit = 60;
   public static final double wheelRadiusMeters = Units.inchesToMeters(1.47);
-  public static final double drivingMotorPinionTeeth = 12.0;
+  public static final double drivingMotorPinionTeeth = 14.0;
   public static final double driveMotorReduction = (45.0 * 22.0) / (drivingMotorPinionTeeth * 15.0);
 
   public static final DCMotor driveGearbox = DCMotor.getKrakenX60(1);
@@ -87,7 +85,7 @@ public class DriveConstants {
   // Turn PID configuration
   public static final double turnKp = 1.0;
   public static final double turnKd = 0.0;
-  
+
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
 }

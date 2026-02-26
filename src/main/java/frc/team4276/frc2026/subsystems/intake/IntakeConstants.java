@@ -1,10 +1,12 @@
 package frc.team4276.frc2026.subsystems.intake;
 
-public class IntakeConstants {
-    public static double deployPosition = 0.0;
-    public static double retractPosition = 0.0;
+import frc.team4276.lib.dashboard.LoggedTunableNumber;
 
-    public static double idleVolts = -2.0;
-    public static double intakeVolts = 12.0;
-    public static double exhaustVolts = -6.0;
+public class IntakeConstants {
+    public static final LoggedTunableNumber deployPosition = new LoggedTunableNumber("Intake/DeployPosition", 0.0);
+    public static final LoggedTunableNumber retractPosition = new LoggedTunableNumber("Intake/RetractPosition", 0.0);
+
+    public static final LoggedTunableNumber idleVolts = new LoggedTunableNumber("Intake/IdleVolts", -2.0);
+    public static final LoggedTunableNumber intakeVolts = new LoggedTunableNumber("Intake/IntakeVolts", 12.0);
+    public static final LoggedTunableNumber exhaustVolts = new LoggedTunableNumber("Intake/ExhaustVolts", -6.0);
 }

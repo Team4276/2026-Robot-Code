@@ -13,12 +13,10 @@ import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.frc2026.subsystems.Superstructure;
 import frc.team4276.frc2026.subsystems.drive.Drive;
 import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIO;
-import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIOADIS;
-import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIPigeon2;
+import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIOPigeon2;
 import frc.team4276.frc2026.subsystems.drive.Module.ModuleIO;
 import frc.team4276.frc2026.subsystems.drive.Module.ModuleIOKreo;
 import frc.team4276.frc2026.subsystems.drive.Module.ModuleIOSim;
-import frc.team4276.frc2026.subsystems.drive.Module.ModuleIOSpark;
 import frc.team4276.frc2026.subsystems.feeder.Feeder;
 import frc.team4276.frc2026.subsystems.feeder.FeederIO;
 import frc.team4276.frc2026.subsystems.feeder.FeederIOSpark;
@@ -27,7 +25,9 @@ import frc.team4276.frc2026.subsystems.flywheel.FlywheelIO;
 import frc.team4276.frc2026.subsystems.flywheel.FlywheelIOSpark;
 import frc.team4276.frc2026.subsystems.intake.Intake;
 import frc.team4276.frc2026.subsystems.intake.IntakeDeployIO;
-import frc.team4276.frc2026.subsystems.intake.IntakeIOSpark;
+import frc.team4276.frc2026.subsystems.intake.IntakeDeployIOSpark;
+import frc.team4276.frc2026.subsystems.intake.IntakeRollerIO;
+import frc.team4276.frc2026.subsystems.intake.IntakeRollerIOSpark;
 import frc.team4276.frc2026.subsystems.vision.Vision;
 import frc.team4276.frc2026.subsystems.vision.VisionIO;
 import frc.team4276.frc2026.subsystems.vision.VisionIOPhotonVision;
@@ -55,20 +55,20 @@ public class RobotContainer {
           // Real robot, instantiate hardware IO implementations
           drive = new Drive(
               Constants.isDemo ? demoController : driver,
-              new GyroIOADIS(),
-              // new ModuleIOSpark(0),
-              // new ModuleIOSpark(1),
-              // new ModuleIOSpark(2),
-              // new ModuleIOSpark(3)
-              new ModuleIO(){},
-              new ModuleIO(){},
-              new ModuleIO(){},
-              new ModuleIO(){}
-              );
-          // intake = new Intake(new IntakeIOSpark());
+              new GyroIOPigeon2(),
+              new ModuleIOKreo(0),
+              new ModuleIOKreo(1),
+              new ModuleIOKreo(2),
+              new ModuleIOKreo(3)
+          // new ModuleIO(){},
+          // new ModuleIO(){},
+          // new ModuleIO(){},
+          // new ModuleIO(){}
+          );
+          intake = new Intake(new IntakeDeployIOSpark(), new IntakeRollerIOSpark());
           feeder = new Feeder(new FeederIOSpark());
           flywheel = new Flywheel(new FlywheelIOSpark());
-          vision = new Vision(RobotState.getInstance()::addVisionMeasurement);
+          vision = new Vision(RobotState.getInstance()::addVisionMeasurement, new VisionIOPhotonVision(0));
         }
 
         case SIMBOT -> {
@@ -82,6 +82,7 @@ public class RobotContainer {
               new ModuleIOSim(),
               new ModuleIOSim());
           intake = new Intake(new IntakeDeployIO() {
+          }, new IntakeRollerIO() {
           });
           feeder = new Feeder(new FeederIO() {
           });
@@ -110,6 +111,7 @@ public class RobotContainer {
 
     if (intake == null) {
       intake = new Intake(new IntakeDeployIO() {
+      }, new IntakeRollerIO() {
       });
     }
 
@@ -187,9 +189,6 @@ public class RobotContainer {
     driver
         .povDown()
         .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(false)));
-
-    // POV RIGHT/LEFT: adjust turret manually for zeroing
-    // dashboard: zero turret
   }
 
   /**

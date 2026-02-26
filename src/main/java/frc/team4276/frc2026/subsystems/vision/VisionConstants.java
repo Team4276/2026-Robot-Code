@@ -41,15 +41,8 @@ public class VisionConstants {
       Units.inchesToMeters(8.0),
       new Rotation3d(0.0, Units.degreesToRadians(-20.0), Units.degreesToRadians(-20.0)));
 
-  public static final Transform3d ov2311RobotToCamera = new Transform3d(
-      Units.inchesToMeters(-1.0),
-      Units.inchesToMeters(9.0) * -1.0,
-      Units.inchesToMeters(8.0),
-      new Rotation3d(0.0, Units.degreesToRadians(-20.0), Units.degreesToRadians(20.0)));
-
   public static final CameraConfig[] configs = new CameraConfig[] {
-      new CameraConfig("Arducam_OV9281_USB_Camera", ov9281RobotToCamera, VisionObservationType.APRILTAG),
-      new CameraConfig("Arducam_OV2311_USB_Camera", ov2311RobotToCamera, VisionObservationType.APRILTAG)
+      new CameraConfig("Arducam_OV9281_USB_Camera", ov9281RobotToCamera, VisionObservationType.APRILTAG)
   };
 
   // Basic filtering thresholds
@@ -74,7 +67,7 @@ public class VisionConstants {
   public static final double kLargeVariance = 1e6;
 
   public static final List<Integer> singleTagIdsToReject = new ArrayList<>() {
-    {//TODO figure this out later lol; filter in subsystem instead of in the hardware impl
+    {
     }
   };
 }

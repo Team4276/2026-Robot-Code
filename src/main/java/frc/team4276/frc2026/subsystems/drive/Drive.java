@@ -8,6 +8,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,6 +21,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team4276.frc2026.Constants;
@@ -26,6 +30,7 @@ import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIO;
 import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIOInputsAutoLogged;
 import frc.team4276.frc2026.subsystems.drive.Module.Module;
 import frc.team4276.frc2026.subsystems.drive.Module.ModuleIO;
+import frc.team4276.lib.dashboard.LoggedTunableNumber;
 import frc.team4276.lib.dashboard.LoggedTunablePID;
 import frc.team4276.lib.geometry.AllianceFlipUtil;
 import frc.team4276.lib.hid.JoystickOutputController;
@@ -66,6 +71,21 @@ public class Drive extends SubsystemBase {
 
   private double maxAutoAlignDriveTranslationOutput = maxVelocityMPS * 0.67;
   private double maxAutoAlignDriveRotationOutput = maxAngularVelocity;
+
+  private final LoggedTunablePID trajectoryXController = new LoggedTunablePID(5.0, 0, 0, Units.inchesToMeters(0.5),
+      "Drive/Trajectory/Translation");
+  private final LoggedTunablePID trajectoryYController = new LoggedTunablePID(5.0, 0, 0, Units.inchesToMeters(0.5),
+      "Drive/Trajectory/Translation");
+  private final LoggedTunablePID trajectoryThetaController = new LoggedTunablePID(3.0, 0, 0, Math.toRadians(1.0),
+      "Drive/Trajectory/Rotation");
+
+  private final LoggedTunableNumber maxError = new LoggedTunableNumber("Drive/Trajectory/maxError", 0.75);
+
+  private PathPlannerTrajectory trajectory;
+  private PathPlannerTrajectoryState sampledTrajectoryState;
+
+  private double startTime = 0.0;
+  private double timeOffset = 0.0;
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
@@ -203,7 +223,15 @@ public class Drive extends SubsystemBase {
   private SystemState handleStateTransition() {
     return switch (wantedState) {
       case TELEOP -> SystemState.TELEOP;
-      case PATH -> SystemState.PATH;
+      case PATH -> {
+        if (systemState != SystemState.PATH) {
+          resetTrajectoryTimer();
+        }
+
+        sampledTrajectoryState = trajectory.sample(getTrajectoryTime());
+
+        yield SystemState.PATH;
+      }
       case HEADING_ALIGN -> SystemState.HEADING_ALIGN;
       case AUTO_ALIGN -> SystemState.AUTO_ALIGN;
       case CHARACTERIZATION -> SystemState.CHARACTERIZATION;
@@ -230,6 +258,32 @@ public class Drive extends SubsystemBase {
         break;
 
       case PATH:
+
+        if (sampledTrajectoryState
+            .pose
+            .getTranslation()
+            .getDistance(currentPose.getTranslation()) > maxError.getAsDouble()) {
+          timeOffset += 0.02;
+        }
+        
+        requestedSpeeds = sampledTrajectoryState.fieldSpeeds;
+
+        requestedSpeeds.vxMetersPerSecond += trajectoryXController.calculate(
+            0.0, sampledTrajectoryState.pose.getX() - currentPose.getTranslation().getX());
+        requestedSpeeds.vyMetersPerSecond += trajectoryYController.calculate(
+            0.0, sampledTrajectoryState.pose.getX() - currentPose.getTranslation().getY());
+        requestedSpeeds.omegaRadiansPerSecond += trajectoryThetaController.calculate(
+            0.0,
+            MathUtil.angleModulus(
+                sampledTrajectoryState.pose
+                    .getRotation()
+                    .minus(currentPose.getRotation())
+                    .getRadians()));
+
+        Logger.recordOutput("Drive/Trajectory/SetpointPose", sampledTrajectoryState.pose);
+        Logger.recordOutput(
+            "Drive/Trajectory/SetpointSpeeds", sampledTrajectoryState.fieldSpeeds);
+        Logger.recordOutput("Drive/Trajectory/TrajectoryTime", getTrajectoryTime());
 
         break;
 
@@ -341,6 +395,48 @@ public class Drive extends SubsystemBase {
         AllianceFlipUtil.apply(Rotation2d.k180deg));
   }
 
+  private double getTrajectoryTime() {
+    return Timer.getTimestamp() - startTime - timeOffset;
+  }
+
+  private void resetTrajectoryTimer() {
+    startTime = Timer.getTimestamp();
+    timeOffset = 0.0;
+  }
+
+  public boolean isTrajectoryFinished() {
+    if (wantedState != WantedState.PATH || trajectory == null) {
+      return false;
+    }
+
+    var pose = trajectory.getEndState().pose;
+
+    return getTrajectoryTime() > trajectory.getTotalTimeSeconds()
+        && isAtTranslation(pose.getTranslation(), trajectoryXController.getErrorTolerance())
+        && isAtHeading(pose.getRotation(), trajectoryThetaController.getErrorTolerance());
+  }
+
+  public boolean isAtPose(Pose2d pose) {
+    return isAtTranslation(pose.getTranslation()) && isAtHeading(pose.getRotation());
+  }
+
+  public boolean isAtTranslation(Translation2d trans) {
+    return isAtTranslation(trans, teleopAutoAlignController.getErrorTolerance());
+  }
+
+  public boolean isAtTranslation(Translation2d trans, double tolerance) {
+    return RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(trans) < tolerance;
+  }
+
+  public boolean isAtHeading(Rotation2d heading) {
+    return isAtHeading(heading, headingAlignController.getErrorTolerance());
+  }
+
+  public boolean isAtHeading(Rotation2d heading, double tolerance) {
+    return Math.abs(
+        RobotState.getInstance().getEstimatedPose().getRotation().minus(heading).getRadians()) < tolerance;
+  }
+
   /**
    * Returns the module states (turn angles and drive velocities) for all of the
    * modules.
@@ -382,7 +478,12 @@ public class Drive extends SubsystemBase {
     setHeadingAlignRotation(RobotState.getInstance().getHubAlignHeading());
   }
 
-  public void setVelocityScalar(DriveSpeedScalar scalar){
+  public void setTrajectory(PathPlannerTrajectory trajectory) {
+    setWantedState(WantedState.PATH);
+    this.trajectory = trajectory;
+  }
+
+  public void setVelocityScalar(DriveSpeedScalar scalar) {
     driveSpeedScalar = scalar;
   }
 }
