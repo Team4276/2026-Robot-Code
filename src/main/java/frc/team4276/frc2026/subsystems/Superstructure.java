@@ -17,6 +17,7 @@ import frc.team4276.frc2026.shooter.ShotCalculator;
 import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.frc2026.shooter.ShotCalculator.ShootingParameters;
 import frc.team4276.frc2026.subsystems.drive.Drive;
+import frc.team4276.frc2026.subsystems.drive.Drive.WantedState;
 import frc.team4276.frc2026.subsystems.feeder.Feeder;
 import frc.team4276.frc2026.subsystems.flywheel.Flywheel;
 import frc.team4276.frc2026.subsystems.intake.Intake;
@@ -73,10 +74,11 @@ public class Superstructure extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (inShootingToleranceDebounce.calculate(
+        shooterAtSetpoint() &&
+            (drive.getSystemState() == Drive.SystemState.HEADING_ALIGN ? drive.isAtHeading() : true))) {
 
-    
-    if (shooterAtSetpoint()) {
-      if (feedState == FeedState.ACTIVE && isHubActive() && drive.isAtHeading()) {
+      if (feedState == FeedState.ACTIVE && (isHubActive() || isActiveOverride)) {
         feeder.setSystemState(Feeder.SystemState.FEED);
 
       } else if (feedState == FeedState.FERRY) {
@@ -93,13 +95,14 @@ public class Superstructure extends SubsystemBase {
     }
 
     flywheel.setVelocity(shootingParams.get().flywheelSpeed());
-    drive.setHeadingAlignRotation(shootingParams.get().robotHeading());
 
     Logger.recordOutput("Superstructure/IsFirstActive", isFirstActive);
     Logger.recordOutput("Superstructure/IsHubActive", isHubActive());
     Logger.recordOutput("Superstructure/FeedState", feedState);
     Logger.recordOutput("Superstructure/ShooterAtSetpoint", shooterAtSetpoint());
     Logger.recordOutput("Superstructure/ParamPreset", currPreset);
+    Logger.recordOutput("Superstructure/PeriodCountdown", getPeriodCountDown());
+    Logger.recordOutput("Superstructure/PeriodName", getCurrentPeriod());
 
   }
 
@@ -112,10 +115,6 @@ public class Superstructure extends SubsystemBase {
   }
 
   public boolean isHubActive() {
-    if (!DriverStation.isFMSAttached()) {
-      return true;
-    }
-
     double matchTime = DriverStation.getMatchTime();
 
     if (DriverStation.isAutonomous() || matchTime > 130 || matchTime < 30) {
@@ -127,6 +126,36 @@ public class Superstructure extends SubsystemBase {
     } else {
       return !isFirstActive;
     }
+  }
+
+  public double getPeriodCountDown() {
+    double matchTime = DriverStation.getMatchTime();
+
+    if (DriverStation.isAutonomous()) { // TODO: HOLLEY SHMOLEY FIND A WAY TO CLEAN THIS UP
+      return matchTime;
+
+    } else if (matchTime > 130) {
+      return matchTime - 130;
+
+    } else if (matchTime > 105) {
+      return matchTime - 105;
+
+    } else if (matchTime > 80) {
+      return matchTime - 80;
+
+    } else if (matchTime > 55) {
+      return matchTime - 55;
+
+    } else if (matchTime > 30) {
+      return matchTime - 30;
+
+    } else {
+      return matchTime;
+    }
+  }
+
+  public String getCurrentPeriod() {
+    return "N/A";
   }
 
   public boolean shooterAtSetpoint() {
@@ -145,11 +174,13 @@ public class Superstructure extends SubsystemBase {
     return Commands.runOnce(() -> {
       if (RobotState.getInstance().getCurrentFieldZone() == FieldZone.ALLIANCE) {
         shootingParams = ShotCalculator.getInstance()::getHubParameters;
+        drive.setHeadingAlignRotation(shootingParams.get()::robotHeading);
 
         feedState = FeedState.ACTIVE;
 
       } else {
         shootingParams = ShotCalculator.getInstance()::getFerryParameters;
+        drive.setWantedState(WantedState.TELEOP);
 
         feedState = FeedState.FERRY;
 
@@ -157,9 +188,10 @@ public class Superstructure extends SubsystemBase {
     });
   }
 
-  public Command disableShooter() { // stop feeding; keep inertia and target
+  public Command disableShooter() { // stop feeding
     return Commands.runOnce(() -> {
       shootingParams = ParamPreset.STOW::getParams;
+      drive.setWantedState(WantedState.TELEOP);
       currPreset = ParamPreset.STOW;
       feedState = FeedState.NO;
 
@@ -170,6 +202,7 @@ public class Superstructure extends SubsystemBase {
     return Commands.runOnce(() -> {
       currPreset = preset;
       shootingParams = currPreset::getParams;
+      drive.setWantedState(WantedState.TELEOP);
 
       if (preset == ParamPreset.SHOWER || preset == ParamPreset.SHUB) {
         feedState = FeedState.ACTIVE;
@@ -188,6 +221,7 @@ public class Superstructure extends SubsystemBase {
   public Command turtle() { // go under trench
     return Commands.runOnce(() -> {
       intake.setWantedState(Intake.WantedState.INTAKE);
+      drive.setWantedState(WantedState.TELEOP);
       currPreset = ParamPreset.TURTLE;
       shootingParams = currPreset::getParams;
       feedState = FeedState.NO;

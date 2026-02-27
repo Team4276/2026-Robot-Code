@@ -4,6 +4,7 @@ import static frc.team4276.frc2026.subsystems.drive.DriveConstants.*;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -67,7 +68,7 @@ public class Drive extends SubsystemBase {
   private Pose2d desiredAutoAlignPose = Pose2d.kZero;
   private final double autoAlignStaticFrictionConstant = maxVelocityMPS * 0.02;
 
-  private Rotation2d desiredHeadingAlignRotation = Rotation2d.kZero;
+  private Supplier<Rotation2d> desiredHeadingAlignRotation = () -> Rotation2d.kZero;
 
   private double maxAutoAlignDriveTranslationOutput = maxVelocityMPS * 0.67;
   private double maxAutoAlignDriveRotationOutput = maxAngularVelocity;
@@ -289,7 +290,7 @@ public class Drive extends SubsystemBase {
 
       case HEADING_ALIGN:
         double headingAlignError = MathUtil.angleModulus(
-            currentPose.getRotation().minus(desiredHeadingAlignRotation).getRadians());
+            currentPose.getRotation().minus(desiredHeadingAlignRotation.get()).getRadians());
         double headingAlignOmega = Math.min(
             headingAlignController.calculate(headingAlignError, 0.0),
             maxAutoAlignDriveRotationOutput);
@@ -438,7 +439,7 @@ public class Drive extends SubsystemBase {
   }
 
   public boolean isAtHeading(){
-    return isAtHeading(desiredHeadingAlignRotation);
+    return isAtHeading(desiredHeadingAlignRotation.get());
   }
 
   /**
@@ -458,6 +459,10 @@ public class Drive extends SubsystemBase {
     this.wantedState = wantedState;
   }
 
+  public SystemState getSystemState(){
+    return systemState;
+  }
+
   public void setAutoAlignPose(Pose2d pose) {
     setWantedState(WantedState.AUTO_ALIGN);
     desiredAutoAlignPose = pose;
@@ -474,6 +479,10 @@ public class Drive extends SubsystemBase {
   }
 
   public void setHeadingAlignRotation(Rotation2d rotation) {
+    setHeadingAlignRotation(() -> rotation);
+  }
+
+  public void setHeadingAlignRotation(Supplier<Rotation2d> rotation){
     setWantedState(WantedState.HEADING_ALIGN);
     desiredHeadingAlignRotation = rotation;
   }

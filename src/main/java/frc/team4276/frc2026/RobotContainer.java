@@ -191,11 +191,11 @@ public class RobotContainer {
 
     driver
         .povRight()
-        .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(false)));
+        .onTrue(Commands.runOnce(() -> superstructure.setOverrideActive(false)));
         
     driver
         .povLeft()
-        .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(false)));
+        .onTrue(Commands.runOnce(() -> superstructure.setOverrideActive(true)));
   }
 
   /**
