@@ -1,0 +1,950 @@
+{
+  "version": 1.0,
+  "grid_size": 32,
+  "tabs": [
+    {
+      "name": "Pit Check",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    },
+    {
+      "name": "Match Prep",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Delay",
+            "x": 1152.0,
+            "y": 128.0,
+            "width": 192.0,
+            "height": 160.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "Comp/Auto/Delay",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "RoutineChooser",
+            "x": 1152.0,
+            "y": 288.0,
+            "width": 384.0,
+            "height": 160.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Comp/Auto/RoutineChooser",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Delay Input Submitted ",
+            "x": 1344.0,
+            "y": 128.0,
+            "width": 192.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Comp/Auto/Delay Input Submitted ",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "FMSInfo",
+            "x": 1152.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "FMSInfo",
+            "properties": {
+              "topic": "/FMSInfo",
+              "period": 0.02
+            }
+          },
+          {
+            "title": "Auto Path Display Field",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1152.0,
+            "height": 544.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/Auto Path Display Field",
+              "period": 0.06,
+              "field_game": "Rebuilt (No Fuel)",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4278255615,
+              "trajectory_color": 4278255615,
+              "show_robot_outside_widget": true
+            }
+          },
+          {
+            "title": "Routine Submitted ",
+            "x": 0.0,
+            "y": 544.0,
+            "width": 1152.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Comp/Auto/Routine Submitted ",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Auto",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Swerve Drive",
+            "x": 1120.0,
+            "y": 0.0,
+            "width": 416.0,
+            "height": 512.0,
+            "type": "SwerveDrive",
+            "properties": {
+              "topic": "/SmartDashboard/Swerve Drive",
+              "period": 0.02,
+              "show_robot_rotation": true,
+              "rotation_unit": "Radians"
+            }
+          },
+          {
+            "title": "Rainbow",
+            "x": 0.0,
+            "y": 512.0,
+            "width": 1536.0,
+            "height": 192.0,
+            "type": "Multi Color View",
+            "properties": {
+              "topic": "/SmartDashboard/Rainbow",
+              "period": 0.06,
+              "data_type": "string[]"
+            }
+          },
+          {
+            "title": "Auto Field",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1120.0,
+            "height": 512.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/Auto Field",
+              "period": 0.06,
+              "field_game": "Rebuilt (No Fuel)",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295,
+              "show_robot_outside_widget": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Teleop",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Drive Mode",
+            "x": 256.0,
+            "y": 448.0,
+            "width": 704.0,
+            "height": 256.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/SystemState",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "Match Time",
+            "x": 0.0,
+            "y": 448.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Match Time",
+            "properties": {
+              "topic": "/SmartDashboard/Match Time",
+              "period": 0.06,
+              "data_type": "double",
+              "time_display_mode": "Minutes and Seconds",
+              "red_start_time": 15,
+              "yellow_start_time": 30
+            }
+          },
+          {
+            "title": "Feed State",
+            "x": 1152.0,
+            "y": 448.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Superstructure/FeedState",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "Intake State",
+            "x": 960.0,
+            "y": 448.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Intake/SystemState",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "IsHubActive",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1536.0,
+            "height": 160.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Superstructure/IsHubActive",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Preset",
+            "x": 960.0,
+            "y": 288.0,
+            "width": 576.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Superstructure/ParamPreset",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "PeriodCountdown",
+            "x": 0.0,
+            "y": 160.0,
+            "width": 256.0,
+            "height": 288.0,
+            "type": "Match Time",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Superstructure/PeriodCountdown",
+              "period": 0.06,
+              "data_type": "double",
+              "time_display_mode": "Minutes and Seconds",
+              "red_start_time": 20,
+              "yellow_start_time": 30
+            }
+          },
+          {
+            "title": "Period",
+            "x": 256.0,
+            "y": 160.0,
+            "width": 704.0,
+            "height": 288.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Superstructure/PeriodName",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "ShooterAtSetpoint",
+            "x": 960.0,
+            "y": 160.0,
+            "width": 576.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Superstructure/ShooterAtSetpoint",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Feeder State",
+            "x": 1344.0,
+            "y": 448.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Feeder/SystemState",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "IsActiveOverride",
+            "x": 960.0,
+            "y": 576.0,
+            "width": 288.0,
+            "height": 160.0,
+            "type": "Toggle Button",
+            "properties": {
+              "topic": "/SmartDashboard/Superstructure/IsActiveOverride",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "IsFirstActive",
+            "x": 1248.0,
+            "y": 576.0,
+            "width": 288.0,
+            "height": 160.0,
+            "type": "Toggle Button",
+            "properties": {
+              "topic": "/SmartDashboard/Superstructure/IsFirstActive",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tuning",
+      "grid_layout": {
+        "layouts": [
+          {
+            "title": "AutoTranslation",
+            "x": 1088.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 352.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "kP",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/AutoAlign/AutoTranslation/kP",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "kD",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/AutoAlign/AutoTranslation/kD",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "kI",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/AutoAlign/AutoTranslation/kI",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Tolerance",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/AutoAlign/AutoTranslation/Tolerance",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "HeadingAlign",
+            "x": 576.0,
+            "y": 352.0,
+            "width": 256.0,
+            "height": 352.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "kP",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/HeadingAlign/kP",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kI",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/HeadingAlign/kI",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kD",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/HeadingAlign/kD",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Tolerance",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/HeadingAlign/Tolerance",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          },
+          {
+            "title": "Trajectory Rotation",
+            "x": 832.0,
+            "y": 352.0,
+            "width": 256.0,
+            "height": 352.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "kP",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/Trajectory/Rotation/kP",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kI",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/Trajectory/Rotation/kI",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kD",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/Trajectory/Rotation/kD",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Tolerance",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/Trajectory/Rotation/Tolerance",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          },
+          {
+            "title": "Trajectory Translation",
+            "x": 832.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 352.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "kP",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/Trajectory/Translation/kP",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kD",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/Trajectory/Translation/kD",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kI",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/Trajectory/Translation/kI",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Tolerance",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/Trajectory/Translation/Tolerance",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          },
+          {
+            "title": "TeleopTranslation",
+            "x": 576.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 352.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "kP",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/AutoAlign/TeleopTranslation/kP",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kI",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/AutoAlign/TeleopTranslation/kI",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kD",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/AutoAlign/TeleopTranslation/kD",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Tolerance",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/AutoAlign/TeleopTranslation/Tolerance",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          },
+          {
+            "title": "Feeder",
+            "x": 256.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 192.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "FeedVolts",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Feeder/FeedVolts",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "IdleVolts",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Feeder/IdleVolts",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          },
+          {
+            "title": "Flywheel",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "ToleranceRPM",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Flywheel/ToleranceRPM",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          },
+          {
+            "title": "Intake",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "DeployPosition",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Intake/DeployPosition",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "ExhaustVolts",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Intake/ExhaustVolts",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "IdleVolts",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Intake/IdleVolts",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "IntakeVolts",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Intake/IntakeVolts",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "RetractPosition",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Intake/RetractPosition",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          },
+          {
+            "title": "Presets",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "ShowerRPM",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Shooter/Presets/ShowerRPM",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "StowRPM",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Shooter/Presets/StowRPM",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "TurtleRPM",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Shooter/Presets/TurtleRPM",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "title": "Trajectory maxError",
+            "x": 1088.0,
+            "y": 576.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "SmartDashboard/TunableNumbers/Drive/Trajectory/maxError",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "TurretToTargetDistance",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 192.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/ShotCalculator/TurretToTargetDistance",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sim",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "OverrideFlip",
+            "x": 544.0,
+            "y": 224.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/SmartDashboard/Sim/OverrideFlip",
+              "period": 0.02,
+              "data_type": "boolean"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

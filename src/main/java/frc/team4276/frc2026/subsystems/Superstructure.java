@@ -7,10 +7,12 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.team4276.frc2026.Constants;
 import frc.team4276.frc2026.RobotState;
 import frc.team4276.frc2026.FieldConstants.FieldZone;
 import frc.team4276.frc2026.shooter.ShotCalculator;
@@ -74,11 +76,14 @@ public class Superstructure extends SubsystemBase {
 
   @Override
   public void periodic() {
+    ShotCalculator.getInstance().clearHubParameters();
+    ShotCalculator.getInstance().clearFerryParameters();
+
     if (inShootingToleranceDebounce.calculate(
         shooterAtSetpoint() &&
             (drive.getSystemState() == Drive.SystemState.HEADING_ALIGN ? drive.isAtHeading() : true))) {
 
-      if (feedState == FeedState.ACTIVE && (isHubActive() || isActiveOverride)) {
+      if (feedState == FeedState.ACTIVE && (isHubActive() || getIsOverrideActive())) {
         feeder.setSystemState(Feeder.SystemState.FEED);
 
       } else if (feedState == FeedState.FERRY) {
@@ -108,10 +113,20 @@ public class Superstructure extends SubsystemBase {
 
   public void setOverrideActive(boolean isActive) {
     isActiveOverride = isActive;
+    SmartDashboard.putBoolean("Superstructure/IsActiveOverride", isActiveOverride);
+  }
+
+  public boolean getIsOverrideActive(){
+    return SmartDashboard.getBoolean("Superstructure/IsActiveOverride", isActiveOverride);
   }
 
   public void setIsFirstActive(boolean isFirstActive) {
     this.isFirstActive = isFirstActive;
+    SmartDashboard.putBoolean("Superstructure/IsFirstActive", isFirstActive);
+  }
+
+  public boolean getIsFirstActive(){
+    return SmartDashboard.getBoolean("Superstructure/IsFirstActive", isFirstActive);
   }
 
   public boolean isHubActive() {
@@ -154,12 +169,34 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
-  public String getCurrentPeriod() {
-    return "N/A";
+  public String getCurrentPeriod() {    
+    double matchTime = DriverStation.getMatchTime();
+
+    if (DriverStation.isAutonomous()) { // TODO: HOLLEY SHMOLEY FIND A WAY TO CLEAN THIS UP
+      return "Auto";
+
+    } else if (matchTime > 130) {
+      return "Transition";
+
+    } else if (matchTime > 105) {
+      return "Shift 1";
+
+    } else if (matchTime > 80) {
+      return "Shift 2";
+
+    } else if (matchTime > 55) {
+      return "Shift 3";
+
+    } else if (matchTime > 30) {
+      return "Shift 4";
+
+    } else {
+      return "Endgame";
+    }
   }
 
   public boolean shooterAtSetpoint() {
-    return flywheel.atSetpoint();
+    return Constants.isSim || flywheel.atSetpoint();
   }
 
   public Command deployIntake() {
@@ -174,7 +211,7 @@ public class Superstructure extends SubsystemBase {
     return Commands.runOnce(() -> {
       if (RobotState.getInstance().getCurrentFieldZone() == FieldZone.ALLIANCE) {
         shootingParams = ShotCalculator.getInstance()::getHubParameters;
-        drive.setHeadingAlignRotation(shootingParams.get()::robotHeading);
+        drive.setHeadingAlignRotation(() -> shootingParams.get().robotHeading());
 
         feedState = FeedState.ACTIVE;
 

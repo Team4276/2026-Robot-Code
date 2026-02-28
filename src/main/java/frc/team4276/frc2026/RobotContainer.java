@@ -183,19 +183,23 @@ public class RobotContainer {
 
     driver
         .povUp()
-        .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(true)));
+        .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(true))
+            .ignoringDisable(true));
 
     driver
         .povDown()
-        .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(false)));
+        .onTrue(Commands.runOnce(() -> superstructure.setIsFirstActive(false))
+            .ignoringDisable(true));
 
     driver
         .povRight()
-        .onTrue(Commands.runOnce(() -> superstructure.setOverrideActive(false)));
-        
+        .onTrue(Commands.runOnce(() -> superstructure.setOverrideActive(false))
+            .ignoringDisable(true));
+
     driver
         .povLeft()
-        .onTrue(Commands.runOnce(() -> superstructure.setOverrideActive(true)));
+        .onTrue(Commands.runOnce(() -> superstructure.setOverrideActive(true))
+            .ignoringDisable(true));
   }
 
   /**
