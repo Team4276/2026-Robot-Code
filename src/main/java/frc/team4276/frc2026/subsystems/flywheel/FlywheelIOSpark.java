@@ -28,7 +28,7 @@ public class FlywheelIOSpark implements FlywheelIO {
     private boolean brakeModeEnabled = false;
 
     public FlywheelIOSpark() {
-        spark = new SparkMax(Ports.FLYWHEEL_FRONT, MotorType.kBrushless);
+        spark = new SparkMax(Ports.FLYWHEEL, MotorType.kBrushless);
         encoder = spark.getEncoder();
         controller = spark.getClosedLoopController();
 

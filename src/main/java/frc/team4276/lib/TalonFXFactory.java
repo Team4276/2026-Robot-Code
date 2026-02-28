@@ -6,8 +6,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
 
 /**
- * Creates FXTalons objects and configures all the parameters we care about to factory defaults.
- * Closed-loop and sensor parameters are not set, as these are expected to be set by the application.
+ * Creates FXTalons objects and configures all the parameters we care about to
+ * factory defaults.
+ * Closed-loop and sensor parameters are not set, as these are expected to be
+ * set by the application.
  */
 public class TalonFXFactory {
     public static NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Coast;
@@ -28,7 +30,8 @@ public class TalonFXFactory {
     public static TalonFX createPermanentFollowerTalon(
             int followerId, int masterId, boolean opposeMasterDirection) {
         final TalonFX talon = createTalon(followerId);
-        talon.setControl(new Follower(masterId, opposeMasterDirection ? MotorAlignmentValue.Opposed : MotorAlignmentValue.Aligned));
+        talon.setControl(new Follower(masterId,
+                opposeMasterDirection ? MotorAlignmentValue.Opposed : MotorAlignmentValue.Aligned));
         return talon;
     }
 

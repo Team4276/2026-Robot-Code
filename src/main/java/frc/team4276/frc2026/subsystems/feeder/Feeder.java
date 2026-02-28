@@ -44,11 +44,11 @@ public class Feeder extends SubsystemBase {
         Logger.recordOutput("Feeder/SystemState", systemState);
     }
 
-    public void setSystemState(SystemState state){
+    public void setSystemState(SystemState state) {
         systemState = state;
     }
 
-    public void setBrakeMode(boolean enabled){
+    public void setBrakeMode(boolean enabled) {
         io.setBrakeMode(enabled);
     }
 }

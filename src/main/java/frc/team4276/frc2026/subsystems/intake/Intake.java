@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
     private WantedState wantedState = WantedState.IDLE;
     private SystemState systemState = SystemState.IDLING;
 
-    public Intake(IntakeDeployIO deployIo, IntakeRollerIO rollerIo){
+    public Intake(IntakeDeployIO deployIo, IntakeRollerIO rollerIo) {
         this.deployIo = deployIo;
         this.rollerIo = rollerIo;
     }
@@ -69,7 +69,7 @@ public class Intake extends SubsystemBase {
                 deployIo.setPositionSetpoint(retractPosition.getAsDouble());
 
                 break;
-            
+
             case INTAKING:
                 rollerIo.setOpenLoop(intakeVolts.getAsDouble());
                 deployIo.setPositionSetpoint(deployPosition.getAsDouble());
@@ -83,11 +83,11 @@ public class Intake extends SubsystemBase {
         }
     }
 
-    public void setWantedState(WantedState state){
+    public void setWantedState(WantedState state) {
         wantedState = state;
     }
-    
-    public void setBrakeMode(boolean enabled){
+
+    public void setBrakeMode(boolean enabled) {
         deployIo.setBrakeMode(enabled);
     }
 }

@@ -27,241 +27,242 @@ import frc.team4276.frc2026.subsystems.vision.Vision;
 import frc.team4276.lib.hid.ViXController;
 
 public class Superstructure extends SubsystemBase {
-  private final Drive drive;
-  private final Intake intake;
-  private final Feeder feeder;
-  private final Flywheel flywheel;
+    private final Drive drive;
+    private final Intake intake;
+    private final Feeder feeder;
+    private final Flywheel flywheel;
 
-  @SuppressWarnings("unused")
-  private final Vision vision;
+    @SuppressWarnings("unused")
+    private final Vision vision;
 
-  private final ViXController controller;
+    private final ViXController controller;
 
-  private boolean isFirstActive = false;
+    private boolean isFirstActive = false;
 
-  private Supplier<ShootingParameters> shootingParams = ParamPreset.STOW::getParams;
-  private ParamPreset currPreset = ParamPreset.STOW;
+    private Supplier<ShootingParameters> shootingParams = ParamPreset.STOW::getParams;
+    private ParamPreset currPreset = ParamPreset.STOW;
 
-  private enum FeedState {
-    NO,
-    FERRY,
-    ACTIVE
-  }
+    private enum FeedState {
+        NO,
+        FERRY,
+        ACTIVE
+    }
 
-  private FeedState feedState = FeedState.NO;
+    private FeedState feedState = FeedState.NO;
 
-  private Trigger activeRumble = new Trigger(this::isHubActive);
+    private Trigger activeRumble = new Trigger(this::isHubActive);
 
-  private boolean isActiveOverride = false;
-  private Debouncer inShootingToleranceDebounce = new Debouncer(0.25);
+    private boolean isActiveOverride = false;
+    private Debouncer inShootingToleranceDebounce = new Debouncer(0.25);
 
-  public Superstructure(
-      Drive drive,
-      Intake intake,
-      Feeder feeder,
-      Flywheel flywheel,
-      Vision vision,
-      ViXController controller) {
-    this.drive = drive;
-    this.intake = intake;
-    this.feeder = feeder;
-    this.flywheel = flywheel;
-    this.vision = vision;
-    this.controller = controller;
+    public Superstructure(
+            Drive drive,
+            Intake intake,
+            Feeder feeder,
+            Flywheel flywheel,
+            Vision vision,
+            ViXController controller) {
+        this.drive = drive;
+        this.intake = intake;
+        this.feeder = feeder;
+        this.flywheel = flywheel;
+        this.vision = vision;
+        this.controller = controller;
 
-    activeRumble
-        .onTrue(this.controller.rumbleCommand(RumbleType.kBothRumble, 0.5, 0.25, 3))
-        .onFalse(this.controller.rumbleCommand(RumbleType.kBothRumble, 0.5, 1.0, 1));
-  }
+        activeRumble
+                .onTrue(this.controller.rumbleCommand(RumbleType.kBothRumble, 0.5, 0.25, 3))
+                .onFalse(this.controller.rumbleCommand(RumbleType.kBothRumble, 0.5, 1.0, 1));
+    }
 
-  @Override
-  public void periodic() {
-    ShotCalculator.getInstance().clearHubParameters();
-    ShotCalculator.getInstance().clearFerryParameters();
+    @Override
+    public void periodic() {
+        ShotCalculator.getInstance().clearHubParameters();
+        ShotCalculator.getInstance().clearFerryParameters();
 
-    if (inShootingToleranceDebounce.calculate(
-        shooterAtSetpoint() &&
-            (drive.getSystemState() == Drive.SystemState.HEADING_ALIGN ? drive.isAtHeading() : true))) {
+        if (inShootingToleranceDebounce.calculate(
+                shooterAtSetpoint() &&
+                        (drive.getSystemState() == Drive.SystemState.HEADING_ALIGN ? drive.isAtHeading() : true))) {
 
-      if (feedState == FeedState.ACTIVE && (isHubActive() || getIsOverrideActive())) {
-        feeder.setSystemState(Feeder.SystemState.FEED);
+            if (feedState == FeedState.ACTIVE && (isHubActive() || getIsOverrideActive())) {
+                feeder.setSystemState(Feeder.SystemState.FEED);
 
-      } else if (feedState == FeedState.FERRY) {
-        feeder.setSystemState(Feeder.SystemState.FEED);
+            } else if (feedState == FeedState.FERRY) {
+                feeder.setSystemState(Feeder.SystemState.FEED);
 
-      } else {
-        feeder.setSystemState(Feeder.SystemState.IDLE);
+            } else {
+                feeder.setSystemState(Feeder.SystemState.IDLE);
 
-      }
+            }
 
-    } else {
-      feeder.setSystemState(Feeder.SystemState.IDLE);
+        } else {
+            feeder.setSystemState(Feeder.SystemState.IDLE);
+
+        }
+
+        flywheel.setVelocity(shootingParams.get().flywheelSpeed());
+
+        Logger.recordOutput("Superstructure/IsFirstActive", isFirstActive);
+        Logger.recordOutput("Superstructure/IsHubActive", isHubActive());
+        Logger.recordOutput("Superstructure/FeedState", feedState);
+        Logger.recordOutput("Superstructure/ShooterAtSetpoint", shooterAtSetpoint());
+        Logger.recordOutput("Superstructure/ParamPreset", currPreset);
+        Logger.recordOutput("Superstructure/PeriodCountdown", getPeriodCountDown());
+        Logger.recordOutput("Superstructure/PeriodName", getCurrentPeriod());
 
     }
 
-    flywheel.setVelocity(shootingParams.get().flywheelSpeed());
-
-    Logger.recordOutput("Superstructure/IsFirstActive", isFirstActive);
-    Logger.recordOutput("Superstructure/IsHubActive", isHubActive());
-    Logger.recordOutput("Superstructure/FeedState", feedState);
-    Logger.recordOutput("Superstructure/ShooterAtSetpoint", shooterAtSetpoint());
-    Logger.recordOutput("Superstructure/ParamPreset", currPreset);
-    Logger.recordOutput("Superstructure/PeriodCountdown", getPeriodCountDown());
-    Logger.recordOutput("Superstructure/PeriodName", getCurrentPeriod());
-
-  }
-
-  public void setOverrideActive(boolean isActive) {
-    isActiveOverride = isActive;
-    SmartDashboard.putBoolean("Superstructure/IsActiveOverride", isActiveOverride);
-  }
-
-  public boolean getIsOverrideActive(){
-    return SmartDashboard.getBoolean("Superstructure/IsActiveOverride", isActiveOverride);
-  }
-
-  public void setIsFirstActive(boolean isFirstActive) {
-    this.isFirstActive = isFirstActive;
-    SmartDashboard.putBoolean("Superstructure/IsFirstActive", isFirstActive);
-  }
-
-  public boolean getIsFirstActive(){
-    return SmartDashboard.getBoolean("Superstructure/IsFirstActive", isFirstActive);
-  }
-
-  public boolean isHubActive() {
-    double matchTime = DriverStation.getMatchTime();
-
-    if (DriverStation.isAutonomous() || matchTime > 130 || matchTime < 30) {
-      return true;
+    public void setOverrideActive(boolean isActive) {
+        isActiveOverride = isActive;
+        SmartDashboard.putBoolean("Superstructure/IsActiveOverride", isActiveOverride);
     }
 
-    if (matchTime > 105 || (matchTime < 80 && matchTime > 55)) {
-      return isFirstActive;
-    } else {
-      return !isFirstActive;
+    public boolean getIsOverrideActive() {
+        return SmartDashboard.getBoolean("Superstructure/IsActiveOverride", isActiveOverride);
     }
-  }
 
-  public double getPeriodCountDown() {
-    double matchTime = DriverStation.getMatchTime();
-
-    if (DriverStation.isAutonomous()) { // TODO: HOLLEY SHMOLEY FIND A WAY TO CLEAN THIS UP
-      return matchTime;
-
-    } else if (matchTime > 130) {
-      return matchTime - 130;
-
-    } else if (matchTime > 105) {
-      return matchTime - 105;
-
-    } else if (matchTime > 80) {
-      return matchTime - 80;
-
-    } else if (matchTime > 55) {
-      return matchTime - 55;
-
-    } else if (matchTime > 30) {
-      return matchTime - 30;
-
-    } else {
-      return matchTime;
+    public void setIsFirstActive(boolean isFirstActive) {
+        this.isFirstActive = isFirstActive;
+        SmartDashboard.putBoolean("Superstructure/IsFirstActive", isFirstActive);
     }
-  }
 
-  public String getCurrentPeriod() {    
-    double matchTime = DriverStation.getMatchTime();
-
-    if (DriverStation.isAutonomous()) { // TODO: HOLLEY SHMOLEY FIND A WAY TO CLEAN THIS UP
-      return "Auto";
-
-    } else if (matchTime > 130) {
-      return "Transition";
-
-    } else if (matchTime > 105) {
-      return "Shift 1";
-
-    } else if (matchTime > 80) {
-      return "Shift 2";
-
-    } else if (matchTime > 55) {
-      return "Shift 3";
-
-    } else if (matchTime > 30) {
-      return "Shift 4";
-
-    } else {
-      return "Endgame";
+    public boolean getIsFirstActive() {
+        return SmartDashboard.getBoolean("Superstructure/IsFirstActive", isFirstActive);
     }
-  }
 
-  public boolean shooterAtSetpoint() {
-    return Constants.isSim || flywheel.atSetpoint();
-  }
+    public boolean isHubActive() {
+        double matchTime = DriverStation.getMatchTime();
 
-  public Command deployIntake() {
-    return Commands.runOnce(() -> intake.setWantedState(Intake.WantedState.INTAKE));
-  }
+        if (DriverStation.isAutonomous() || matchTime > 130 || matchTime < 30) {
+            return true;
+        }
 
-  public Command retractIntake() {
-    return Commands.runOnce(() -> intake.setWantedState(Intake.WantedState.RETRACT));
-  }
+        if (matchTime > 105 || (matchTime < 80 && matchTime > 55)) {
+            return isFirstActive;
+        } else {
+            return !isFirstActive;
+        }
+    }
 
-  public Command enableShooter() { // auto aim
-    return Commands.runOnce(() -> {
-      if (RobotState.getInstance().getCurrentFieldZone() == FieldZone.ALLIANCE) {
-        shootingParams = ShotCalculator.getInstance()::getHubParameters;
-        drive.setHeadingAlignRotation(() -> shootingParams.get().robotHeading());
+    public double getPeriodCountDown() {
+        double matchTime = DriverStation.getMatchTime();
 
-        feedState = FeedState.ACTIVE;
+        if (DriverStation.isAutonomous()) { // TODO: HOLLEY SHMOLEY FIND A WAY TO CLEAN THIS UP
+            return matchTime;
 
-      } else {
-        shootingParams = ShotCalculator.getInstance()::getFerryParameters;
-        drive.setWantedState(WantedState.TELEOP);
+        } else if (matchTime > 130) {
+            return matchTime - 130;
 
-        feedState = FeedState.FERRY;
+        } else if (matchTime > 105) {
+            return matchTime - 105;
 
-      }
-    });
-  }
+        } else if (matchTime > 80) {
+            return matchTime - 80;
 
-  public Command disableShooter() { // stop feeding
-    return Commands.runOnce(() -> {
-      shootingParams = ParamPreset.STOW::getParams;
-      drive.setWantedState(WantedState.TELEOP);
-      currPreset = ParamPreset.STOW;
-      feedState = FeedState.NO;
+        } else if (matchTime > 55) {
+            return matchTime - 55;
 
-    });
-  }
+        } else if (matchTime > 30) {
+            return matchTime - 30;
 
-  public Command shootPreset(ParamPreset preset) { // rev up a few secs before active period; auto shoots once it begins
-    return Commands.runOnce(() -> {
-      currPreset = preset;
-      shootingParams = currPreset::getParams;
-      drive.setWantedState(WantedState.TELEOP);
+        } else {
+            return matchTime;
+        }
+    }
 
-      if (preset == ParamPreset.SHOWER || preset == ParamPreset.SHUB) {
-        feedState = FeedState.ACTIVE;
+    public String getCurrentPeriod() {
+        double matchTime = DriverStation.getMatchTime();
 
-        // drive.setHeadingAlignRotation(AllianceFlipUtil.apply(Rotation2d.kPi));
+        if (DriverStation.isAutonomous()) { // TODO: HOLLEY SHMOLEY FIND A WAY TO CLEAN THIS UP
+            return "Auto";
 
-      } else if (preset == ParamPreset.SHERRY) {
-        feedState = FeedState.FERRY;
+        } else if (matchTime > 130) {
+            return "Transition";
 
-        // drive.setHeadingAlignRotation(AllianceFlipUtil.apply(Rotation2d.kZero));
+        } else if (matchTime > 105) {
+            return "Shift 1";
 
-      }
-    });
-  }
+        } else if (matchTime > 80) {
+            return "Shift 2";
 
-  public Command turtle() { // go under trench
-    return Commands.runOnce(() -> {
-      intake.setWantedState(Intake.WantedState.INTAKE);
-      drive.setWantedState(WantedState.TELEOP);
-      currPreset = ParamPreset.TURTLE;
-      shootingParams = currPreset::getParams;
-      feedState = FeedState.NO;
-    });
-  }
+        } else if (matchTime > 55) {
+            return "Shift 3";
+
+        } else if (matchTime > 30) {
+            return "Shift 4";
+
+        } else {
+            return "Endgame";
+        }
+    }
+
+    public boolean shooterAtSetpoint() {
+        return Constants.isSim || flywheel.atSetpoint();
+    }
+
+    public Command deployIntake() {
+        return Commands.runOnce(() -> intake.setWantedState(Intake.WantedState.INTAKE));
+    }
+
+    public Command retractIntake() {
+        return Commands.runOnce(() -> intake.setWantedState(Intake.WantedState.RETRACT));
+    }
+
+    public Command enableShooter() { // auto aim
+        return Commands.runOnce(() -> {
+            if (RobotState.getInstance().getCurrentFieldZone() == FieldZone.ALLIANCE) {
+                shootingParams = ShotCalculator.getInstance()::getHubParameters;
+                drive.setHeadingAlignRotation(() -> shootingParams.get().robotHeading());
+
+                feedState = FeedState.ACTIVE;
+
+            } else {
+                shootingParams = ShotCalculator.getInstance()::getFerryParameters;
+                drive.setWantedState(WantedState.TELEOP);
+
+                feedState = FeedState.FERRY;
+
+            }
+        });
+    }
+
+    public Command disableShooter() { // stop feeding
+        return Commands.runOnce(() -> {
+            shootingParams = ParamPreset.STOW::getParams;
+            drive.setWantedState(WantedState.TELEOP);
+            currPreset = ParamPreset.STOW;
+            feedState = FeedState.NO;
+
+        });
+    }
+
+    public Command shootPreset(ParamPreset preset) { // rev up a few secs before active period; auto shoots once it
+                                                     // begins
+        return Commands.runOnce(() -> {
+            currPreset = preset;
+            shootingParams = currPreset::getParams;
+            drive.setWantedState(WantedState.TELEOP);
+
+            if (preset == ParamPreset.SHOWER || preset == ParamPreset.SHUB) {
+                feedState = FeedState.ACTIVE;
+
+                // drive.setHeadingAlignRotation(AllianceFlipUtil.apply(Rotation2d.kPi));
+
+            } else if (preset == ParamPreset.SHERRY) {
+                feedState = FeedState.FERRY;
+
+                // drive.setHeadingAlignRotation(AllianceFlipUtil.apply(Rotation2d.kZero));
+
+            }
+        });
+    }
+
+    public Command turtle() { // go under trench
+        return Commands.runOnce(() -> {
+            intake.setWantedState(Intake.WantedState.INTAKE);
+            drive.setWantedState(WantedState.TELEOP);
+            currPreset = ParamPreset.TURTLE;
+            shootingParams = currPreset::getParams;
+            feedState = FeedState.NO;
+        });
+    }
 }

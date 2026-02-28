@@ -13,34 +13,34 @@ public class ShooterConstants {
     public static enum ParamPreset {
         // Shooting Presets
         SHOWER(Rotation2d.kZero,
-                        0.0,
-                        new LoggedTunableNumber("Shooter/Presets/ShowerRPM", 3000.0)),
+                0.0,
+                new LoggedTunableNumber("Shooter/Presets/ShowerRPM", 3000.0)),
         SHUB(Rotation2d.kZero,
-                        0.0,
-                        new LoggedTunableNumber("Shooter/Presets/ShowerRPM", 3000.0)),
+                0.0,
+                new LoggedTunableNumber("Shooter/Presets/ShowerRPM", 3000.0)),
         SHERRY(Rotation2d.kZero,
-                        0.0,
-                        new LoggedTunableNumber("Shooter/Presets/ShowerRPM", 5000.0)),
-                        
+                0.0,
+                new LoggedTunableNumber("Shooter/Presets/ShowerRPM", 5000.0)),
+
         // Other
         STOW(Rotation2d.kZero,
-                        0.0,
-                        new LoggedTunableNumber("Shooter/Presets/StowRPM", 300.0)),
+                0.0,
+                new LoggedTunableNumber("Shooter/Presets/StowRPM", 300.0)),
         TURTLE(Rotation2d.kZero,
-                        0.0,
-                        new LoggedTunableNumber("Shooter/Presets/TurtleRPM", 300.0));
+                0.0,
+                new LoggedTunableNumber("Shooter/Presets/TurtleRPM", 300.0));
 
         private final Rotation2d robotHeading;
         private final double robotOmega;
         private final DoubleSupplier flywheelSpeed;
 
-        ParamPreset(Rotation2d robotHeading, double robotOmega, DoubleSupplier flywheelSpeed){
+        ParamPreset(Rotation2d robotHeading, double robotOmega, DoubleSupplier flywheelSpeed) {
             this.robotHeading = robotHeading;
             this.robotOmega = robotOmega;
             this.flywheelSpeed = flywheelSpeed;
         }
 
-        public ShootingParameters getParams(){
+        public ShootingParameters getParams() {
             return new ShootingParameters(true, robotHeading, robotOmega, flywheelSpeed.getAsDouble());
         }
     }

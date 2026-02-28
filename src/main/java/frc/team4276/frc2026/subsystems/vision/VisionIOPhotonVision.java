@@ -29,95 +29,96 @@ import org.photonvision.PhotonPoseEstimator;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
-  protected final PhotonCamera camera;
-  protected final Transform3d robotToCamera;
-  protected final VisionObservationType observationType;
+    protected final PhotonCamera camera;
+    protected final Transform3d robotToCamera;
+    protected final VisionObservationType observationType;
 
-  private final PhotonPoseEstimator poseEstimator;
+    private final PhotonPoseEstimator poseEstimator;
 
-  /**
-   * Creates a new VisionIOPhotonVision.
-   *
-   * @param name             The configured name of the camera.
-   * @param rotationSupplier The 3D position of the camera relative to the robot.
-   */
-  public VisionIOPhotonVision(int index) {
-    camera = new PhotonCamera(configs[index].name);
-    this.robotToCamera = configs[index].robotToCamera;
-    this.observationType = configs[index].observationType;
+    /**
+     * Creates a new VisionIOPhotonVision.
+     *
+     * @param name             The configured name of the camera.
+     * @param rotationSupplier The 3D position of the camera relative to the robot.
+     */
+    public VisionIOPhotonVision(int index) {
+        camera = new PhotonCamera(configs[index].name);
+        this.robotToCamera = configs[index].robotToCamera;
+        this.observationType = configs[index].observationType;
 
-    poseEstimator = new PhotonPoseEstimator(aprilTagLayout, robotToCamera);
-  }
+        poseEstimator = new PhotonPoseEstimator(aprilTagLayout, robotToCamera);
+    }
 
-  @Override
-  public void updateInputs(VisionIOInputs inputs) {
-    inputs.connected = camera.isConnected();
+    @Override
+    public void updateInputs(VisionIOInputs inputs) {
+        inputs.connected = camera.isConnected();
 
-    // Read new camera observations
-    Set<Short> tagIds = new HashSet<>();
-    List<PoseObservation> poseObservations = new LinkedList<>();
-    for (var result : camera.getAllUnreadResults()) {
-      if (observationType == VisionObservationType.FUEL) {
-        inputs.objectFrames = new double[result.targets.size()][];
-        
-        for (int i = 0; i < result.targets.size(); i++) {
-          inputs.objectFrames[i] = new double[8];
-          for (int j = 0; j < 4; j++) {
-            inputs.objectFrames[i][j] = result.targets.get(i).getDetectedCorners().get(j).x;
-            inputs.objectFrames[i][j + 4] = result.targets.get(i).getDetectedCorners().get(j).y;
-          }
+        // Read new camera observations
+        Set<Short> tagIds = new HashSet<>();
+        List<PoseObservation> poseObservations = new LinkedList<>();
+        for (var result : camera.getAllUnreadResults()) {
+            if (observationType == VisionObservationType.FUEL) {
+                inputs.objectFrames = new double[result.targets.size()][];
+
+                for (int i = 0; i < result.targets.size(); i++) {
+                    inputs.objectFrames[i] = new double[8];
+                    for (int j = 0; j < 4; j++) {
+                        inputs.objectFrames[i][j] = result.targets.get(i).getDetectedCorners().get(j).x;
+                        inputs.objectFrames[i][j + 4] = result.targets.get(i).getDetectedCorners().get(j).y;
+                    }
+                }
+
+            } else if (observationType == VisionObservationType.APRILTAG) {
+                Optional<EstimatedRobotPose> estimate = poseEstimator.estimateCoprocMultiTagPose(result);
+
+                if (estimate.isEmpty()) {
+                    estimate = poseEstimator.estimateLowestAmbiguityPose(result);
+                }
+
+                estimate.ifPresent(
+                        (poseEstimate) -> {
+                            if (rejectEstimate(poseEstimate)) {
+                                return;
+                            }
+
+                            // Calculate average tag distance
+                            double totalTagDistance = 0.0;
+                            for (var target : poseEstimate.targetsUsed) {
+                                // Add tag IDs
+                                tagIds.add((short) target.fiducialId);
+                                totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
+                            }
+
+                            // Add observation
+                            poseObservations.add(
+                                    new PoseObservation(
+                                            poseEstimate.timestampSeconds, // Timestamp
+                                            poseEstimate.estimatedPose, // 3D pose estimate
+                                            poseEstimate.targetsUsed.get(0).poseAmbiguity, // Ambiguity
+                                            poseEstimate.targetsUsed.size(), // Tag count
+                                            poseEstimate.targetsUsed.get(0).fiducialId, // 1st tag id for single tag
+                                                                                        // gyro fusion
+                                            totalTagDistance / poseEstimate.targetsUsed.size(), // Average tag distance
+                                            PoseObservationType.PHOTONVISION)); // Observation type
+                        });
+            }
         }
 
-      } else if (observationType == VisionObservationType.APRILTAG) {
-        Optional<EstimatedRobotPose> estimate = poseEstimator.estimateCoprocMultiTagPose(result);
-
-        if (estimate.isEmpty()) {
-          estimate = poseEstimator.estimateLowestAmbiguityPose(result);
+        // Save pose observations to inputs object
+        inputs.poseObservations = new PoseObservation[poseObservations.size()];
+        for (int i = 0; i < poseObservations.size(); i++) {
+            inputs.poseObservations[i] = poseObservations.get(i);
         }
 
-        estimate.ifPresent(
-            (poseEstimate) -> {
-              if (rejectEstimate(poseEstimate)) {
-                return;
-              }
-
-              // Calculate average tag distance
-              double totalTagDistance = 0.0;
-              for (var target : poseEstimate.targetsUsed) {
-                // Add tag IDs
-                tagIds.add((short) target.fiducialId);
-                totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
-              }
-
-              // Add observation
-              poseObservations.add(
-                  new PoseObservation(
-                      poseEstimate.timestampSeconds, // Timestamp
-                      poseEstimate.estimatedPose, // 3D pose estimate
-                      poseEstimate.targetsUsed.get(0).poseAmbiguity, // Ambiguity
-                      poseEstimate.targetsUsed.size(), // Tag count
-                      poseEstimate.targetsUsed.get(0).fiducialId, // 1st tag id for single tag gyro fusion
-                      totalTagDistance / poseEstimate.targetsUsed.size(), // Average tag distance
-                      PoseObservationType.PHOTONVISION)); // Observation type
-            });
-      }
+        // Save tag IDs to inputs objects
+        inputs.tagIds = new int[tagIds.size()];
+        int i = 0;
+        for (int id : tagIds) {
+            inputs.tagIds[i++] = id;
+        }
     }
 
-    // Save pose observations to inputs object
-    inputs.poseObservations = new PoseObservation[poseObservations.size()];
-    for (int i = 0; i < poseObservations.size(); i++) {
-      inputs.poseObservations[i] = poseObservations.get(i);
+    private boolean rejectEstimate(EstimatedRobotPose estimate) {
+        return false;
     }
-
-    // Save tag IDs to inputs objects
-    inputs.tagIds = new int[tagIds.size()];
-    int i = 0;
-    for (int id : tagIds) {
-      inputs.tagIds[i++] = id;
-    }
-  }
-
-  private boolean rejectEstimate(EstimatedRobotPose estimate) {
-    return false;
-  }
 }

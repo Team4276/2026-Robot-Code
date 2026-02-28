@@ -27,47 +27,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VisionConstants {
-  private static final boolean forceEnableInstanceLogging = false;
-  public static final boolean enableInstanceLogging =
-      forceEnableInstanceLogging || Constants.getMode() == Mode.REPLAY;
+    private static final boolean forceEnableInstanceLogging = false;
+    public static final boolean enableInstanceLogging = forceEnableInstanceLogging
+            || Constants.getMode() == Mode.REPLAY;
 
-  // AprilTag layout
-  public static AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+    // AprilTag layout
+    public static AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
-  // Robot to camera transforms
-  public static final Transform3d ov9281RobotToCamera = new Transform3d(
-      Units.inchesToMeters(-1.0),
-      Units.inchesToMeters(9.0),
-      Units.inchesToMeters(8.0),
-      new Rotation3d(0.0, Units.degreesToRadians(-20.0), Units.degreesToRadians(-20.0)));
+    // Robot to camera transforms
+    public static final Transform3d ov9281RobotToCamera = new Transform3d(
+            Units.inchesToMeters(-1.0),
+            Units.inchesToMeters(9.0),
+            Units.inchesToMeters(8.0),
+            new Rotation3d(0.0, Units.degreesToRadians(-20.0), Units.degreesToRadians(-20.0)));
 
-  public static final CameraConfig[] configs = new CameraConfig[] {
-      new CameraConfig("Arducam_OV9281_USB_Camera", ov9281RobotToCamera, VisionObservationType.APRILTAG)
-  };
+    public static final CameraConfig[] configs = new CameraConfig[] {
+            new CameraConfig("Arducam_OV9281_USB_Camera", ov9281RobotToCamera, VisionObservationType.APRILTAG)
+    };
 
-  // Basic filtering thresholds
-  public static final double maxAmbiguity = 0.19;
-  public static final double maxZError = 0.3;
-  public static final double maxSingleTagDistanceMeters = 3.0;
+    // Basic filtering thresholds
+    public static final double maxAmbiguity = 0.19;
+    public static final double maxZError = 0.3;
+    public static final double maxSingleTagDistanceMeters = 3.0;
 
-  // Standard deviation baselines, for 1 meter distance and 1 tag
-  // (Adjusted automatically based on distance and # of tags)
-  public static final double linearStdDevBaseline = 0.02; // Meters
-  public static final double angularStdDevBaseline = 0.06; // Radians
+    // Standard deviation baselines, for 1 meter distance and 1 tag
+    // (Adjusted automatically based on distance and # of tags)
+    public static final double linearStdDevBaseline = 0.02; // Meters
+    public static final double angularStdDevBaseline = 0.06; // Radians
 
-  // Vision can sometimes provide bad rotation updates
-  public static final boolean useVisionRotation = true;
+    // Vision can sometimes provide bad rotation updates
+    public static final boolean useVisionRotation = true;
 
-  // Standard deviation multipliers for each camera
-  // (Adjust to trust some cameras more than others)
-  public static final double[] cameraStdDevFactors = new double[] {
-      1.0 // Camera 0
-  };
+    // Standard deviation multipliers for each camera
+    // (Adjust to trust some cameras more than others)
+    public static final double[] cameraStdDevFactors = new double[] {
+            1.0 // Camera 0
+    };
 
-  public static final double kLargeVariance = 1e6;
+    public static final double kLargeVariance = 1e6;
 
-  public static final List<Integer> singleTagIdsToReject = new ArrayList<>() {
-    {
-    }
-  };
+    public static final List<Integer> singleTagIdsToReject = new ArrayList<>() {
+        {
+        }
+    };
 }

@@ -18,6 +18,7 @@ import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 
 import frc.team4276.frc2026.Ports;
 
@@ -32,7 +33,7 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
     private boolean brakeModeEnabled = false;
 
     public IntakeDeployIOSpark() {
-        spark = new SparkMax(Ports.FLYWHEEL_FRONT, MotorType.kBrushless);
+        spark = new SparkMax(Ports.FLYWHEEL, MotorType.kBrushless);
         encoder = spark.getEncoder();
         absoluteEncoder = spark.getAbsoluteEncoder();
         controller = spark.getClosedLoopController();
@@ -57,9 +58,14 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
         config.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .pid(
-                        0.001,
+                        0.0,
                         0.0,
                         0.0);
+        config.closedLoop.maxMotion
+                .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal)
+                .allowedProfileError(10.0)
+                .cruiseVelocity(10.0)
+                .maxAcceleration(10.0);
         config.signals
                 .primaryEncoderVelocityAlwaysOn(true)
                 .primaryEncoderVelocityPeriodMs(20)
@@ -94,7 +100,13 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
 
     @Override
     public void setPositionSetpoint(double position) {
-        controller.setSetpoint(position, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0, 0.0, ArbFFUnits.kVoltage);
+        controller.setSetpoint(position, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0, 0.0,
+                ArbFFUnits.kVoltage);
+    }
+
+    @Override
+    public void setPosition(double position) {
+        encoder.setPosition(position);
     }
 
     @Override
@@ -118,4 +130,5 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
                 .start();
 
     }
+
 }

@@ -90,7 +90,7 @@ public class ModuleIOKreo implements ModuleIO {
                 .withKI(0.0)
                 .withKD(0.0)
                 .withKS(0.0)
-                .withKV(12.0 / 100.0) 
+                .withKV(12.0 / 100.0)
                 .withKA(0.0);
         driveConfig.CurrentLimits
                 .withSupplyCurrentLimit(50)

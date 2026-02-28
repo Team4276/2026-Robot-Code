@@ -17,49 +17,49 @@ package frc.team4276.frc2026;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static enum Mode {
-    /** Running on a real robot. */
-    REAL,
+    public static enum Mode {
+        /** Running on a real robot. */
+        REAL,
 
-    /** Running a physics simulator. */
-    SIM,
+        /** Running a physics simulator. */
+        SIM,
 
-    /** Replaying from a log file. */
-    REPLAY,
-  }
-
-  public static Mode getMode() {
-    return mode;
-  }
-
-  public static enum RobotType {
-    COMPBOT,
-    SIMBOT
-  }
-
-  public static Mode mode = Mode.REAL;
-
-  public static RobotType getType() {
-    return switch (mode) {
-      case REAL -> RobotType.COMPBOT;
-      case REPLAY -> RobotType.COMPBOT;
-      case SIM -> RobotType.SIMBOT;
-    };
-  }
-
-  public static final boolean isTuning = true;
-
-  public static final boolean isSim = (mode == Mode.SIM);
-
-  public static final boolean isDemo = false;
-
-  /** Checks whether the correct robot is selected when deploying. */
-  public static class CheckDeploy {
-    public static void main(String... args) {
-      if (getType() == RobotType.SIMBOT) {
-        System.err.println("Cannot deploy, invalid robot selected: " + getType());
-        System.exit(1);
-      }
+        /** Replaying from a log file. */
+        REPLAY,
     }
-  }
+
+    public static Mode getMode() {
+        return mode;
+    }
+
+    public static enum RobotType {
+        COMPBOT,
+        SIMBOT
+    }
+
+    public static Mode mode = Mode.REAL;
+
+    public static RobotType getType() {
+        return switch (mode) {
+            case REAL -> RobotType.COMPBOT;
+            case REPLAY -> RobotType.COMPBOT;
+            case SIM -> RobotType.SIMBOT;
+        };
+    }
+
+    public static final boolean isTuning = true;
+
+    public static final boolean isSim = (mode == Mode.SIM);
+
+    public static final boolean isDemo = false;
+
+    /** Checks whether the correct robot is selected when deploying. */
+    public static class CheckDeploy {
+        public static void main(String... args) {
+            if (getType() == RobotType.SIMBOT) {
+                System.err.println("Cannot deploy, invalid robot selected: " + getType());
+                System.exit(1);
+            }
+        }
+    }
 }
