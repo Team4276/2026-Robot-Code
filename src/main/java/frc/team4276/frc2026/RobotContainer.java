@@ -9,6 +9,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.team4276.frc2026.auto.AutoFactory;
+import frc.team4276.frc2026.auto.AutoSelector;
 import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.frc2026.subsystems.Superstructure;
 import frc.team4276.frc2026.subsystems.drive.Drive;
@@ -43,6 +45,10 @@ public class RobotContainer {
     private Vision vision;
 
     private final Superstructure superstructure;
+
+    private final AutoSelector autoSelector = new AutoSelector(new AutoFactory(this)); // I don't know why I did this.
+                                                                                       // Do not ask why I did this. 
+                                                                                       // No, I will not change it.
 
     private final ViXController driver = new ViXController(Ports.DRIVER_CONTROLLER);
     private final CowsController demoController = new CowsController(Ports.DEMO_CONTROLLER_LEFT,
@@ -203,26 +209,26 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return Commands.none();
+        return autoSelector.getCommand();
     }
 
-    public Drive getDrive(){
+    public Drive getDrive() {
         return drive;
     }
-    
-    public Intake getIntake(){
+
+    public Intake getIntake() {
         return intake;
     }
 
-    public Feeder getFeeder(){
+    public Feeder getFeeder() {
         return feeder;
     }
-    
-    public Flywheel getFlywheel(){
+
+    public Flywheel getFlywheel() {
         return flywheel;
     }
-    
-    public Vision getVision(){
+
+    public Vision getVision() {
         return vision;
     }
 }

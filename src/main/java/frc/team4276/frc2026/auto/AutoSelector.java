@@ -19,9 +19,11 @@ public class AutoSelector extends VirtualSubsystem {
     private Supplier<Command> lastRoutine = () -> Commands.none();
     private String lastRoutineName = "";
 
+    private Command autoCommand;
     private static boolean autoChanged = true;
 
     private final LoggedNetworkNumber delayInput = new LoggedNetworkNumber("Comp/Auto/Delay", 0.0);
+    private double prevDelayInput = 0.0;
 
     public AutoSelector(AutoFactory autoFactory) {
         this.autoFactory = autoFactory;
@@ -31,10 +33,14 @@ public class AutoSelector extends VirtualSubsystem {
 
     /** Returns the selected auto command with the inputted delay. */
     public Command getCommand() {
-        return lastRoutine
-                .get()
-                .beforeStarting(Commands.waitSeconds(getDelayInput()))
-                .finallyDo(() -> this.autoFactory.autoEnd());
+        if (autoCommand == null) {
+            autoCommand = lastRoutine
+                    .get()
+                    .beforeStarting(Commands.waitSeconds(getDelayInput()))
+                    .finallyDo(() -> this.autoFactory.autoEnd());
+        }
+
+        return autoCommand;
     }
 
     public double getDelayInput() {
@@ -48,6 +54,8 @@ public class AutoSelector extends VirtualSubsystem {
         if (DriverStation.isAutonomousEnabled() && lastRoutine != null) {
             return;
         }
+
+        autoChanged = false;
 
         SmartDashboard.putNumber("Comp/Auto/Delay Input Submitted ", getDelayInput());
 
@@ -72,15 +80,14 @@ public class AutoSelector extends VirtualSubsystem {
             autoChanged = true;
         }
 
-        wasRed = AllianceFlipUtil.shouldFlip();
-    }
-
-    public static boolean hasAutoChanged() {
-        if (autoChanged) {
-            autoChanged = false;
-            return true;
+        if(getDelayInput() == prevDelayInput){
+            autoChanged = true;
         }
 
-        return false;
+        wasRed = AllianceFlipUtil.shouldFlip();
+
+        if (autoChanged) {
+            autoCommand = null;
+        }
     }
 }
