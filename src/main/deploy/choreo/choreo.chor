@@ -9,39 +9,39 @@
  "config":{
   "frontLeft":{
    "x":{
-    "exp":"11 in",
-    "val":0.2794
+    "exp":"13.75 in",
+    "val":0.34925
    },
    "y":{
-    "exp":"11 in",
-    "val":0.2794
+    "exp":"9.75 in",
+    "val":0.24765
    }
   },
   "backLeft":{
    "x":{
-    "exp":"-11 in",
-    "val":-0.2794
+    "exp":"-13.75 in",
+    "val":-0.34925
    },
    "y":{
-    "exp":"11 in",
-    "val":0.2794
+    "exp":"9.75 in",
+    "val":0.24765
    }
   },
   "mass":{
-   "exp":"150 lbs",
-   "val":68.0388555
+   "exp":"87 lbs",
+   "val":39.46253619
   },
   "inertia":{
-   "exp":"6 kg m ^ 2",
-   "val":6.0
+   "exp":"4.59 kg m ^ 2",
+   "val":4.59
   },
   "gearing":{
-   "exp":"6.5",
-   "val":6.5
+   "exp":"4.71",
+   "val":4.71
   },
   "radius":{
-   "exp":"2 in",
-   "val":0.0508
+   "exp":"1.5 in",
+   "val":0.038099999999999995
   },
   "vmax":{
    "exp":"6000 RPM",
@@ -52,21 +52,21 @@
    "val":1.2
   },
   "cof":{
-   "exp":"1.5",
-   "val":1.5
+   "exp":"1.2",
+   "val":1.2
   },
   "bumper":{
    "front":{
-    "exp":"16 in",
-    "val":0.4064
+    "exp":"19.375 in",
+    "val":0.492125
    },
    "side":{
-    "exp":"16 in",
-    "val":0.4064
+    "exp":"15.375 in",
+    "val":0.390525
    },
    "back":{
-    "exp":"16 in",
-    "val":0.4064
+    "exp":"19.375 in",
+    "val":0.492125
    }
   },
   "differentialTrackWidth":{
@@ -76,7 +76,7 @@
  },
  "generationFeatures":[],
  "codegen":{
-  "root":"..\\C:\\Robotics\\github\\2026-Robot-Code\\src\\main\\deploy",
+  "root":null,
   "genVars":true,
   "genTrajData":true,
   "useChoreoLib":true

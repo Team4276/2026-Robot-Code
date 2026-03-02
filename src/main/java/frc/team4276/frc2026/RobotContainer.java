@@ -205,4 +205,24 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return Commands.none();
     }
+
+    public Drive getDrive(){
+        return drive;
+    }
+    
+    public Intake getIntake(){
+        return intake;
+    }
+
+    public Feeder getFeeder(){
+        return feeder;
+    }
+    
+    public Flywheel getFlywheel(){
+        return flywheel;
+    }
+    
+    public Vision getVision(){
+        return vision;
+    }
 }

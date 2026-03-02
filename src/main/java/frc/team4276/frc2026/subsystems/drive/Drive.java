@@ -259,7 +259,6 @@ public class Drive extends SubsystemBase {
                 break;
 
             case PATH:
-
                 if (sampledTrajectoryState.pose
                         .getTranslation()
                         .getDistance(currentPose.getTranslation()) > maxError.getAsDouble()) {
@@ -419,6 +418,10 @@ public class Drive extends SubsystemBase {
 
     public boolean isAtPose(Pose2d pose) {
         return isAtTranslation(pose.getTranslation()) && isAtHeading(pose.getRotation());
+    }
+
+    public boolean isAtAutoAlignPose(){
+        return isAtPose(desiredAutoAlignPose);
     }
 
     public boolean isAtTranslation(Translation2d trans) {

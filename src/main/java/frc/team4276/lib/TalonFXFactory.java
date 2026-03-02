@@ -1,5 +1,6 @@
 package frc.team4276.lib;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -16,20 +17,31 @@ public class TalonFXFactory {
     public static InvertedValue INVERT_VALUE = InvertedValue.CounterClockwise_Positive;
     public static double NEUTRAL_DEADBAND = 0.04;
 
-    // create a TalonFX with the default (out of the box) configuration
-    public static TalonFX createDefaultTalon(int id) {
-        return createDefaultTalon(id, true);
+    public enum CanBus { // Cmon ctre...
+        RIO("rio"),
+        CANIVORE("*");
+
+        final String string;
+
+        CanBus(String string){
+            this.string = string;
+        }
     }
 
-    public static TalonFX createDefaultTalon(int id, boolean trigger_config) {
-        var talon = createTalon(id);
+    // create a TalonFX with the default (out of the box) configuration
+    public static TalonFX createDefaultTalon(int id, CanBus canBus) {
+        return createDefaultTalon(id, canBus, true);
+    }
+
+    public static TalonFX createDefaultTalon(int id, CanBus canBus, boolean trigger_config) {
+        var talon = createTalon(id, canBus);
         talon.getConfigurator().apply(getDefaultConfig());
         return talon;
     }
 
     public static TalonFX createPermanentFollowerTalon(
-            int followerId, int masterId, boolean opposeMasterDirection) {
-        final TalonFX talon = createTalon(followerId);
+            int followerId, int masterId, CanBus canBus, boolean opposeMasterDirection) {
+        final TalonFX talon = createTalon(followerId, canBus);
         talon.setControl(new Follower(masterId,
                 opposeMasterDirection ? MotorAlignmentValue.Opposed : MotorAlignmentValue.Aligned));
         return talon;
@@ -70,8 +82,8 @@ public class TalonFXFactory {
         return config;
     }
 
-    private static TalonFX createTalon(int id) {
-        TalonFX talon = new TalonFX(id);
+    private static TalonFX createTalon(int id, CanBus canBus) {
+        TalonFX talon = new TalonFX(id, new CANBus(canBus.string));
         talon.clearStickyFaults();
 
         return talon;

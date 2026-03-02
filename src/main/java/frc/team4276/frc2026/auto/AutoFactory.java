@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.team4276.frc2026.FieldConstants;
 import frc.team4276.frc2026.RobotContainer;
 import frc.team4276.frc2026.RobotState;
+import frc.team4276.frc2026.RobotState.VisionState;
 import frc.team4276.lib.dashboard.Elastic;
 import frc.team4276.lib.dashboard.Elastic.Notification;
 import frc.team4276.lib.dashboard.Elastic.Notification.NotificationLevel;
@@ -14,6 +15,8 @@ import frc.team4276.lib.geometry.AllianceFlipUtil;
 
 import java.util.List;
 import java.util.function.Supplier;
+
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 
 @SuppressWarnings("unused")
 public class AutoFactory {
@@ -38,43 +41,32 @@ public class AutoFactory {
         return Commands.runOnce(() -> RobotState.getInstance().resetPose(pose));
     }
 
-    // private Command driveTrajectory(Trajectory<SwerveSample> traj) {
-    // ElasticUI.putAutoTrajectory(traj);
-    // ElasticUI.putAutoPath(
-    // List.of(traj.getInitialPose(false).get(), traj.getFinalPose(false).get()));
+    private Command driveTrajectoryWithVisionState(PathPlannerTrajectory traj, VisionState state) {
+        if (traj.getStates().isEmpty()) {
+            return Commands.none();
+        }
 
-    // return Commands.runOnce(
-    // () -> {
-    // robotContainer.getDrive().setChoreoTrajectory(traj);
-    // RobotState.getInstance().setVisionMode(VisionMode.REJECT_ALL);
-    // })
-    // .andThen(Commands.waitUntil(() ->
-    // robotContainer.getDrive().isTrajectoryFinished()))
-    // .finallyDo(
-    // () -> {
-    // RobotState.getInstance().setVisionMode(VisionMode.ACCEPT_ALL);
-    // });
-    // }
+        return Commands.runOnce(
+                () -> {
+                    robotContainer.getDrive().setTrajectory(traj);
+                    RobotState.getInstance().setVisionState(state);
+                })
+                .andThen(Commands.waitUntil(() -> robotContainer.getDrive().isTrajectoryFinished()))
+                .andThen(Commands.runOnce(() -> RobotState.getInstance().setVisionState(VisionState.ACCEPT)));
+    }
 
-    // private Command driveToPoint(Pose2d pose) {
-    // return driveToPoint(() -> pose);
-    // }
+    private Command driveTrajectory(PathPlannerTrajectory traj){
+        return driveTrajectoryWithVisionState(traj, VisionState.ACCEPT);
+    }
 
-    // private Command driveToPoint(Supplier<Pose2d> pose) {
-    // return Commands.run(() ->
-    // robotContainer.getDrive().setAutoAlignPose(pose.get()))
-    // .until(() -> robotContainer.getDrive().isAtAutoAlignPose());
-    // }
+    private Command driveToPoint(Pose2d pose) {
+        return driveToPoint(() -> pose);
+    }
 
-    // private Command driveToPointWithCheckerPose(Supplier<Pose2d> pose, Pose2d
-    // checkerPose) {
-    // return Commands.run(
-    // () -> {
-    // robotContainer.getDrive().setAutoAlignPose(pose.get());
-    // robotContainer.getDrive().setIsAutoAlignCheckPose(checkerPose);
-    // })
-    // .until(() -> robotContainer.getDrive().isAtAutoAlignPose());
-    // }
+    private Command driveToPoint(Supplier<Pose2d> pose) {
+        return Commands.run(() -> robotContainer.getDrive().setAutoAlignPose(pose.get()))
+                .until(() -> robotContainer.getDrive().isAtAutoAlignPose());
+    }
 
     /**
      * Returns whether robot has crossed x boundary, accounting for alliance flip

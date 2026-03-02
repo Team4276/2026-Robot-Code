@@ -60,6 +60,13 @@ public class RobotState {
     @AutoLogOutput
     private int visionUpdateCount = 0;
 
+    public enum VisionState {
+        ACCEPT,
+        REJECT
+    }
+
+    private VisionState visionState = VisionState.ACCEPT;
+
     private double lastUsedVisionPoseEstimateTimestamp = 0.0;
 
     private static RobotState mInstance;
@@ -97,10 +104,17 @@ public class RobotState {
         poseBuffer.addSample(timestamp, getEstimatedOdomPose());
     }
 
+    public void setVisionState(VisionState state){
+        visionState = state;
+    }
+
     public void addVisionMeasurement(
             Pose2d visionRobotPoseMeters,
             double timestampSeconds,
             Matrix<N3, N1> visionMeasurementStdDevs) {
+        if(visionState == VisionState.REJECT){
+            return;
+        }
 
         visionUpdateCount++;
 

@@ -5,6 +5,7 @@ import static frc.team4276.lib.PhoenixUtil.*;
 import java.util.Queue;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -18,7 +19,7 @@ import frc.team4276.frc2026.subsystems.drive.DriveConstants;
 import frc.team4276.frc2026.subsystems.drive.PhoenixOdometryThread;
 
 public class GyroIOPigeon2 implements GyroIO {
-    private final Pigeon2 gyro = new Pigeon2(Ports.PIGEON);
+    private final Pigeon2 gyro = new Pigeon2(Ports.PIGEON, new CANBus("*"));
 
     private final StatusSignal<Angle> yawStatusSignal = gyro.getYaw();
     private final Queue<Double> yawPositionQueue;

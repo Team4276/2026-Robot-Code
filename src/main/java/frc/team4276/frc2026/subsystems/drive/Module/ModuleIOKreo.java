@@ -40,6 +40,7 @@ import frc.team4276.frc2026.subsystems.drive.PhoenixOdometryThread;
 import frc.team4276.frc2026.subsystems.drive.SparkOdometryThread;
 import frc.team4276.lib.PhoenixUtil;
 import frc.team4276.lib.TalonFXFactory;
+import frc.team4276.lib.TalonFXFactory.CanBus;
 
 public class ModuleIOKreo implements ModuleIO {
     private final Rotation2d zeroRotation;
@@ -78,7 +79,7 @@ public class ModuleIOKreo implements ModuleIO {
         zeroRotation = zeroRotations[module];
         zeroHelperRotation = zeroHelperRotations[module];
 
-        driveTalon = TalonFXFactory.createDefaultTalon(canIds[module][0]);
+        driveTalon = TalonFXFactory.createDefaultTalon(canIds[module][0], CanBus.CANIVORE);
         turnSpark = new SparkMax(canIds[module][1], MotorType.kBrushless);
         turnEncoder = turnSpark.getAbsoluteEncoder();
         turnController = turnSpark.getClosedLoopController();
