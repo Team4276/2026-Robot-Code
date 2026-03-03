@@ -161,9 +161,9 @@ public class ModuleIOKreo implements ModuleIO {
         driveTalon.optimizeBusUtilization();
 
         // Create odometry queues
-        timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
+        timestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
         drivePositionQueue = PhoenixOdometryThread.getInstance().registerSignal(drivePosition);
-        turnPositionQueue = SparkOdometryThread.getInstance().registerSignal(turnSpark, turnEncoder::getPosition);
+        turnPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(turnEncoder::getPosition);
     }
 
     @Override
