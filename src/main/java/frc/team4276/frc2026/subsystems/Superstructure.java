@@ -72,6 +72,9 @@ public class Superstructure extends SubsystemBase {
         activeRumble
                 .onTrue(this.controller.rumbleCommand(RumbleType.kBothRumble, 0.5, 0.25, 3))
                 .onFalse(this.controller.rumbleCommand(RumbleType.kBothRumble, 0.5, 1.0, 1));
+
+        SmartDashboard.putBoolean("Superstructure/IsActiveOverride", isActiveOverride);
+        SmartDashboard.putBoolean("Superstructure/IsFirstActive", isFirstActive);
     }
 
     @Override
@@ -101,12 +104,13 @@ public class Superstructure extends SubsystemBase {
 
         flywheel.setVelocity(shootingParams.get().flywheelSpeed());
 
-        Logger.recordOutput("Superstructure/IsFirstActive", isFirstActive);
+        Logger.recordOutput("Superstructure/IsFirstActive", getIsFirstActive());
         Logger.recordOutput("Superstructure/IsHubActive", isHubActive());
         Logger.recordOutput("Superstructure/FeedState", feedState);
         Logger.recordOutput("Superstructure/ShooterAtSetpoint", shooterAtSetpoint());
         Logger.recordOutput("Superstructure/ParamPreset", currPreset);
         Logger.recordOutput("Superstructure/PeriodCountdown", getPeriodCountDown());
+        Logger.recordOutput("Superstructure/MatchTime", DriverStation.getMatchTime());
         Logger.recordOutput("Superstructure/PeriodName", getCurrentPeriod());
 
     }
@@ -137,9 +141,9 @@ public class Superstructure extends SubsystemBase {
         }
 
         if (matchTime > 105 || (matchTime < 80 && matchTime > 55)) {
-            return isFirstActive;
+            return getIsFirstActive();
         } else {
-            return !isFirstActive;
+            return !getIsFirstActive();
         }
     }
 

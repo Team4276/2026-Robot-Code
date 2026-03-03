@@ -177,8 +177,11 @@ public class ModuleIOKreo implements ModuleIO {
         inputs.driveVelocityRadPerSec = Units
                 .rotationsToRadians(driveVelocity.getValueAsDouble() / driveMotorReduction);
 
+        BaseStatusSignal.refreshAll(driveAppliedVolts, driveSupplyCurrent, driveTemperature);
+
         inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
         inputs.driveCurrentAmps = driveSupplyCurrent.getValueAsDouble();
+        inputs.driveTempCelsius = driveTemperature.getValueAsDouble();
 
         // Update turn inputs
         sparkStickyFault = false;
@@ -192,6 +195,7 @@ public class ModuleIOKreo implements ModuleIO {
                 new DoubleSupplier[] { turnSpark::getAppliedOutput, turnSpark::getBusVoltage },
                 (values) -> inputs.turnAppliedVolts = values[0] * values[1]);
         ifOk(turnSpark, turnSpark::getOutputCurrent, (value) -> inputs.turnCurrentAmps = value);
+        ifOk(turnSpark, turnSpark::getMotorTemperature, (value) -> inputs.turnTempCelsius = value);
         inputs.zeroHelperTurnPosition = inputs.turnPosition.minus(zeroHelperRotation);
         inputs.turnConnected = turnConnectedDebounce.calculate(!sparkStickyFault);
 

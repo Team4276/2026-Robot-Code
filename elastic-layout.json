@@ -6,7 +6,195 @@
       "name": "Pit Check",
       "grid_layout": {
         "layouts": [],
-        "containers": []
+        "containers": [
+          {
+            "title": "Gyro",
+            "x": 704.0,
+            "y": 288.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Gyro/Connected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "X"
+            }
+          },
+          {
+            "title": "Front Left Turn",
+            "x": 192.0,
+            "y": 160.0,
+            "width": 160.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module0/TurnConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Front Left Drive",
+            "x": 192.0,
+            "y": 32.0,
+            "width": 160.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module0/DriveConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "DriveConnected",
+            "x": 352.0,
+            "y": 32.0,
+            "width": 160.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module1/DriveConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "TurnConnected",
+            "x": 352.0,
+            "y": 160.0,
+            "width": 160.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module1/TurnConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "DriveConnected",
+            "x": 192.0,
+            "y": 288.0,
+            "width": 160.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module2/DriveConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "TurnConnected",
+            "x": 192.0,
+            "y": 416.0,
+            "width": 160.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module2/TurnConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "DriveConnected",
+            "x": 352.0,
+            "y": 288.0,
+            "width": 160.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module3/DriveConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "TurnConnected",
+            "x": 352.0,
+            "y": 416.0,
+            "width": 160.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module3/TurnConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Feeder",
+            "x": 832.0,
+            "y": 32.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Feeder/Connected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Flywheel",
+            "x": 832.0,
+            "y": 160.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Flywheel/Connected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          }
+        ]
       }
     },
     {
@@ -166,10 +354,10 @@
         "containers": [
           {
             "title": "Drive Mode",
-            "x": 256.0,
-            "y": 448.0,
-            "width": 704.0,
-            "height": 256.0,
+            "x": 288.0,
+            "y": 576.0,
+            "width": 672.0,
+            "height": 160.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/SystemState",
@@ -178,26 +366,10 @@
             }
           },
           {
-            "title": "Match Time",
-            "x": 0.0,
-            "y": 448.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Match Time",
-            "properties": {
-              "topic": "/SmartDashboard/Match Time",
-              "period": 0.06,
-              "data_type": "double",
-              "time_display_mode": "Minutes and Seconds",
-              "red_start_time": 15,
-              "yellow_start_time": 30
-            }
-          },
-          {
             "title": "Feed State",
-            "x": 1152.0,
+            "x": 512.0,
             "y": 448.0,
-            "width": 192.0,
+            "width": 224.0,
             "height": 128.0,
             "type": "Large Text Display",
             "properties": {
@@ -208,9 +380,9 @@
           },
           {
             "title": "Intake State",
-            "x": 960.0,
+            "x": 288.0,
             "y": 448.0,
-            "width": 192.0,
+            "width": 224.0,
             "height": 128.0,
             "type": "Large Text Display",
             "properties": {
@@ -239,9 +411,9 @@
           {
             "title": "Preset",
             "x": 960.0,
-            "y": 288.0,
+            "y": 160.0,
             "width": 576.0,
-            "height": 160.0,
+            "height": 256.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Superstructure/ParamPreset",
@@ -253,23 +425,23 @@
             "title": "PeriodCountdown",
             "x": 0.0,
             "y": 160.0,
-            "width": 256.0,
+            "width": 288.0,
             "height": 288.0,
             "type": "Match Time",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Superstructure/PeriodCountdown",
               "period": 0.06,
               "data_type": "double",
-              "time_display_mode": "Minutes and Seconds",
-              "red_start_time": 20,
-              "yellow_start_time": 30
+              "time_display_mode": "Seconds Only",
+              "red_start_time": 5,
+              "yellow_start_time": 10
             }
           },
           {
             "title": "Period",
-            "x": 256.0,
+            "x": 288.0,
             "y": 160.0,
-            "width": 704.0,
+            "width": 672.0,
             "height": 288.0,
             "type": "Large Text Display",
             "properties": {
@@ -281,9 +453,9 @@
           {
             "title": "ShooterAtSetpoint",
             "x": 960.0,
-            "y": 160.0,
+            "y": 416.0,
             "width": 576.0,
-            "height": 128.0,
+            "height": 224.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Superstructure/ShooterAtSetpoint",
@@ -297,9 +469,9 @@
           },
           {
             "title": "Feeder State",
-            "x": 1344.0,
+            "x": 736.0,
             "y": 448.0,
-            "width": 192.0,
+            "width": 224.0,
             "height": 128.0,
             "type": "Large Text Display",
             "properties": {
@@ -311,7 +483,7 @@
           {
             "title": "IsActiveOverride",
             "x": 960.0,
-            "y": 576.0,
+            "y": 640.0,
             "width": 288.0,
             "height": 160.0,
             "type": "Toggle Button",
@@ -324,14 +496,30 @@
           {
             "title": "IsFirstActive",
             "x": 1248.0,
-            "y": 576.0,
+            "y": 640.0,
             "width": 288.0,
-            "height": 160.0,
+            "height": 128.0,
             "type": "Toggle Button",
             "properties": {
               "topic": "/SmartDashboard/Superstructure/IsFirstActive",
               "period": 0.06,
               "data_type": "boolean"
+            }
+          },
+          {
+            "title": "MatchTime",
+            "x": 0.0,
+            "y": 448.0,
+            "width": 288.0,
+            "height": 288.0,
+            "type": "Match Time",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Superstructure/MatchTime",
+              "period": 0.06,
+              "data_type": "double",
+              "time_display_mode": "Minutes and Seconds",
+              "red_start_time": 20,
+              "yellow_start_time": 30
             }
           }
         ]
