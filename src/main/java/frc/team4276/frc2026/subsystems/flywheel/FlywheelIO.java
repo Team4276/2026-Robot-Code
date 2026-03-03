@@ -11,13 +11,16 @@ public interface FlywheelIO {
         public double statorCurrent = 0.0;
         public double tempCelsius = 0.0;
 
-        public double velocityRPS = 0.0; // rpm
+        public double velocityRPM = 0.0;
     }
 
     public default void updateInputs(FlywheelIOInputs inputs) {
     }
 
     public default void setRpm(double rpm) {
+    }
+
+    public default void setRpm(double rpm, double feedforward) {
     }
 
     public default void setOpenLoop(double voltage) {

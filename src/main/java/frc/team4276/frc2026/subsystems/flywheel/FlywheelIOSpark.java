@@ -7,11 +7,13 @@ import java.util.function.DoubleSupplier;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -39,18 +41,15 @@ public class FlywheelIOSpark implements FlywheelIO {
                 .voltageCompensation(12.0)
                 .inverted(false);
         config.encoder
-                .positionConversionFactor(1.0)
-                .velocityConversionFactor(1.0 / 60.0)
+                // .velocityConversionFactor(1.0 / 60.0)
                 .uvwMeasurementPeriod(10)
                 .uvwAverageDepth(2);
         config.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .pid(
-                        0.001,
+                        0.0001,
                         0.0,
-                        0.0);
-                //         .feedForward
-                // .kV(12.0 / 5600.0); 
+                        0.0); 
         config.signals
                 .primaryEncoderVelocityAlwaysOn(true)
                 .primaryEncoderVelocityPeriodMs(20)
@@ -74,7 +73,7 @@ public class FlywheelIOSpark implements FlywheelIO {
         ifOk(spark, spark::getOutputCurrent, (values) -> inputs.statorCurrent = values);
         ifOk(spark, spark::getMotorTemperature, (values) -> inputs.tempCelsius = values);
 
-        ifOk(spark, encoder::getVelocity, (values) -> inputs.velocityRPS = values);
+        ifOk(spark, encoder::getVelocity, (values) -> inputs.velocityRPM = values);
     }
 
     @Override
@@ -84,9 +83,14 @@ public class FlywheelIOSpark implements FlywheelIO {
 
     @Override
     public void setRpm(double rpm) {
-        // controller.setSetpoint(rpm / 60.0, ControlType.kVelocity);
+        setRpm(rpm, 0.0);
+    }
 
-        spark.setVoltage(12*rpm/5600);
+    @Override
+    public void setRpm(double rpm, double feedforward) {
+        controller.setSetpoint(rpm, ControlType.kVelocity, ClosedLoopSlot.kSlot0, feedforward, ArbFFUnits.kVoltage);
+
+        // spark.setVoltage(12 * rpm / 5676);
     }
 
     @Override
