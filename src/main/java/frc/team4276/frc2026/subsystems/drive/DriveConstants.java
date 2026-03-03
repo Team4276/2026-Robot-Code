@@ -26,10 +26,10 @@ public class DriveConstants {
 
     // Zeroed rotation values for each module, see setup instructions
     public static final Rotation2d[] zeroRotations = {
-            new Rotation2d(1.52507), // FL
-            new Rotation2d(0.0318), // FR
-            new Rotation2d(0.034), // BL
-            new Rotation2d(2.5579) // BR
+            Rotation2d.fromDegrees(98), // FL
+            Rotation2d.fromDegrees(171), // FR
+            Rotation2d.fromDegrees(2.5), // BL
+            Rotation2d.fromDegrees(149) // BR
     };
 
     public static final Rotation2d[] zeroHelperRotations = {
@@ -57,6 +57,8 @@ public class DriveConstants {
 
     public static final double driveEncoderPositionFactor = 2 * Math.PI / driveMotorReduction;
     public static final double driveEncoderVelocityFactor = (2 * Math.PI) / 60.0 / driveMotorReduction;
+
+    
 
     // Drive PID configuration
     public static final double driveKp = 0.006;

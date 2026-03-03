@@ -21,6 +21,8 @@ public class Flywheel extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Flywheel", inputs);
+
+        Logger.recordOutput("Flywheel/RPM", getRPM());
         
     }
 
@@ -34,6 +36,10 @@ public class Flywheel extends SubsystemBase {
     }
 
     public boolean atSetpoint(){
-        return MathUtil.isNear(rpmSetpoint, inputs.velocityRPS * 60, tolerance.getAsDouble());
+        return MathUtil.isNear(rpmSetpoint, inputs.velocityRPS * 60.0, tolerance.getAsDouble());
+    }
+
+    public double getRPM(){
+        return inputs.velocityRPS * 60.0;
     }
 }

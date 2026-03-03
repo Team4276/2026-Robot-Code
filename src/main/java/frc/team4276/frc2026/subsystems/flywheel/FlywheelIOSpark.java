@@ -40,7 +40,7 @@ public class FlywheelIOSpark implements FlywheelIO {
                 .inverted(false);
         config.encoder
                 .positionConversionFactor(1.0)
-                .velocityConversionFactor(1.0 / 60)
+                .velocityConversionFactor(1.0 / 60.0)
                 .uvwMeasurementPeriod(10)
                 .uvwAverageDepth(2);
         config.closedLoop
@@ -49,6 +49,8 @@ public class FlywheelIOSpark implements FlywheelIO {
                         0.001,
                         0.0,
                         0.0);
+                //         .feedForward
+                // .kV(12.0 / 5600.0); 
         config.signals
                 .primaryEncoderVelocityAlwaysOn(true)
                 .primaryEncoderVelocityPeriodMs(20)
@@ -82,9 +84,9 @@ public class FlywheelIOSpark implements FlywheelIO {
 
     @Override
     public void setRpm(double rpm) {
-        controller.setSetpoint(rpm / 60, ControlType.kVelocity);
+        // controller.setSetpoint(rpm / 60.0, ControlType.kVelocity);
 
-        // spark.setVoltage(12*rpm/5000);
+        spark.setVoltage(12*rpm/5600);
     }
 
     @Override

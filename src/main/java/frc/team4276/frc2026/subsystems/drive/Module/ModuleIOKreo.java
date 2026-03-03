@@ -37,7 +37,6 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.team4276.frc2026.subsystems.drive.PhoenixOdometryThread;
-import frc.team4276.frc2026.subsystems.drive.SparkOdometryThread;
 import frc.team4276.lib.PhoenixUtil;
 import frc.team4276.lib.TalonFXFactory;
 import frc.team4276.lib.TalonFXFactory.CanBus;
