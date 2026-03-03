@@ -8,7 +8,7 @@ public interface IntakeDeployIO {
         public boolean connected = true;
 
         public double positionRev = 0.0;
-        public double absolutePositionRad = 0.0;
+        public double absolutePositionRev = 0.0;
 
         public double appliedVolts = 0.0;
         public double supplyCurrent = 0.0;

@@ -4,13 +4,18 @@ import static frc.team4276.frc2026.subsystems.intake.IntakeConstants.*;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.team4276.lib.dashboard.LoggedTunableNumber;
 
 public class Intake extends SubsystemBase {
     private final IntakeDeployIO deployIo;
     private final IntakeRollerIO rollerIo;
     private final IntakeDeployIOInputsAutoLogged deployInputs = new IntakeDeployIOInputsAutoLogged();
     private final IntakeRollerIOInputsAutoLogged rollerInputs = new IntakeRollerIOInputsAutoLogged();
+
+    private final LoggedTunableNumber absoluteEncoderZero = new LoggedTunableNumber("Intake/AbsoluteEncoderZero", 0.0);
 
     public enum WantedState {
         IDLE,
@@ -25,6 +30,8 @@ public class Intake extends SubsystemBase {
         INTAKING,
         EXHAUSTING
     }
+
+    private boolean isDisabled = false;
 
     private WantedState wantedState = WantedState.IDLE;
     private SystemState systemState = SystemState.IDLING;
@@ -43,6 +50,12 @@ public class Intake extends SubsystemBase {
 
         systemState = handleStateTransition();
         applyState();
+
+        if(isDisabled && DriverStation.isEnabled()){
+            deployIo.setPosition(MathUtil.inputModulus(deployInputs.absolutePositionRev + absoluteEncoderZero.getAsDouble(), -1.0, 1.0) / motorToEncoderReduction);
+        }
+
+        isDisabled = DriverStation.isDisabled();
 
         Logger.recordOutput("Intake/SystemState", systemState);
         Logger.recordOutput("Intake/DesiredState", wantedState);

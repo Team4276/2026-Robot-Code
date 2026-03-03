@@ -45,14 +45,14 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
                 .voltageCompensation(12.0)
                 .inverted(false);
         config.encoder
-                .positionConversionFactor(1.0)
-                .velocityConversionFactor(1.0 / 60)
+                // .positionConversionFactor(1.0)
+                // .velocityConversionFactor(1.0 / 60)
                 .uvwMeasurementPeriod(10)
                 .uvwAverageDepth(2);
         config.absoluteEncoder
                 .inverted(false)
-                .positionConversionFactor(2 * Math.PI)
-                .velocityConversionFactor(2 * Math.PI / 60)
+                // .positionConversionFactor(2 * Math.PI)
+                // .velocityConversionFactor(2 * Math.PI / 60)
                 .averageDepth(2);
         config.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -63,8 +63,8 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
         config.closedLoop.maxMotion
                 .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal)
                 .allowedProfileError(10.0)
-                .cruiseVelocity(10.0)
-                .maxAcceleration(10.0);
+                .cruiseVelocity(0.0)
+                .maxAcceleration(0.0);
         config.signals
                 .primaryEncoderVelocityAlwaysOn(true)
                 .primaryEncoderVelocityPeriodMs(20)
@@ -89,7 +89,7 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
         ifOk(spark, spark::getMotorTemperature, (values) -> inputs.tempCelsius = values);
 
         ifOk(spark, encoder::getPosition, (values) -> inputs.positionRev = values);
-        ifOk(spark, absoluteEncoder::getPosition, (values) -> inputs.absolutePositionRad = values);
+        ifOk(spark, absoluteEncoder::getPosition, (values) -> inputs.absolutePositionRev = values);
     }
 
     @Override

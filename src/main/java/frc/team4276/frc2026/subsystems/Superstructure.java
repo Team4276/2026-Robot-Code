@@ -146,7 +146,7 @@ public class Superstructure extends SubsystemBase {
     public double getPeriodCountDown() {
         double matchTime = DriverStation.getMatchTime();
 
-        if (DriverStation.isAutonomous()) { // TODO: HOLLEY SHMOLEY FIND A WAY TO CLEAN THIS UP
+        if (DriverStation.isAutonomous()) {
             return matchTime;
 
         } else if (matchTime > 130) {
@@ -172,7 +172,7 @@ public class Superstructure extends SubsystemBase {
     public String getCurrentPeriod() {
         double matchTime = DriverStation.getMatchTime();
 
-        if (DriverStation.isAutonomous()) { // TODO: HOLLEY SHMOLEY FIND A WAY TO CLEAN THIS UP
+        if (DriverStation.isAutonomous()) {
             return "Auto";
 
         } else if (matchTime > 130) {
