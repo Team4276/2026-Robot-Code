@@ -17,9 +17,10 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import frc.team4276.frc2026.Ports;
 import frc.team4276.frc2026.subsystems.drive.DriveConstants;
 import frc.team4276.frc2026.subsystems.drive.PhoenixOdometryThread;
+import frc.team4276.lib.TalonFXFactory.CanBus;
 
 public class GyroIOPigeon2 implements GyroIO {
-    private final Pigeon2 gyro = new Pigeon2(Ports.PIGEON, new CANBus("*"));
+    private final Pigeon2 gyro = new Pigeon2(Ports.PIGEON, new CANBus(CanBus.CANIVORE.getID()));
 
     private final StatusSignal<Angle> yawStatusSignal = gyro.getYaw();
     private final Queue<Double> yawPositionQueue;

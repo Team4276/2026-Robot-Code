@@ -19,12 +19,16 @@ public class TalonFXFactory {
 
     public enum CanBus { // Cmon ctre...
         RIO("rio"),
-        CANIVORE("*");
+        CANIVORE("Canivore-2026-A");
 
         final String string;
 
         CanBus(String string){
             this.string = string;
+        }
+
+        public String getID(){
+            return string;
         }
     }
 
@@ -83,7 +87,7 @@ public class TalonFXFactory {
     }
 
     private static TalonFX createTalon(int id, CanBus canBus) {
-        TalonFX talon = new TalonFX(id, new CANBus(canBus.string));
+        TalonFX talon = new TalonFX(id, new CANBus(canBus.getID()));
         talon.clearStickyFaults();
 
         return talon;

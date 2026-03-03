@@ -39,7 +39,6 @@ public class FlywheelIOSpark implements FlywheelIO {
                 .voltageCompensation(12.0)
                 .inverted(false);
         config.encoder
-                .inverted(false)
                 .positionConversionFactor(1.0)
                 .velocityConversionFactor(1.0 / 60)
                 .uvwMeasurementPeriod(10)

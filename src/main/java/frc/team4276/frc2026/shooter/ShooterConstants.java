@@ -8,7 +8,7 @@ import frc.team4276.frc2026.shooter.ShotCalculator.ShootingParameters;
 import frc.team4276.lib.dashboard.LoggedTunableNumber;
 
 public class ShooterConstants {
-    public static final Transform3d robotToShooter = Transform3d.kZero;
+    public static final Transform3d robotToShooter = new Transform3d();
 
     public static enum ParamPreset {
         // Shooting Presets

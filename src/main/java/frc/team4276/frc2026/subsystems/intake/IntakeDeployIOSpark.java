@@ -33,7 +33,7 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
     private boolean brakeModeEnabled = false;
 
     public IntakeDeployIOSpark() {
-        spark = new SparkMax(Ports.FLYWHEEL, MotorType.kBrushless);
+        spark = new SparkMax(Ports.INTAKE_DEPLOY, MotorType.kBrushless);
         encoder = spark.getEncoder();
         absoluteEncoder = spark.getAbsoluteEncoder();
         controller = spark.getClosedLoopController();
@@ -45,7 +45,6 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
                 .voltageCompensation(12.0)
                 .inverted(false);
         config.encoder
-                .inverted(false)
                 .positionConversionFactor(1.0)
                 .velocityConversionFactor(1.0 / 60)
                 .uvwMeasurementPeriod(10)
