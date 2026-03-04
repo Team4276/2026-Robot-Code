@@ -43,9 +43,73 @@ public class AutoFactory {
 
         return resetPose(startPose)
                 .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT))
-                .andThen(robotContainer.getSuperstructure().enableShooter());
+                .andThen(robotContainer.getSuperstructure().enableShooter())
+                .andThen(Commands.waitSeconds(5.0))
+                .andThen(robotContainer.getSuperstructure().disableShooter());
+    }
 
-        // return Commands.none();
+    // Append
+    Command mint() {
+        var traj = AutoPathFactory.getSprinkle();
+        var afterShotPose = traj.getInitialPose(false).get();
+
+        return driveToPoint(afterShotPose)
+                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT))
+                .andThen(robotContainer.getSuperstructure().enableShooter())
+                .andThen(Commands.waitSeconds(5.0))
+                .andThen(robotContainer.getSuperstructure().disableShooter());
+    }
+
+    // Append
+    Command sprinkles() {
+        var traj = AutoPathFactory.getSprinkle();
+        var afterShotPose = traj.getInitialPose(false).get();
+
+        return driveToPoint(afterShotPose)
+                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT))
+                .andThen(robotContainer.getSuperstructure().enableShooter())
+                .andThen(Commands.waitSeconds(5.0))
+                .andThen(robotContainer.getSuperstructure().disableShooter());
+    }
+
+    Command vanillaMintSwirl(String name) {
+        return vanilla(name)
+                .andThen(mint());
+    }
+
+    Command vanillaWithSprinkles(String name) {
+        return vanilla(name)
+                .andThen(sprinkles());
+    }
+
+    Command vanillaMintSwirlWithSprinkles(String name) {
+        return vanilla(name)
+                .andThen(mint())
+                .andThen(sprinkles());
+    }
+
+    Command rockyRoad(boolean isLeft, boolean isSwipe) {
+        var traj = isSwipe ? AutoPathFactory.getRockyRoadSwipeRight() : AutoPathFactory.getRockyRoadRight();
+
+        if (isLeft) {
+            traj = ChoreoUtil.mirrorLengthwise(traj);
+        }
+
+        var startPose = traj.getInitialPose(false).get();
+
+        var split1 = traj.getSplit(0).get();
+        var split2 = traj.getSplit(1).get();
+        var split3 = traj.getSplit(2).get();
+
+        return resetPose(startPose)
+                .andThen(driveTrajectoryWithVisionState(split1, VisionState.REJECT))
+                .andThen(robotContainer.getSuperstructure().deployIntake())
+                .andThen(driveTrajectoryWithVisionState(split2, VisionState.REJECT))
+                // .andThen(robotContainer.getSuperstructure().retractIntake())
+                .andThen(driveTrajectoryWithVisionState(split3, VisionState.REJECT))
+                .andThen(robotContainer.getSuperstructure().enableShooter())
+                .andThen(Commands.waitSeconds(7.5))
+                .andThen(robotContainer.getSuperstructure().disableShooter());
     }
 
     void autoEnd() {

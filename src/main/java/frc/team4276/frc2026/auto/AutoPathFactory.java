@@ -19,4 +19,20 @@ public class AutoPathFactory {
     public static Trajectory<SwerveSample> getVaniright(){
         return ChoreoUtil.getChoreoTrajectory("Vaniright");
     }
+
+    public static Trajectory<SwerveSample> getMint(){
+        return ChoreoUtil.getChoreoTrajectory("Mint");
+    }
+
+    public static Trajectory<SwerveSample> getSprinkle(){
+        return ChoreoUtil.getChoreoTrajectory("Sprinkle");
+    }
+
+    public static Trajectory<SwerveSample> getRockyRoadRight(){
+        return ChoreoUtil.getChoreoTrajectory("RockyRoadRight");
+    }
+
+    public static Trajectory<SwerveSample> getRockyRoadSwipeRight(){
+        return ChoreoUtil.getChoreoTrajectory("RockyRoadSwipeRight");
+    }
 }
