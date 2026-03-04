@@ -25,11 +25,11 @@ import choreo.trajectory.Trajectory;
 
 @SuppressWarnings("unused")
 public class AutoFactory {
-    public final LoggedTunableNumber preloadShotTime = new LoggedTunableNumber("Auto/PreloadShotTime", 5.0);
-    public final LoggedTunableNumber refillShotTime = new LoggedTunableNumber("Auto/RefillShotTime", 5.0);
-    public final LoggedTunableNumber fullShotTime = new LoggedTunableNumber("Auto/FullShotTime", 7.5);
+    private final LoggedTunableNumber preloadShotTime = new LoggedTunableNumber("Auto/PreloadShotTime", 5.0);
+    private final LoggedTunableNumber refillShotTime = new LoggedTunableNumber("Auto/RefillShotTime", 5.0);
+    private final LoggedTunableNumber fullShotTime = new LoggedTunableNumber("Auto/FullShotTime", 7.5);
 
-    public final LoggedTunableNumber sprinkleWaitTime = new LoggedTunableNumber("Auto/SprinkleWaitTime", 5.0);
+    private final LoggedTunableNumber sprinkleWaitTime = new LoggedTunableNumber("Auto/SprinkleWaitTime", 5.0);
 
     private RobotContainer robotContainer;
 

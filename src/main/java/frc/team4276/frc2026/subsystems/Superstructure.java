@@ -19,11 +19,13 @@ import frc.team4276.frc2026.shooter.ShotCalculator;
 import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.frc2026.shooter.ShotCalculator.ShootingParameters;
 import frc.team4276.frc2026.subsystems.drive.Drive;
+import frc.team4276.frc2026.subsystems.drive.Drive.DriveSpeedScalar;
 import frc.team4276.frc2026.subsystems.drive.Drive.WantedState;
 import frc.team4276.frc2026.subsystems.feeder.Feeder;
 import frc.team4276.frc2026.subsystems.flywheel.Flywheel;
 import frc.team4276.frc2026.subsystems.intake.Intake;
 import frc.team4276.frc2026.subsystems.vision.Vision;
+import frc.team4276.lib.dashboard.LoggedTunableNumber;
 import frc.team4276.lib.hid.ViXController;
 
 public class Superstructure extends SubsystemBase {
@@ -55,6 +57,8 @@ public class Superstructure extends SubsystemBase {
     private boolean isManual = false;
     private Debouncer inShootingToleranceDebounce = new Debouncer(0.25);
 
+    private final LoggedTunableNumber hubPrefireTime = new LoggedTunableNumber("Superstructure/HubPrefireTime", 1.0);
+
     public Superstructure(
             Drive drive,
             Intake intake,
@@ -82,7 +86,7 @@ public class Superstructure extends SubsystemBase {
         ShotCalculator.getInstance().clearHubParameters();
         ShotCalculator.getInstance().clearFerryParameters();
 
-        if(DriverStation.isDisabled()){
+        if (DriverStation.isDisabled()) {
             drive.setWantedState(WantedState.TELEOP);
             currPreset = ParamPreset.TURTLE;
             shootingParams = currPreset::getParams;
@@ -90,10 +94,9 @@ public class Superstructure extends SubsystemBase {
         }
 
         if (inShootingToleranceDebounce.calculate(
-                shooterAtSetpoint() &&
-                        (drive.getSystemState() == Drive.SystemState.HEADING_ALIGN ? drive.isAtHeading() : true))) {
+                shooterAtSetpoint())) {
 
-            if (feedState == FeedState.ACTIVE && (isHubActive() || getIsManual())) {
+            if (feedState == FeedState.ACTIVE && (shouldShootHub() || getIsManual())) {
                 feeder.setSystemState(Feeder.SystemState.FEED);
 
             } else if (feedState == FeedState.FERRY) {
@@ -113,6 +116,7 @@ public class Superstructure extends SubsystemBase {
 
         Logger.recordOutput("Superstructure/IsFirstActive", getIsFirstActive());
         Logger.recordOutput("Superstructure/IsHubActive", isHubActive());
+        Logger.recordOutput("Superstructure/ShouldShootHub", shouldShootHub());
         Logger.recordOutput("Superstructure/FeedState", feedState);
         Logger.recordOutput("Superstructure/ShooterAtSetpoint", shooterAtSetpoint());
         Logger.recordOutput("Superstructure/ParamPreset", currPreset);
@@ -152,6 +156,15 @@ public class Superstructure extends SubsystemBase {
         } else {
             return !getIsFirstActive();
         }
+    }
+
+    // Arrow stacking :D
+    public boolean shouldShootHub() {
+        if (!isHubActive()) {
+            return getPeriodCountDown() < hubPrefireTime.getAsDouble();
+        }
+
+        return true;
     }
 
     public double getPeriodCountDown() {
@@ -207,7 +220,9 @@ public class Superstructure extends SubsystemBase {
     }
 
     public boolean shooterAtSetpoint() {
-        return Constants.isSim || flywheel.atSetpoint();
+        return Constants.isSim ||
+                (flywheel.atSetpoint()
+                        && (drive.getSystemState() == Drive.SystemState.HEADING_ALIGN ? drive.isAtHeading() : true));
     }
 
     public Command deployIntake() {
@@ -222,6 +237,7 @@ public class Superstructure extends SubsystemBase {
         return Commands.runOnce(() -> {
             if (RobotState.getInstance().getCurrentFieldZone() == FieldZone.ALLIANCE) {
                 shootingParams = ShotCalculator.getInstance()::getHubParameters;
+                drive.setVelocityScalar(DriveSpeedScalar.CRAWL);
                 drive.setHeadingAlignRotation(() -> shootingParams.get().robotHeading());
 
                 feedState = FeedState.ACTIVE;
@@ -236,9 +252,10 @@ public class Superstructure extends SubsystemBase {
         });
     }
 
-    public Command disableShooter() { // stop feeding
+    public Command disableShooter() { // stop shooting
         return Commands.runOnce(() -> {
             shootingParams = ParamPreset.STOW::getParams;
+            drive.setVelocityScalar(DriveSpeedScalar.DEFAULT);
             drive.setWantedState(WantedState.TELEOP);
             currPreset = ParamPreset.STOW;
             feedState = FeedState.NO;
@@ -269,9 +286,9 @@ public class Superstructure extends SubsystemBase {
         });
     }
 
-    public Command turtle() { // go under trench
+    public Command turtle() { // go under trench/exhaust
         return Commands.runOnce(() -> {
-            intake.setWantedState(Intake.WantedState.INTAKE);
+            intake.setWantedState(Intake.WantedState.EXHAUST);
             drive.setWantedState(WantedState.TELEOP);
             currPreset = ParamPreset.TURTLE;
             shootingParams = currPreset::getParams;

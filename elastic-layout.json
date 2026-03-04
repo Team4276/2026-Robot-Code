@@ -556,14 +556,14 @@
             }
           },
           {
-            "title": "IsHubActive",
+            "title": "ShouldShootHub",
             "x": 0.0,
             "y": 0.0,
             "width": 1536.0,
             "height": 160.0,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Superstructure/IsHubActive",
+              "topic": "/AdvantageKit/RealOutputs/Superstructure/ShouldShootHub",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,
@@ -695,7 +695,7 @@
         "layouts": [
           {
             "title": "AutoTranslation",
-            "x": 1088.0,
+            "x": 1280.0,
             "y": 0.0,
             "width": 256.0,
             "height": 352.0,
@@ -764,7 +764,7 @@
           },
           {
             "title": "HeadingAlign",
-            "x": 576.0,
+            "x": 768.0,
             "y": 352.0,
             "width": 256.0,
             "height": 352.0,
@@ -833,7 +833,7 @@
           },
           {
             "title": "Trajectory Rotation",
-            "x": 832.0,
+            "x": 1024.0,
             "y": 352.0,
             "width": 256.0,
             "height": 352.0,
@@ -902,7 +902,7 @@
           },
           {
             "title": "Trajectory Translation",
-            "x": 832.0,
+            "x": 1024.0,
             "y": 0.0,
             "width": 256.0,
             "height": 352.0,
@@ -971,7 +971,7 @@
           },
           {
             "title": "TeleopTranslation",
-            "x": 576.0,
+            "x": 768.0,
             "y": 0.0,
             "width": 256.0,
             "height": 352.0,
@@ -1039,50 +1039,9 @@
             ]
           },
           {
-            "title": "Feeder",
-            "x": 256.0,
-            "y": 448.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "FeedVolts",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "SmartDashboard/TunableNumbers/Feeder/FeedVolts",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              },
-              {
-                "title": "IdleVolts",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "SmartDashboard/TunableNumbers/Feeder/IdleVolts",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              }
-            ]
-          },
-          {
             "title": "Flywheel",
             "x": 0.0,
-            "y": 384.0,
+            "y": 352.0,
             "width": 256.0,
             "height": 256.0,
             "type": "List Layout",
@@ -1139,7 +1098,7 @@
             "x": 0.0,
             "y": 0.0,
             "width": 256.0,
-            "height": 384.0,
+            "height": 352.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1313,12 +1272,136 @@
                 }
               }
             ]
+          },
+          {
+            "title": "Auto",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 320.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "FullShotTime",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Auto/FullShotTime",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "PreloadShotTime",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Auto/PreloadShotTime",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "RefillShotTime",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Auto/RefillShotTime",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "SprinkleWaitTime",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Auto/SprinkleWaitTime",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          },
+          {
+            "title": "Feeder",
+            "x": 256.0,
+            "y": 448.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "DirectionSwapTime",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Feeder/DirectionSwapTime",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "FeedVolts",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Feeder/FeedVolts",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "IdleVolts",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Feeder/IdleVolts",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
           }
         ],
         "containers": [
           {
             "title": "Trajectory maxError",
-            "x": 1088.0,
+            "x": 1280.0,
             "y": 576.0,
             "width": 256.0,
             "height": 128.0,
@@ -1332,10 +1415,10 @@
           },
           {
             "title": "TurretToTargetDistance",
-            "x": 1088.0,
-            "y": 416.0,
+            "x": 0.0,
+            "y": 608.0,
             "width": 256.0,
-            "height": 160.0,
+            "height": 128.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/ShotCalculator/TurretToTargetDistance",

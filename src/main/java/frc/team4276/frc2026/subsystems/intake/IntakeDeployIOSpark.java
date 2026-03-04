@@ -40,7 +40,7 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
 
         config = new SparkMaxConfig();
         config
-                .idleMode(IdleMode.kBrake)
+                .idleMode(IdleMode.kCoast)
                 .smartCurrentLimit(40)
                 .voltageCompensation(12.0)
                 .inverted(false);

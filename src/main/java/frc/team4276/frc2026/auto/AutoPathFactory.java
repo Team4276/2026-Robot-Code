@@ -5,9 +5,6 @@ import choreo.trajectory.Trajectory;
 import frc.team4276.lib.path.ChoreoUtil;
 
 public class AutoPathFactory {
-    // Trajectory caching
-    // Path Generation
-
     public static Trajectory<SwerveSample> getVanilla(){
         return ChoreoUtil.getChoreoTrajectory("Vanilla");
     }

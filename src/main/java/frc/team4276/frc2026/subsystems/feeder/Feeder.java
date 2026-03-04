@@ -4,6 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.team4276.lib.dashboard.LoggedTunableNumber;
@@ -30,8 +31,14 @@ public class Feeder extends SubsystemBase {
     private final FeederIOInputsAutoLogged inputs = new FeederIOInputsAutoLogged();
     private final FeederIO io;
 
+    private double directionFactor = 1.0;
+    private final Timer directionSwap = new Timer();
+    private final LoggedTunableNumber directionSwapTime = new LoggedTunableNumber("Feeder/DirectionSwapTime", 0.5);
+
     public Feeder(FeederIO io) {
         this.io = io;
+
+        directionSwap.restart();
     }
 
     @Override
@@ -39,7 +46,18 @@ public class Feeder extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Feeder", inputs);
 
-        io.setOpenLoop(systemState.getVoltage());
+        double outputVoltage = systemState.getVoltage();
+
+        if(directionSwap.get() > directionSwapTime.getAsDouble()){
+            directionFactor *= -1.0;
+            directionSwap.restart();
+        }
+
+        if(systemState == SystemState.IDLE){
+            outputVoltage *= directionFactor;
+        }
+
+        io.setOpenLoop(outputVoltage);
 
         Logger.recordOutput("Feeder/SystemState", systemState);
     }
