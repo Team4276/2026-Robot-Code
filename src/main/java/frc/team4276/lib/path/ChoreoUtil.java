@@ -1,13 +1,15 @@
 package frc.team4276.lib.path;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
-import choreo.trajectory.TrajectorySample;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.team4276.lib.geometry.AllianceFlipUtil;
 
 public class ChoreoUtil {
@@ -60,27 +62,31 @@ public class ChoreoUtil {
         }
     }
 
-    public static Trajectory<SwerveSample> mirrorLengthwise(Trajectory<?> trajectory) {
-        List<SwerveSample> mirroredStates = new ArrayList<>();
+  public static SwerveSample mirrorLengthwise(SwerveSample sample) {
+    Pose2d pose = PathUtil.mirrorLengthwise(sample.getPose());
+    ChassisSpeeds speeds = PathUtil.mirrorLengthwise(sample.getChassisSpeeds());
 
-        for (var state : trajectory.samples()) {
-            mirroredStates.add(mirrorLengthwise(state));
-        }
-        return new Trajectory<SwerveSample>("", mirroredStates, List.of(), List.of());
+    return new SwerveSample(
+        sample.t,
+        pose.getX(),
+        pose.getY(),
+        pose.getRotation().getRadians(),
+        speeds.vxMetersPerSecond,
+        speeds.vyMetersPerSecond,
+        speeds.omegaRadiansPerSecond,
+        sample.ax,
+        -sample.ay,
+        -sample.alpha,
+        sample.moduleForcesX(),
+        Arrays.stream(sample.moduleForcesY()).map(y -> -y).toArray());
+  }
+
+  public static Trajectory<SwerveSample> mirrorLengthwise(Trajectory<SwerveSample> traj) {
+    List<SwerveSample> mirrored = new ArrayList<SwerveSample>();
+    for (var sample : traj.samples()) {
+      mirrored.add(mirrorLengthwise(sample));
     }
 
-    private static final double[] dummyList = { 0.0, 0.0, 0.0, 0.0 };
-
-    public static SwerveSample mirrorLengthwise(TrajectorySample<?> state) {
-        var flipped = new SwerveSample(
-                state.getTimestamp(),
-                state.getPose().getX(),
-                state.getPose().getY(),
-                state.getPose().getRotation().getRadians(),
-                state.getChassisSpeeds().vxMetersPerSecond,
-                state.getChassisSpeeds().vyMetersPerSecond,
-                state.getChassisSpeeds().omegaRadiansPerSecond, 0, 0, 0, dummyList, dummyList);
-
-        return flipped;
-    }
+    return new Trajectory<SwerveSample>(traj.name(), mirrored, traj.splits(), traj.events());
+  }
 }

@@ -11,6 +11,7 @@ import frc.team4276.frc2026.RobotState;
 import frc.team4276.frc2026.RobotState.VisionState;
 import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.lib.dashboard.Elastic;
+import frc.team4276.lib.dashboard.LoggedTunableNumber;
 import frc.team4276.lib.dashboard.Elastic.Notification;
 import frc.team4276.lib.dashboard.Elastic.Notification.NotificationLevel;
 import frc.team4276.lib.geometry.AllianceFlipUtil;
@@ -24,6 +25,12 @@ import choreo.trajectory.Trajectory;
 
 @SuppressWarnings("unused")
 public class AutoFactory {
+    public final LoggedTunableNumber preloadShotTime = new LoggedTunableNumber("Auto/PreloadShotTime", 5.0);
+    public final LoggedTunableNumber refillShotTime = new LoggedTunableNumber("Auto/RefillShotTime", 5.0);
+    public final LoggedTunableNumber fullShotTime = new LoggedTunableNumber("Auto/FullShotTime", 7.5);
+
+    public final LoggedTunableNumber sprinkleWaitTime = new LoggedTunableNumber("Auto/SprinkleWaitTime", 5.0);
+
     private RobotContainer robotContainer;
 
     public AutoFactory(RobotContainer robotContainer) {
@@ -44,19 +51,19 @@ public class AutoFactory {
         return resetPose(startPose)
                 .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT))
                 .andThen(robotContainer.getSuperstructure().enableShooter())
-                .andThen(Commands.waitSeconds(5.0))
+                .andThen(Commands.waitSeconds(preloadShotTime.getAsDouble()))
                 .andThen(robotContainer.getSuperstructure().disableShooter());
     }
 
     // Append
     Command mint() {
-        var traj = AutoPathFactory.getSprinkle();
+        var traj = AutoPathFactory.getMint();
         var afterShotPose = traj.getInitialPose(false).get();
 
         return driveToPoint(afterShotPose)
                 .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT))
                 .andThen(robotContainer.getSuperstructure().enableShooter())
-                .andThen(Commands.waitSeconds(5.0))
+                .andThen(Commands.waitSeconds(refillShotTime.getAsDouble()))
                 .andThen(robotContainer.getSuperstructure().disableShooter());
     }
 
@@ -65,10 +72,15 @@ public class AutoFactory {
         var traj = AutoPathFactory.getSprinkle();
         var afterShotPose = traj.getInitialPose(false).get();
 
+        var split1 = traj.getSplit(0).get();
+        var split2 = traj.getSplit(1).get();
+
         return driveToPoint(afterShotPose)
-                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT))
+                .andThen(driveTrajectoryWithVisionState(split1, VisionState.REJECT))
+                .andThen(Commands.waitSeconds(sprinkleWaitTime.getAsDouble()))
+                .andThen(driveTrajectoryWithVisionState(split2, VisionState.REJECT))
                 .andThen(robotContainer.getSuperstructure().enableShooter())
-                .andThen(Commands.waitSeconds(5.0))
+                .andThen(Commands.waitSeconds(refillShotTime.getAsDouble()))
                 .andThen(robotContainer.getSuperstructure().disableShooter());
     }
 
@@ -97,23 +109,19 @@ public class AutoFactory {
 
         var startPose = traj.getInitialPose(false).get();
 
-        var split1 = traj.getSplit(0).get();
-        var split2 = traj.getSplit(1).get();
-        var split3 = traj.getSplit(2).get();
-
         return resetPose(startPose)
-                .andThen(driveTrajectoryWithVisionState(split1, VisionState.REJECT))
-                .andThen(robotContainer.getSuperstructure().deployIntake())
-                .andThen(driveTrajectoryWithVisionState(split2, VisionState.REJECT))
+                .andThen(robotContainer.getSuperstructure().retractIntake())
+                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT)
+                        .alongWith(waitUntilXCrossed(5.9, true)
+                                .andThen(robotContainer.getSuperstructure().deployIntake())))
                 // .andThen(robotContainer.getSuperstructure().retractIntake())
-                .andThen(driveTrajectoryWithVisionState(split3, VisionState.REJECT))
                 .andThen(robotContainer.getSuperstructure().enableShooter())
-                .andThen(Commands.waitSeconds(7.5))
+                .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
                 .andThen(robotContainer.getSuperstructure().disableShooter());
     }
 
     void autoEnd() {
-
+        RobotState.getInstance().setVisionState(VisionState.ACCEPT);
     }
 
     private Command resetPose(Pose2d pose) {

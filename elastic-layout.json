@@ -381,19 +381,6 @@
             }
           },
           {
-            "title": "RoutineChooser",
-            "x": 1152.0,
-            "y": 288.0,
-            "width": 384.0,
-            "height": 160.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Comp/Auto/RoutineChooser",
-              "period": 0.06,
-              "sort_options": false
-            }
-          },
-          {
             "title": "Delay Input Submitted ",
             "x": 1344.0,
             "y": 128.0,
@@ -450,6 +437,19 @@
               "topic": "/SmartDashboard/Comp/Auto/Routine Submitted ",
               "period": 0.06,
               "data_type": "string"
+            }
+          },
+          {
+            "title": "RoutineChooser",
+            "x": 1152.0,
+            "y": 288.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Comp/Auto/RoutineChooser",
+              "period": 0.06,
+              "sort_options": false
             }
           }
         ]

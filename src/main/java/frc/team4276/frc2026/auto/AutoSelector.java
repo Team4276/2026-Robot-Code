@@ -32,6 +32,14 @@ public class AutoSelector extends VirtualSubsystem {
         routineChooser.addOption("Vanilla", () -> this.autoFactory.vanilla("Vanilla"));
         routineChooser.addOption("Vanilleft", () -> this.autoFactory.vanilla("Vanilleft"));
         routineChooser.addOption("Vaniright", () -> this.autoFactory.vanilla("Vaniright"));
+        routineChooser.addOption("VanillaMintSwirl", () -> this.autoFactory.vanillaMintSwirl("Vanilleft"));
+        routineChooser.addOption("VanillaWithSprinkles", () -> this.autoFactory.vanillaWithSprinkles("Vaniright"));
+        routineChooser.addOption("VanillaMintSwirlWithSprinkles",
+                () -> this.autoFactory.vanillaMintSwirlWithSprinkles("Vanilleft"));
+        routineChooser.addOption("RockyRoadRight", () -> this.autoFactory.rockyRoad(false, false));
+        routineChooser.addOption("RockyRoadSwipeRight", () -> this.autoFactory.rockyRoad(false, true));
+        routineChooser.addOption("RockyRoadLeft", () -> this.autoFactory.rockyRoad(true, false));
+        routineChooser.addOption("RockyRoadSwipeLeft", () -> this.autoFactory.rockyRoad(true, true));
     }
 
     /** Returns the selected auto command with the inputted delay. */
@@ -83,7 +91,7 @@ public class AutoSelector extends VirtualSubsystem {
             autoChanged = true;
         }
 
-        if(getDelayInput() == prevDelayInput){
+        if (getDelayInput() == prevDelayInput) {
             autoChanged = true;
         }
 
