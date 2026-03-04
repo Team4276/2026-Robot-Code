@@ -719,20 +719,6 @@
                 }
               },
               {
-                "title": "kD",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "SmartDashboard/TunableNumbers/Drive/AutoAlign/AutoTranslation/kD",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "kI",
                 "x": 0.0,
                 "y": 0.0,
@@ -741,6 +727,20 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "SmartDashboard/TunableNumbers/Drive/AutoAlign/AutoTranslation/kI",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "kD",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/AutoAlign/AutoTranslation/kD",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -926,20 +926,6 @@
                 }
               },
               {
-                "title": "kD",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "SmartDashboard/TunableNumbers/Drive/Trajectory/Translation/kD",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              },
-              {
                 "title": "kI",
                 "x": 0.0,
                 "y": 0.0,
@@ -948,6 +934,20 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "SmartDashboard/TunableNumbers/Drive/Trajectory/Translation/kI",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kD",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Drive/Trajectory/Translation/kD",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": true

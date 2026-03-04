@@ -82,6 +82,13 @@ public class Superstructure extends SubsystemBase {
         ShotCalculator.getInstance().clearHubParameters();
         ShotCalculator.getInstance().clearFerryParameters();
 
+        if(DriverStation.isDisabled()){
+            drive.setWantedState(WantedState.TELEOP);
+            currPreset = ParamPreset.TURTLE;
+            shootingParams = currPreset::getParams;
+            feedState = FeedState.NO;
+        }
+
         if (inShootingToleranceDebounce.calculate(
                 shooterAtSetpoint() &&
                         (drive.getSystemState() == Drive.SystemState.HEADING_ALIGN ? drive.isAtHeading() : true))) {

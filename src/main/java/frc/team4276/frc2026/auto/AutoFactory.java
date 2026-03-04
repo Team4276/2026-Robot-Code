@@ -2,21 +2,25 @@ package frc.team4276.frc2026.auto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.team4276.frc2026.FieldConstants;
 import frc.team4276.frc2026.RobotContainer;
 import frc.team4276.frc2026.RobotState;
 import frc.team4276.frc2026.RobotState.VisionState;
+import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.lib.dashboard.Elastic;
 import frc.team4276.lib.dashboard.Elastic.Notification;
 import frc.team4276.lib.dashboard.Elastic.Notification.NotificationLevel;
 import frc.team4276.lib.geometry.AllianceFlipUtil;
+import frc.team4276.lib.path.ChoreoUtil;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import choreo.trajectory.SwerveSample;
+import choreo.trajectory.Trajectory;
 
 @SuppressWarnings("unused")
 public class AutoFactory {
@@ -33,6 +37,17 @@ public class AutoFactory {
                         AllianceFlipUtil.apply(Rotation2d.kZero)));
     }
 
+    Command vanilla(String name) {
+        var traj = ChoreoUtil.getChoreoTrajectory(name);
+        var startPose = traj.getInitialPose(false).get();
+
+        return resetPose(startPose)
+                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT))
+                .andThen(robotContainer.getSuperstructure().enableShooter());
+
+        // return Commands.none();
+    }
+
     void autoEnd() {
 
     }
@@ -41,11 +56,7 @@ public class AutoFactory {
         return Commands.runOnce(() -> RobotState.getInstance().resetPose(pose));
     }
 
-    private Command driveTrajectoryWithVisionState(PathPlannerTrajectory traj, VisionState state) {
-        if (traj.getStates().isEmpty()) {
-            return Commands.none();
-        }
-
+    private Command driveTrajectoryWithVisionState(Trajectory<SwerveSample> traj, VisionState state) {
         return Commands.runOnce(
                 () -> {
                     robotContainer.getDrive().setTrajectory(traj);
@@ -55,7 +66,7 @@ public class AutoFactory {
                 .andThen(Commands.runOnce(() -> RobotState.getInstance().setVisionState(VisionState.ACCEPT)));
     }
 
-    private Command driveTrajectory(PathPlannerTrajectory traj){
+    private Command driveTrajectory(Trajectory<SwerveSample> traj) {
         return driveTrajectoryWithVisionState(traj, VisionState.ACCEPT);
     }
 

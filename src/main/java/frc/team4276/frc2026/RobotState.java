@@ -16,6 +16,7 @@ import edu.wpi.first.math.numbers.N3;
 import frc.team4276.frc2026.FieldConstants.FieldZone;
 import frc.team4276.frc2026.subsystems.vision.VisionConstants;
 import frc.team4276.lib.dashboard.LoggedTunableNumber;
+import frc.team4276.lib.geometry.AllianceFlipUtil;
 import frc.team4276.lib.geometry.GeomUtil;
 
 import static frc.team4276.frc2026.subsystems.drive.DriveConstants.kinematics;
@@ -95,7 +96,7 @@ public class RobotState {
             double timestamp, Rotation2d yaw, SwerveModulePosition[] wheelPositions) {
         if (yaw == null) {
             var twist = kinematics.toTwist2d(lastWheelPositions, wheelPositions);
-            yaw = odomPoseEstimator.getEstimatedPosition().getRotation().rotateBy(new Rotation2d(twist.dtheta));
+            yaw = lastYaw.plus(Rotation2d.fromRadians(twist.dtheta));
         }
         poseEstimator.updateWithTime(timestamp, yaw, wheelPositions);
         odomPoseEstimator.updateWithTime(timestamp, yaw, wheelPositions);
@@ -104,7 +105,7 @@ public class RobotState {
         poseBuffer.addSample(timestamp, getEstimatedOdomPose());
     }
 
-    public void setVisionState(VisionState state){
+    public void setVisionState(VisionState state) {
         visionState = state;
     }
 
@@ -112,7 +113,7 @@ public class RobotState {
             Pose2d visionRobotPoseMeters,
             double timestampSeconds,
             Matrix<N3, N1> visionMeasurementStdDevs) {
-        if(visionState == VisionState.REJECT){
+        if (visionState == VisionState.REJECT) {
             return;
         }
 
@@ -170,7 +171,7 @@ public class RobotState {
     }
 
     public FieldZone getCurrentFieldZone() {
-        double x = getEstimatedPose().getX();
+        double x = AllianceFlipUtil.applyX(getEstimatedPose().getX());
 
         if (x < FieldConstants.LinesVertical.allianceZone) {
             return FieldZone.ALLIANCE;

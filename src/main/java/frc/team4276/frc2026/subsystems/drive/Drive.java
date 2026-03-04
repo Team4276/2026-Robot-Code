@@ -9,9 +9,8 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
-
+import choreo.trajectory.SwerveSample;
+import choreo.trajectory.Trajectory;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -82,8 +81,8 @@ public class Drive extends SubsystemBase {
 
     private final LoggedTunableNumber maxError = new LoggedTunableNumber("Drive/Trajectory/maxError", 0.75);
 
-    private PathPlannerTrajectory trajectory;
-    private PathPlannerTrajectoryState sampledTrajectoryState;
+    private Trajectory<SwerveSample> trajectory;
+    private SwerveSample sampledTrajectoryState;
 
     private double startTime = 0.0;
     private double timeOffset = 0.0;
@@ -229,7 +228,7 @@ public class Drive extends SubsystemBase {
                     resetTrajectoryTimer();
                 }
 
-                sampledTrajectoryState = trajectory.sample(getTrajectoryTime());
+                sampledTrajectoryState = trajectory.sampleAt(getTrajectoryTime(), false).get();
 
                 yield SystemState.PATH;
             }
@@ -259,29 +258,29 @@ public class Drive extends SubsystemBase {
                 break;
 
             case PATH:
-                if (sampledTrajectoryState.pose
+                if (sampledTrajectoryState.getPose()
                         .getTranslation()
                         .getDistance(currentPose.getTranslation()) > maxError.getAsDouble()) {
                     timeOffset += 0.02;
                 }
 
-                requestedSpeeds = sampledTrajectoryState.fieldSpeeds;
+                requestedSpeeds = sampledTrajectoryState.getChassisSpeeds();
 
                 requestedSpeeds.vxMetersPerSecond += trajectoryXController.calculate(
-                        0.0, sampledTrajectoryState.pose.getX() - currentPose.getTranslation().getX());
+                        0.0, sampledTrajectoryState.x - currentPose.getTranslation().getX());
                 requestedSpeeds.vyMetersPerSecond += trajectoryYController.calculate(
-                        0.0, sampledTrajectoryState.pose.getX() - currentPose.getTranslation().getY());
+                        0.0, sampledTrajectoryState.y - currentPose.getTranslation().getY());
                 requestedSpeeds.omegaRadiansPerSecond += trajectoryThetaController.calculate(
                         0.0,
                         MathUtil.angleModulus(
-                                sampledTrajectoryState.pose
+                                sampledTrajectoryState.getPose()
                                         .getRotation()
                                         .minus(currentPose.getRotation())
                                         .getRadians()));
 
-                Logger.recordOutput("Drive/Trajectory/SetpointPose", sampledTrajectoryState.pose);
+                Logger.recordOutput("Drive/Trajectory/SetpointPose", sampledTrajectoryState.getPose());
                 Logger.recordOutput(
-                        "Drive/Trajectory/SetpointSpeeds", sampledTrajectoryState.fieldSpeeds);
+                        "Drive/Trajectory/SetpointSpeeds", sampledTrajectoryState.getChassisSpeeds());
                 Logger.recordOutput("Drive/Trajectory/TrajectoryTime", getTrajectoryTime());
 
                 break;
@@ -409,9 +408,9 @@ public class Drive extends SubsystemBase {
             return false;
         }
 
-        var pose = trajectory.getEndState().pose;
+        var pose = trajectory.getFinalPose(false).get();
 
-        return getTrajectoryTime() > trajectory.getTotalTimeSeconds()
+        return getTrajectoryTime() > trajectory.getTotalTime()
                 && isAtTranslation(pose.getTranslation(), trajectoryXController.getErrorTolerance())
                 && isAtHeading(pose.getRotation(), trajectoryThetaController.getErrorTolerance());
     }
@@ -494,7 +493,7 @@ public class Drive extends SubsystemBase {
         setHeadingAlignRotation(RobotState.getInstance().getHubAlignHeading());
     }
 
-    public void setTrajectory(PathPlannerTrajectory trajectory) {
+    public void setTrajectory(Trajectory<SwerveSample> trajectory) {
         setWantedState(WantedState.PATH);
         this.trajectory = trajectory;
     }

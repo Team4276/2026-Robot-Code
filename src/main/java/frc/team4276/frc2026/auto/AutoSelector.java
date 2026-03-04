@@ -29,6 +29,9 @@ public class AutoSelector extends VirtualSubsystem {
         this.autoFactory = autoFactory;
 
         routineChooser.addDefaultOption("Do Nothing", () -> this.autoFactory.idle());
+        routineChooser.addOption("Vanilla", () -> this.autoFactory.vanilla("Vanilla"));
+        routineChooser.addOption("Vanilleft", () -> this.autoFactory.vanilla("Vanilleft"));
+        routineChooser.addOption("Vaniright", () -> this.autoFactory.vanilla("Vaniright"));
     }
 
     /** Returns the selected auto command with the inputted delay. */

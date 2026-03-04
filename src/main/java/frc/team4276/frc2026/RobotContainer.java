@@ -231,4 +231,8 @@ public class RobotContainer {
     public Vision getVision() {
         return vision;
     }
+
+    public Superstructure getSuperstructure(){
+        return superstructure;
+    }
 }
