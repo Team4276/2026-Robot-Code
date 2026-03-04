@@ -52,7 +52,7 @@ public class Superstructure extends SubsystemBase {
 
     private Trigger activeRumble = new Trigger(this::isHubActive);
 
-    private boolean isActiveOverride = false;
+    private boolean isManual = false;
     private Debouncer inShootingToleranceDebounce = new Debouncer(0.25);
 
     public Superstructure(
@@ -73,7 +73,7 @@ public class Superstructure extends SubsystemBase {
                 .onTrue(this.controller.rumbleCommand(RumbleType.kBothRumble, 0.5, 0.25, 3))
                 .onFalse(this.controller.rumbleCommand(RumbleType.kBothRumble, 0.5, 1.0, 1));
 
-        SmartDashboard.putBoolean("Superstructure/IsActiveOverride", isActiveOverride);
+        SmartDashboard.putBoolean("Superstructure/IsManual", isManual);
         SmartDashboard.putBoolean("Superstructure/IsFirstActive", isFirstActive);
     }
 
@@ -86,7 +86,7 @@ public class Superstructure extends SubsystemBase {
                 shooterAtSetpoint() &&
                         (drive.getSystemState() == Drive.SystemState.HEADING_ALIGN ? drive.isAtHeading() : true))) {
 
-            if (feedState == FeedState.ACTIVE && (isHubActive() || getIsOverrideActive())) {
+            if (feedState == FeedState.ACTIVE && (isHubActive() || getIsManual())) {
                 feeder.setSystemState(Feeder.SystemState.FEED);
 
             } else if (feedState == FeedState.FERRY) {
@@ -115,13 +115,13 @@ public class Superstructure extends SubsystemBase {
 
     }
 
-    public void setOverrideActive(boolean isActive) {
-        isActiveOverride = isActive;
-        SmartDashboard.putBoolean("Superstructure/IsActiveOverride", isActiveOverride);
+    public void setIsManual(boolean isManual) {
+        this.isManual = isManual;
+        SmartDashboard.putBoolean("Superstructure/IsManual", isManual);
     }
 
-    public boolean getIsOverrideActive() {
-        return SmartDashboard.getBoolean("Superstructure/IsActiveOverride", isActiveOverride);
+    public boolean getIsManual() {
+        return SmartDashboard.getBoolean("Superstructure/IsManual", isManual);
     }
 
     public void setIsFirstActive(boolean isFirstActive) {
@@ -254,8 +254,10 @@ public class Superstructure extends SubsystemBase {
             } else if (preset == ParamPreset.SHERRY) {
                 feedState = FeedState.FERRY;
 
-                // drive.setHeadingAlignRotation(AllianceFlipUtil.apply(Rotation2d.kZero));
+                if (!isManual) {
+                    drive.setHeadingAlignRotation(preset.getParams().robotHeading());
 
+                }
             }
         });
     }
