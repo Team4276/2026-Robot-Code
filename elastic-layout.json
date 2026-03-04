@@ -9,10 +9,10 @@
         "containers": [
           {
             "title": "Gyro",
-            "x": 704.0,
-            "y": 288.0,
-            "width": 128.0,
-            "height": 128.0,
+            "x": 672.0,
+            "y": 32.0,
+            "width": 160.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/Drive/Gyro/Connected",
@@ -21,15 +21,15 @@
               "true_color": 4283215696,
               "false_color": 4294198070,
               "true_icon": "None",
-              "false_icon": "X"
+              "false_icon": "None"
             }
           },
           {
             "title": "Front Left Turn",
             "x": 192.0,
-            "y": 160.0,
+            "y": 192.0,
             "width": 160.0,
-            "height": 128.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/Drive/Module0/TurnConnected",
@@ -46,7 +46,7 @@
             "x": 192.0,
             "y": 32.0,
             "width": 160.0,
-            "height": 128.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/Drive/Module0/DriveConnected",
@@ -59,11 +59,11 @@
             }
           },
           {
-            "title": "DriveConnected",
+            "title": "Front Right Drive",
             "x": 352.0,
             "y": 32.0,
             "width": 160.0,
-            "height": 128.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/Drive/Module1/DriveConnected",
@@ -76,11 +76,11 @@
             }
           },
           {
-            "title": "TurnConnected",
+            "title": "Front Right Turn",
             "x": 352.0,
-            "y": 160.0,
+            "y": 192.0,
             "width": 160.0,
-            "height": 128.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/Drive/Module1/TurnConnected",
@@ -93,11 +93,11 @@
             }
           },
           {
-            "title": "DriveConnected",
+            "title": "Back Left Drive",
             "x": 192.0,
-            "y": 288.0,
+            "y": 352.0,
             "width": 160.0,
-            "height": 128.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/Drive/Module2/DriveConnected",
@@ -110,11 +110,11 @@
             }
           },
           {
-            "title": "TurnConnected",
+            "title": "Back Left Turn",
             "x": 192.0,
-            "y": 416.0,
+            "y": 512.0,
             "width": 160.0,
-            "height": 128.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/Drive/Module2/TurnConnected",
@@ -127,11 +127,11 @@
             }
           },
           {
-            "title": "DriveConnected",
+            "title": "Back Right Drive",
             "x": 352.0,
-            "y": 288.0,
+            "y": 352.0,
             "width": 160.0,
-            "height": 128.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/Drive/Module3/DriveConnected",
@@ -144,11 +144,11 @@
             }
           },
           {
-            "title": "TurnConnected",
+            "title": "Back Right Turn",
             "x": 352.0,
-            "y": 416.0,
+            "y": 512.0,
             "width": 160.0,
-            "height": 128.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/Drive/Module3/TurnConnected",
@@ -162,10 +162,10 @@
           },
           {
             "title": "Feeder",
-            "x": 832.0,
+            "x": 864.0,
             "y": 32.0,
-            "width": 128.0,
-            "height": 128.0,
+            "width": 160.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/Feeder/Connected",
@@ -179,10 +179,10 @@
           },
           {
             "title": "Flywheel",
-            "x": 832.0,
-            "y": 160.0,
-            "width": 128.0,
-            "height": 128.0,
+            "x": 864.0,
+            "y": 192.0,
+            "width": 160.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/Flywheel/Connected",
@@ -192,6 +192,170 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "Intake Deploy",
+            "x": 864.0,
+            "y": 352.0,
+            "width": 160.0,
+            "height": 160.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Intake/Deploy/Connected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Intake Rollers",
+            "x": 864.0,
+            "y": 512.0,
+            "width": 160.0,
+            "height": 160.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/Intake/Roller/Connected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "TempCelsius",
+            "x": 1024.0,
+            "y": 192.0,
+            "width": 128.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/Flywheel/TempCelsius",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "TempCelsius",
+            "x": 1024.0,
+            "y": 32.0,
+            "width": 128.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/Feeder/TempCelsius",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "TempCelsius",
+            "x": 64.0,
+            "y": 32.0,
+            "width": 128.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module0/DriveTempCelsius",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "TempCelsius",
+            "x": 64.0,
+            "y": 192.0,
+            "width": 128.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module0/TurnTempCelsius",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "TempCelsius",
+            "x": 512.0,
+            "y": 32.0,
+            "width": 128.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module1/DriveTempCelsius",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "TempCelsius",
+            "x": 512.0,
+            "y": 192.0,
+            "width": 128.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module1/TurnTempCelsius",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "TempCelsius",
+            "x": 64.0,
+            "y": 352.0,
+            "width": 128.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module2/DriveTempCelsius",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "TempCelsius",
+            "x": 64.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module2/TurnTempCelsius",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "TempCelsius",
+            "x": 512.0,
+            "y": 352.0,
+            "width": 128.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module3/DriveTempCelsius",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "TempCelsius",
+            "x": 512.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/Drive/Module3/TurnTempCelsius",
+              "period": 0.06,
+              "data_type": "double"
             }
           }
         ]
@@ -485,7 +649,7 @@
             "x": 960.0,
             "y": 640.0,
             "width": 288.0,
-            "height": 160.0,
+            "height": 128.0,
             "type": "Toggle Button",
             "properties": {
               "topic": "/SmartDashboard/Superstructure/IsActiveOverride",
