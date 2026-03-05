@@ -33,7 +33,7 @@ public class Feeder extends SubsystemBase {
 
     private double directionFactor = 1.0;
     private final Timer directionSwap = new Timer();
-    private final LoggedTunableNumber directionSwapTime = new LoggedTunableNumber("Feeder/DirectionSwapTime", 0.5);
+    private final LoggedTunableNumber directionSwapTime = new LoggedTunableNumber("Feeder/DirectionSwapTime", 0.25);
 
     public Feeder(FeederIO io) {
         this.io = io;
@@ -54,7 +54,7 @@ public class Feeder extends SubsystemBase {
         }
 
         if(systemState == SystemState.IDLE){
-            outputVoltage *= directionFactor;
+            // outputVoltage *= directionFactor;
         }
 
         io.setOpenLoop(outputVoltage);

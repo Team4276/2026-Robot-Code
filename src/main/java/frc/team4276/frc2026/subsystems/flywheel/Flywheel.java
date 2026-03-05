@@ -7,14 +7,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team4276.lib.dashboard.LoggedTunableNumber;
 
 public class Flywheel extends SubsystemBase {
-    private final LoggedTunableNumber tolerance = new LoggedTunableNumber("Flywheel/ToleranceRPM", 300);
+    private final LoggedTunableNumber tolerance = new LoggedTunableNumber("Flywheel/ToleranceRPM", 1000);
 
     private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
     private final FlywheelIO io;
 
     private double rpmSetpoint = 0.0;
 
-    private LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.0);
+    private LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.2);
     private LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 12.0 / 5676.0);
 
     public Flywheel(FlywheelIO io){

@@ -43,7 +43,7 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
                 .idleMode(IdleMode.kCoast)
                 .smartCurrentLimit(40)
                 .voltageCompensation(12.0)
-                .inverted(false);
+                .inverted(true);
         config.encoder
                 // .positionConversionFactor(1.0)
                 // .velocityConversionFactor(1.0 / 60)
@@ -53,7 +53,10 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
                 .inverted(false)
                 // .positionConversionFactor(2 * Math.PI)
                 // .velocityConversionFactor(2 * Math.PI / 60)
-                .averageDepth(2);
+                .positionConversionFactor(1.0)
+                .velocityConversionFactor(1.0)
+                .averageDepth(2)
+                .zeroOffset(0.0);
         config.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .pid(
@@ -62,7 +65,7 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
                         0.0);
         config.closedLoop.maxMotion
                 .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal)
-                .allowedProfileError(10.0)
+                .allowedProfileError(0.0)
                 .cruiseVelocity(0.0)
                 .maxAcceleration(0.0);
         config.signals
@@ -99,7 +102,7 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
 
     @Override
     public void setPositionSetpoint(double position) {
-        controller.setSetpoint(position, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0, 0.0,
+        controller.setSetpoint(position, ControlType.kPosition, ClosedLoopSlot.kSlot0, 0.0,
                 ArbFFUnits.kVoltage);
     }
 

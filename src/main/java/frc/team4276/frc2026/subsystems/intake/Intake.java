@@ -15,7 +15,7 @@ public class Intake extends SubsystemBase {
     private final IntakeDeployIOInputsAutoLogged deployInputs = new IntakeDeployIOInputsAutoLogged();
     private final IntakeRollerIOInputsAutoLogged rollerInputs = new IntakeRollerIOInputsAutoLogged();
 
-    private final LoggedTunableNumber absoluteEncoderZero = new LoggedTunableNumber("Intake/AbsoluteEncoderZero", 0.0);
+    private final LoggedTunableNumber absoluteEncoderZero = new LoggedTunableNumber("Intake/AbsoluteEncoderZero", 0.24);
 
     public enum WantedState {
         IDLE,
@@ -52,7 +52,7 @@ public class Intake extends SubsystemBase {
         applyState();
 
         if(isDisabled && DriverStation.isEnabled()){
-            deployIo.setPosition(MathUtil.inputModulus(deployInputs.absolutePositionRev + absoluteEncoderZero.getAsDouble(), -1.0, 1.0) / motorToEncoderReduction);
+            deployIo.setPosition(MathUtil.inputModulus(deployInputs.absolutePositionRev - absoluteEncoderZero.getAsDouble(), -1.0, 1.0) / motorToEncoderReduction);
         }
 
         isDisabled = DriverStation.isDisabled();
@@ -74,6 +74,7 @@ public class Intake extends SubsystemBase {
         switch (systemState) {
             case IDLING:
                 rollerIo.setOpenLoop(idleVolts.getAsDouble());
+                deployIo.setOpenLoop(deployIdleVolts.getAsDouble());
 
                 break;
 

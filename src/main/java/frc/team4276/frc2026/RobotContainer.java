@@ -66,7 +66,12 @@ public class RobotContainer {
                             new ModuleIOKreo(1),
                             new ModuleIOKreo(2),
                             new ModuleIOKreo(3));
-                    intake = new Intake(new IntakeDeployIOSpark(), new IntakeRollerIOSpark());
+                    intake = new Intake(
+                        new IntakeDeployIO() {
+                                
+                        }
+                        // new IntakeDeployIOSpark()
+                    , new IntakeRollerIOSpark());
                     feeder = new Feeder(new FeederIOSpark());
                     flywheel = new Flywheel(new FlywheelIOSpark());
                     vision = new Vision(RobotState.getInstance()::addVisionMeasurement, new VisionIOPhotonVision(0));
