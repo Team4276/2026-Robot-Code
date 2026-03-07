@@ -39,7 +39,9 @@ public class FlywheelIOSpark implements FlywheelIO {
                 .idleMode(IdleMode.kCoast)
                 .smartCurrentLimit(80)
                 .voltageCompensation(12.0)
-                .inverted(false);
+                .inverted(false)
+                .openLoopRampRate(1.0)
+                .closedLoopRampRate(1.0);
         config.encoder
                 // .velocityConversionFactor(1.0 / 60.0)
                 .uvwMeasurementPeriod(10)
