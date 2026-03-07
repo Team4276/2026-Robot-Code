@@ -26,10 +26,10 @@ public class DriveConstants {
 
     // Zeroed rotation values for each module, see setup instructions
     public static final Rotation2d[] zeroRotations = {
-            Rotation2d.fromDegrees(98), // FL
-            Rotation2d.fromDegrees(171), // FR
-            Rotation2d.fromDegrees(2.5), // BL
-            Rotation2d.fromDegrees(149) // BR
+            Rotation2d.fromDegrees(101.8), // FL
+            Rotation2d.fromDegrees(175.2), // FR
+            Rotation2d.fromDegrees(8.1), // BL
+            Rotation2d.fromDegrees(148.6) // BR
     };
 
     public static final Rotation2d[] zeroHelperRotations = {
