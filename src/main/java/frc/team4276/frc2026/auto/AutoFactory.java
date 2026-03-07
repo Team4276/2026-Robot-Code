@@ -49,8 +49,9 @@ public class AutoFactory {
         var startPose = traj.getInitialPose(false).get();
 
         return resetPose(startPose)
-                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT))
-                .andThen(robotContainer.getSuperstructure().enableShooter())
+                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT)
+                        .raceWith(Commands.waitSeconds(3.0)))
+                .andThen(robotContainer.getSuperstructure().shootPreset(ParamPreset.SHUB))
                 .andThen(Commands.waitSeconds(preloadShotTime.getAsDouble()))
                 .andThen(robotContainer.getSuperstructure().disableShooter());
     }
@@ -62,7 +63,7 @@ public class AutoFactory {
 
         return driveToPoint(afterShotPose)
                 .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT))
-                .andThen(robotContainer.getSuperstructure().enableShooter())
+                .andThen(robotContainer.getSuperstructure().shootPreset(ParamPreset.SHUB))
                 .andThen(Commands.waitSeconds(refillShotTime.getAsDouble()))
                 .andThen(robotContainer.getSuperstructure().disableShooter());
     }
@@ -79,7 +80,7 @@ public class AutoFactory {
                 .andThen(driveTrajectoryWithVisionState(split1, VisionState.REJECT))
                 .andThen(Commands.waitSeconds(sprinkleWaitTime.getAsDouble()))
                 .andThen(driveTrajectoryWithVisionState(split2, VisionState.REJECT))
-                .andThen(robotContainer.getSuperstructure().enableShooter())
+                .andThen(robotContainer.getSuperstructure().shootPreset(ParamPreset.SHUB))
                 .andThen(Commands.waitSeconds(refillShotTime.getAsDouble()))
                 .andThen(robotContainer.getSuperstructure().disableShooter());
     }

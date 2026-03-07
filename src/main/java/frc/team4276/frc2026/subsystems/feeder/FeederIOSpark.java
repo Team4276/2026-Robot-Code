@@ -28,7 +28,9 @@ public class FeederIOSpark implements FeederIO {
         config.idleMode(IdleMode.kCoast)
                 .smartCurrentLimit(80)
                 .voltageCompensation(12.0)
-                .inverted(true);
+                .inverted(true)
+                .openLoopRampRate(0.5)
+                .closedLoopRampRate(0.5);
         config.signals
                 .appliedOutputPeriodMs(20)
                 .busVoltagePeriodMs(20)

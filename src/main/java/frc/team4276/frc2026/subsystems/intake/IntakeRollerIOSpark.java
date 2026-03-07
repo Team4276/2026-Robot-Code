@@ -28,7 +28,9 @@ public class IntakeRollerIOSpark implements IntakeRollerIO {
         config.idleMode(IdleMode.kCoast)
                 .smartCurrentLimit(40)
                 .voltageCompensation(12.0)
-                .inverted(true);
+                .inverted(true)
+                .openLoopRampRate(0.5)
+                .closedLoopRampRate(0.5);
         config.signals
                 .appliedOutputPeriodMs(20)
                 .busVoltagePeriodMs(20)

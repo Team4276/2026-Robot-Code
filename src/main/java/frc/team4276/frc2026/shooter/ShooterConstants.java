@@ -19,10 +19,10 @@ public class ShooterConstants {
                 new LoggedTunableNumber("Shooter/Presets/ShowerRPM", 3000.0)),
         SHUB(Rotation2d.kZero,
                 0.0,
-                new LoggedTunableNumber("Shooter/Presets/ShubRPM",2750.0)),
+                new LoggedTunableNumber("Shooter/Presets/ShubRPM",3000.0)),
         SHERRY(Rotation2d.kZero,
                 0.0,
-                new LoggedTunableNumber("Shooter/Presets/SherryRPM", 5000.0)),
+                new LoggedTunableNumber("Shooter/Presets/SherryRPM", 4000.0)),
 
         // Other
         STOW(Rotation2d.kZero,

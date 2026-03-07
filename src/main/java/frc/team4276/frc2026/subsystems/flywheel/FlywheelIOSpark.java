@@ -40,8 +40,8 @@ public class FlywheelIOSpark implements FlywheelIO {
                 .smartCurrentLimit(80)
                 .voltageCompensation(12.0)
                 .inverted(false)
-                .openLoopRampRate(1.0)
-                .closedLoopRampRate(1.0);
+                .openLoopRampRate(0.5)
+                .closedLoopRampRate(0.5);
         config.encoder
                 // .velocityConversionFactor(1.0 / 60.0)
                 .uvwMeasurementPeriod(10)

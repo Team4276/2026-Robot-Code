@@ -17,37 +17,43 @@ public class Flywheel extends SubsystemBase {
     private LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.2);
     private LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 12.0 / 5676.0);
 
-    public Flywheel(FlywheelIO io){
+    public Flywheel(FlywheelIO io) {
         this.io = io;
     }
 
     @Override
     public void periodic() {
         io.updateInputs(inputs);
-        Logger.processInputs("Flywheel", inputs);
 
+        Logger.processInputs("Flywheel", inputs);
         Logger.recordOutput("Flywheel/RPM", getRPM());
-        
+
     }
 
-    public void setVelocity(double RPM){
+    public void setVelocity(double RPM) {
         double velocityFeedforward = kV.getAsDouble() * RPM;
-        
-        io.setRpm(RPM, kS.getAsDouble() + velocityFeedforward);
+
+        if (RPM < 400) {
+            io.setOpenLoop(0.0);
+
+        } else {
+            io.setRpm(RPM, kS.getAsDouble() + velocityFeedforward);
+
+        }
         rpmSetpoint = RPM;
-        
+
         Logger.recordOutput("Flywheel/VelocityFeedforward", velocityFeedforward);
     }
 
-    public void setBrakeMode(boolean enabled){
+    public void setBrakeMode(boolean enabled) {
         io.setBrakeMode(enabled);
     }
 
-    public boolean atSetpoint(){
+    public boolean atSetpoint() {
         return MathUtil.isNear(rpmSetpoint, inputs.velocityRPM, tolerance.getAsDouble());
     }
 
-    public double getRPM(){
+    public double getRPM() {
         return inputs.velocityRPM;
     }
 }
