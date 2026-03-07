@@ -112,6 +112,10 @@ public class Superstructure extends SubsystemBase {
 
         }
 
+        if(Constants.isTuning){
+            ShotCalculator.getInstance().getHubParameters();
+        }
+
         flywheel.setVelocity(shootingParams.get().flywheelSpeed());
 
         Logger.recordOutput("Superstructure/IsFirstActive", getIsFirstActive());
