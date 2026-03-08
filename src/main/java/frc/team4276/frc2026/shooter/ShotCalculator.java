@@ -46,7 +46,7 @@ public class ShotCalculator {
     private ShootingParameters latestFerryParameters = null;
 
     private static LoggedTunableNumber minDistance = new LoggedTunableNumber("ShotCalculator/MinDistance", 1.5);
-    private static LoggedTunableNumber maxDistance = new LoggedTunableNumber("ShotCalculator/MaxDistance", 2.5);
+    private static LoggedTunableNumber maxDistance = new LoggedTunableNumber("ShotCalculator/MaxDistance", 2.0);
     private static double phaseDelay;
     private static final InterpolatingDoubleTreeMap shotFlywheelSpeedMap = new InterpolatingDoubleTreeMap();
     private static final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();

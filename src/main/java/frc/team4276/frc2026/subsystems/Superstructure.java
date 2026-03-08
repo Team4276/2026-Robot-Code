@@ -5,6 +5,8 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.team4276.frc2026.Constants;
+import frc.team4276.frc2026.FieldConstants;
 import frc.team4276.frc2026.RobotState;
 import frc.team4276.frc2026.FieldConstants.FieldZone;
 import frc.team4276.frc2026.shooter.ShotCalculator;
@@ -112,7 +115,7 @@ public class Superstructure extends SubsystemBase {
 
         }
 
-        if(Constants.isTuning){
+        if (Constants.isTuning) {
             ShotCalculator.getInstance().getHubParameters();
         }
 
@@ -242,7 +245,13 @@ public class Superstructure extends SubsystemBase {
             if (RobotState.getInstance().getCurrentFieldZone() == FieldZone.ALLIANCE) {
                 shootingParams = ShotCalculator.getInstance()::getHubParameters;
                 drive.setVelocityScalar(DriveSpeedScalar.CRAWL);
-                drive.setHeadingAlignRotation(() -> shootingParams.get().robotHeading());
+                if (isManual) {
+                    drive.setHeadingAlignRotation(() -> shootingParams.get().robotHeading());
+
+                } else {
+                    drive.setAutoAlignPose(new Pose2d(2.9, FieldConstants.fieldWidth / 2.0, Rotation2d.kPi));
+
+                }
 
                 feedState = FeedState.ACTIVE;
 
@@ -283,7 +292,7 @@ public class Superstructure extends SubsystemBase {
                 feedState = FeedState.FERRY;
 
                 if (!isManual) {
-                    drive.setHeadingAlignRotation(preset.getParams().robotHeading());
+                    // drive.setHeadingAlignRotation(preset.getParams().robotHeading());
 
                 }
             }
