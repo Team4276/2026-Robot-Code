@@ -1,6 +1,7 @@
 package frc.team4276.frc2026.subsystems.intake;
 
 import static frc.team4276.lib.SparkUtil.*;
+import static frc.team4276.frc2026.subsystems.intake.IntakeConstants.*;
 
 import java.util.function.DoubleSupplier;
 
@@ -40,29 +41,36 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
 
         config = new SparkMaxConfig();
         config
-                .idleMode(IdleMode.kCoast)
+                .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(40)
                 .voltageCompensation(12.0)
                 .inverted(true);
         config.encoder
-                // .positionConversionFactor(1.0)
-                // .velocityConversionFactor(1.0 / 60)
+                .positionConversionFactor(1.0)
+                .velocityConversionFactor(1.0)
                 .uvwMeasurementPeriod(10)
                 .uvwAverageDepth(2);
         config.absoluteEncoder
                 .inverted(false)
-                // .positionConversionFactor(2 * Math.PI)
-                // .velocityConversionFactor(2 * Math.PI / 60)
-                .positionConversionFactor(1.0)
-                .velocityConversionFactor(1.0)
+                .positionConversionFactor(2 * Math.PI)
+                .velocityConversionFactor(2 * Math.PI / 60)
+                // .positionConversionFactor(1.0)
+                // .velocityConversionFactor(1.0)
                 .averageDepth(2)
-                .zeroOffset(0.0);
+                // .zeroOffset(0.0)
+                ;
         config.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .pid(
                         0.0,
                         0.0,
                         0.0);
+        config.closedLoop.feedForward
+                .kS(0.0)
+                // .kG(0.0)
+                .kCos(0.0)
+                .kCosRatio(motorReduction)
+                .kV(12.0 / 5676.0);
         config.closedLoop.maxMotion
                 .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal)
                 .allowedProfileError(0.0)
@@ -92,7 +100,7 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
         ifOk(spark, spark::getMotorTemperature, (values) -> inputs.tempCelsius = values);
 
         ifOk(spark, encoder::getPosition, (values) -> inputs.positionRev = values);
-        ifOk(spark, absoluteEncoder::getPosition, (values) -> inputs.absolutePositionRev = values);
+        ifOk(spark, absoluteEncoder::getPosition, (values) -> inputs.absolutePositionRad = values);
     }
 
     @Override
@@ -102,7 +110,7 @@ public class IntakeDeployIOSpark implements IntakeDeployIO {
 
     @Override
     public void setPositionSetpoint(double position) {
-        controller.setSetpoint(position, ControlType.kPosition, ClosedLoopSlot.kSlot0, 0.0,
+        controller.setSetpoint(position, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0, 0.0,
                 ArbFFUnits.kVoltage);
     }
 

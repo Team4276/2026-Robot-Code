@@ -47,7 +47,7 @@ public class RobotContainer {
     private final Superstructure superstructure;
 
     private final AutoSelector autoSelector = new AutoSelector(new AutoFactory(this)); // I don't know why I did this.
-                                                                                       // Do not ask why I did this. 
+                                                                                       // Do not ask why I did this.
                                                                                        // No, I will not change it.
 
     private final ViXController driver = new ViXController(Ports.DRIVER_CONTROLLER);
@@ -68,11 +68,10 @@ public class RobotContainer {
                             new ModuleIOKreo(2),
                             new ModuleIOKreo(3));
                     intake = new Intake(
-                        // new IntakeDeployIO() {
-                                
-                        // }
-                        new IntakeDeployIOSpark()
-                    , new IntakeRollerIOSpark());
+                            // new IntakeDeployIO() {
+
+                            // }
+                            new IntakeDeployIOSpark(), new IntakeRollerIOSpark());
                     feeder = new Feeder(new FeederIOSpark());
                     flywheel = new Flywheel(new FlywheelIOSpark());
                     vision = new Vision(RobotState.getInstance()::addVisionMeasurement, new VisionIOPhotonVision(0));
@@ -207,12 +206,24 @@ public class RobotContainer {
                 .povLeft()
                 .onTrue(Commands.runOnce(() -> superstructure.setIsManual(true))
                         .ignoringDisable(true));
+
+        operator
+                .rightBumper()
+                .and(operator.leftTrigger())
+                .and(operator.rightTrigger().negate())
+                .onTrue(Commands.runOnce(() -> intake.setDeployed(true)));
+
+        operator
+                .leftBumper()
+                .and(operator.leftTrigger())
+                .and(operator.rightTrigger().negate())
+                .onTrue(Commands.runOnce(() -> intake.setDeployed(false)));
     }
 
-    public void periodic(){
-        if(operator.rightTrigger().getAsBoolean()){
+    public void periodic() {
+        if (operator.rightTrigger().getAsBoolean()) {
             intake.setDeployVoltage(6.0 * operator.getRightY());
-        } else {
+        } else if (!operator.leftTrigger().getAsBoolean()) {
             intake.setDeployVoltage(0.0);
         }
     }
@@ -246,7 +257,7 @@ public class RobotContainer {
         return vision;
     }
 
-    public Superstructure getSuperstructure(){
+    public Superstructure getSuperstructure() {
         return superstructure;
     }
 }

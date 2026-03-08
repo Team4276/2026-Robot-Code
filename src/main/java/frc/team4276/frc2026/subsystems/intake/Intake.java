@@ -52,7 +52,7 @@ public class Intake extends SubsystemBase {
         applyState();
 
         if(isDisabled && DriverStation.isEnabled()){
-            deployIo.setPosition(MathUtil.inputModulus(deployInputs.absolutePositionRev - absoluteEncoderZero.getAsDouble(), -1.0, 1.0) / motorToEncoderReduction);
+            deployIo.setPosition(MathUtil.inputModulus(deployInputs.absolutePositionRad - absoluteEncoderZero.getAsDouble(), -1.0, 1.0) / motorToEncoderReduction);
         }
 
         isDisabled = DriverStation.isDisabled();
@@ -99,6 +99,14 @@ public class Intake extends SubsystemBase {
 
     public void setDeployVoltage(double voltage){
         deployIo.setOpenLoop(voltage);
+    }
+
+    public void setDeployed(boolean deployed){
+        if(deployed){
+            deployIo.setPosition(deployPosition.getAsDouble());
+        } else {
+            deployIo.setPosition(retractPosition.getAsDouble());
+        }
     }
 
     public void setWantedState(WantedState state) {
