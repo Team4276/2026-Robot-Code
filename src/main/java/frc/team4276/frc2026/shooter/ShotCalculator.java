@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.team4276.frc2026.FieldConstants;
 import frc.team4276.frc2026.RobotState;
 import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
+import frc.team4276.lib.dashboard.LoggedTunableNumber;
 import frc.team4276.lib.geometry.AllianceFlipUtil;
 import frc.team4276.lib.geometry.GeomUtil;
 
@@ -44,15 +45,15 @@ public class ShotCalculator {
     private ShootingParameters latestHubParameters = null;
     private ShootingParameters latestFerryParameters = null;
 
-    private static double minDistance;
-    private static double maxDistance;
+    private static LoggedTunableNumber minDistance = new LoggedTunableNumber("ShotCalculator/MinDistance", 1.5);
+    private static LoggedTunableNumber maxDistance = new LoggedTunableNumber("ShotCalculator/MaxDistance", 2.5);
     private static double phaseDelay;
     private static final InterpolatingDoubleTreeMap shotFlywheelSpeedMap = new InterpolatingDoubleTreeMap();
     private static final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();
 
     static {
-        minDistance = 1.34;
-        maxDistance = 5.60;
+        // minDistance = 1.34;
+        // maxDistance = 5.60;
         phaseDelay = 0.03;
 
         shotFlywheelSpeedMap.put(1.34, 3000.0);
@@ -62,10 +63,16 @@ public class ShotCalculator {
         timeOfFlightMap.put(1.34, 0.001);
     }
 
+    boolean stooop = true;
+
     public ShootingParameters getHubParameters() {
         if (latestHubParameters != null) {
             return latestHubParameters;
         }
+
+        if (stooop) {
+            return getShrimpleParameters();
+        } 
 
         // Calculate estimated pose while accounting for phase delay
         Pose2d estimatedPose = RobotState.getInstance().getEstimatedPose();
@@ -127,8 +134,8 @@ public class ShotCalculator {
         // behindFarHub);
 
         latestHubParameters = new ShootingParameters(
-                lookaheadToTargetDistance >= minDistance
-                        && lookaheadToTargetDistance <= maxDistance,
+                lookaheadToTargetDistance >= minDistance.getAsDouble()
+                        && lookaheadToTargetDistance <= maxDistance.getAsDouble(),
                 desiredRobotAngle.plus(Rotation2d.kPi),
                 robotOmega,
                 shotFlywheelSpeedMap.get(lookaheadToTargetDistance));
@@ -139,6 +146,43 @@ public class ShotCalculator {
         Logger.recordOutput("ShotCalculator/ShooterToTargetDistance", lookaheadToTargetDistance);
 
         return latestHubParameters;
+    }
+
+    private ShootingParameters getShrimpleParameters() {
+        // Calculate estimated pose while accounting for phase delay
+        Pose2d estimatedPose = RobotState.getInstance().getEstimatedPose();
+
+        // Calculate target
+        Translation2d target = AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
+
+        // Calculate parameters
+        Translation2d robotToTarget = target.minus(estimatedPose.getTranslation());
+        double targetDist = robotToTarget.getNorm();
+        desiredRobotAngle = robotToTarget.getAngle();
+
+        // Check if inside a box of bad
+        // var flippedPose = AllianceFlipUtil.apply(estimatedPose);
+        // boolean insideTowerBadBox =
+        // towerBound.contains(flippedPose.getTranslation());
+        // boolean behindNearHub = nearHubBound.contains(flippedPose.getTranslation());
+        // boolean behindFarHub = farHubBound.contains(flippedPose.getTranslation());
+        // boolean outsideOfBadBoxes = !(insideTowerBadBox || behindNearHub ||
+        // behindFarHub);
+
+        latestHubParameters = new ShootingParameters(
+                targetDist >= minDistance.getAsDouble()
+                        && targetDist <= maxDistance.getAsDouble(),
+                desiredRobotAngle.plus(Rotation2d.kPi),
+                0.0,
+                shotFlywheelSpeedMap.get(targetDist));
+
+        // Log calculated values
+        Logger.recordOutput("ShotCalculator/TargetPose", new Pose2d(target, Rotation2d.kZero));
+        Logger.recordOutput("ShotCalculator/LookaheadPose", estimatedPose);
+        Logger.recordOutput("ShotCalculator/ShooterToTargetDistance", targetDist);
+
+        return latestHubParameters;
+
     }
 
     public void clearHubParameters() {
