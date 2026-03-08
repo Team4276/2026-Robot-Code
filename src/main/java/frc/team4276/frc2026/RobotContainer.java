@@ -212,6 +212,8 @@ public class RobotContainer {
     public void periodic(){
         if(operator.rightTrigger().getAsBoolean()){
             intake.setDeployVoltage(8.0 * operator.getRightY());
+        } else {
+            intake.setDeployVoltage(0.0);
         }
     }
 
