@@ -55,7 +55,7 @@ public class Superstructure extends SubsystemBase {
     private Trigger activeRumble = new Trigger(this::isHubActive);
 
     private boolean isManual = false;
-    private Debouncer inShootingToleranceDebounce = new Debouncer(0.25);
+    private Debouncer inShootingToleranceDebounce = new Debouncer(2.0);
 
     private final LoggedTunableNumber hubPrefireTime = new LoggedTunableNumber("Superstructure/HubPrefireTime", 1.0);
 
