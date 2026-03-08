@@ -45,6 +45,10 @@ public class Flywheel extends SubsystemBase {
         Logger.recordOutput("Flywheel/VelocityFeedforward", velocityFeedforward);
     }
 
+    public void setVoltage(double volts){
+        io.setOpenLoop(volts);
+    }
+
     public void setBrakeMode(boolean enabled) {
         io.setBrakeMode(enabled);
     }

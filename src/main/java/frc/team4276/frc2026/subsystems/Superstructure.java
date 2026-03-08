@@ -41,6 +41,7 @@ public class Superstructure extends SubsystemBase {
     private final Vision vision;
 
     private final ViXController controller;
+    private final ViXController operator;
 
     private boolean isFirstActive = false;
 
@@ -68,13 +69,15 @@ public class Superstructure extends SubsystemBase {
             Feeder feeder,
             Flywheel flywheel,
             Vision vision,
-            ViXController controller) {
+            ViXController controller,
+            ViXController operator) {
         this.drive = drive;
         this.intake = intake;
         this.feeder = feeder;
         this.flywheel = flywheel;
         this.vision = vision;
         this.controller = controller;
+        this.operator = operator;
 
         activeRumble
                 .onTrue(this.controller.rumbleCommand(RumbleType.kBothRumble, 0.5, 0.25, 3))
@@ -119,7 +122,13 @@ public class Superstructure extends SubsystemBase {
             ShotCalculator.getInstance().getHubParameters();
         }
 
-        flywheel.setVelocity(shootingParams.get().flywheelSpeed());
+        if (operator.a().getAsBoolean()) {
+            flywheel.setVoltage(-12.0);
+            
+        } else {
+            flywheel.setVelocity(shootingParams.get().flywheelSpeed());
+
+        }
 
         Logger.recordOutput("Superstructure/IsFirstActive", getIsFirstActive());
         Logger.recordOutput("Superstructure/IsHubActive", isHubActive());

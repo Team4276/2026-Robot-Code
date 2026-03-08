@@ -136,7 +136,7 @@ public class RobotContainer {
             });
         }
 
-        superstructure = new Superstructure(drive, intake, feeder, flywheel, vision, driver);
+        superstructure = new Superstructure(drive, intake, feeder, flywheel, vision, driver, operator);
 
         configureBindings();
 
