@@ -24,7 +24,12 @@ public class Ports {
     public static final int FLYWHEEL = 13;
 
     /* Inputs */
+
+    /* Comp */
     public static final int DRIVER_CONTROLLER = 0;
-    public static final int DEMO_CONTROLLER_LEFT = 1;
-    public static final int DEMO_CONTROLLER_RIGHT = 2;
+    public static final int OPERATOR_CONTROLLER = 1;
+
+    /* Demo */
+    public static final int DEMO_CONTROLLER_LEFT = 2;
+    public static final int DEMO_CONTROLLER_RIGHT = 3;
 }

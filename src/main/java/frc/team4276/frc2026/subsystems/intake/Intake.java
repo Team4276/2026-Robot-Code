@@ -74,27 +74,31 @@ public class Intake extends SubsystemBase {
         switch (systemState) {
             case IDLING:
                 rollerIo.setOpenLoop(idleVolts.getAsDouble());
-                deployIo.setOpenLoop(deployIdleVolts.getAsDouble());
+                // deployIo.setOpenLoop(deployIdleVolts.getAsDouble());
 
                 break;
 
             case RETRACTED:
                 rollerIo.setOpenLoop(idleVolts.getAsDouble());
-                deployIo.setPositionSetpoint(retractPosition.getAsDouble());
+                // deployIo.setPositionSetpoint(retractPosition.getAsDouble());
 
                 break;
 
             case INTAKING:
                 rollerIo.setOpenLoop(intakeVolts.getAsDouble());
-                deployIo.setPositionSetpoint(deployPosition.getAsDouble());
+                // deployIo.setPositionSetpoint(deployPosition.getAsDouble());
 
                 break;
             case EXHAUSTING:
                 rollerIo.setOpenLoop(exhaustVolts.getAsDouble());
-                deployIo.setPositionSetpoint(deployPosition.getAsDouble());
+                // deployIo.setPositionSetpoint(deployPosition.getAsDouble());
 
                 break;
         }
+    }
+
+    public void setDeployVoltage(double voltage){
+        deployIo.setOpenLoop(voltage);
     }
 
     public void setWantedState(WantedState state) {

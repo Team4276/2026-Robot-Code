@@ -51,6 +51,7 @@ public class RobotContainer {
                                                                                        // No, I will not change it.
 
     private final ViXController driver = new ViXController(Ports.DRIVER_CONTROLLER);
+    private final ViXController operator = new ViXController(Ports.OPERATOR_CONTROLLER);
     private final CowsController demoController = new CowsController(Ports.DEMO_CONTROLLER_LEFT,
             Ports.DEMO_CONTROLLER_RIGHT);
 
@@ -67,10 +68,10 @@ public class RobotContainer {
                             new ModuleIOKreo(2),
                             new ModuleIOKreo(3));
                     intake = new Intake(
-                        new IntakeDeployIO() {
+                        // new IntakeDeployIO() {
                                 
-                        }
-                        // new IntakeDeployIOSpark()
+                        // }
+                        new IntakeDeployIOSpark()
                     , new IntakeRollerIOSpark());
                     feeder = new Feeder(new FeederIOSpark());
                     flywheel = new Flywheel(new FlywheelIOSpark());
@@ -206,6 +207,12 @@ public class RobotContainer {
                 .povLeft()
                 .onTrue(Commands.runOnce(() -> superstructure.setIsManual(true))
                         .ignoringDisable(true));
+    }
+
+    public void periodic(){
+        if(operator.rightTrigger().getAsBoolean()){
+            intake.setDeployVoltage(8.0 * operator.getRightY());
+        }
     }
 
     /**
