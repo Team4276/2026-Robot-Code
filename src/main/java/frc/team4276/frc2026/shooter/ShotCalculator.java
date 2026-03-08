@@ -55,14 +55,11 @@ public class ShotCalculator {
         maxDistance = 5.60;
         phaseDelay = 0.03;
 
-        shotFlywheelSpeedMap.put(1.34, 1000.0);
-        shotFlywheelSpeedMap.put(5.60, 5000.0);
+        shotFlywheelSpeedMap.put(1.34, 3000.0);
+        shotFlywheelSpeedMap.put(5.60, 3000.0);
 
-        timeOfFlightMap.put(5.68, 1.16);
-        timeOfFlightMap.put(4.55, 1.12);
-        timeOfFlightMap.put(3.15, 1.11);
-        timeOfFlightMap.put(1.88, 1.09);
-        timeOfFlightMap.put(1.38, 0.90);
+        timeOfFlightMap.put(5.60, 0.001);
+        timeOfFlightMap.put(1.34, 0.001);
     }
 
     public ShootingParameters getHubParameters() {
