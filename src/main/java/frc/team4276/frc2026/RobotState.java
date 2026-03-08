@@ -113,7 +113,7 @@ public class RobotState {
             Pose2d visionRobotPoseMeters,
             double timestampSeconds,
             Matrix<N3, N1> visionMeasurementStdDevs) {
-        visionState = VisionState.REJECT;
+        // visionState = VisionState.REJECT;
         if (visionState == VisionState.REJECT) {
             return;
         }
