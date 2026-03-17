@@ -5,6 +5,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.filter.Debouncer;
@@ -30,7 +31,7 @@ public class IntakeRollerIOTalon implements IntakeRollerIO {
     private boolean brakeModeEnabled = false;
 
     public IntakeRollerIOTalon() {
-        talon = TalonFXFactory.createDefaultTalon(Ports.INTAKE_ROLLERS, CanBus.RIO);
+        talon = TalonFXFactory.createDefaultTalon(Ports.INTAKE_ROLLERS, CanBus.CANIVORE);
 
         // Configure motor
         var config = new TalonFXConfiguration();
@@ -41,6 +42,7 @@ public class IntakeRollerIOTalon implements IntakeRollerIO {
                 .withStatorCurrentLimitEnable(true);
 
         config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         PhoenixUtil.tryUntilOk(5, () -> talon.getConfigurator().apply(config));

@@ -15,7 +15,7 @@ public class Ports {
 
     /* Intake */
     public static final int INTAKE_DEPLOY = 10;
-    public static final int INTAKE_ROLLERS = 11;
+    public static final int INTAKE_ROLLERS = 20;
 
     /* Feeder */
     public static final int FEEDER = 12;
