@@ -30,7 +30,7 @@ public class FlywheelIOSpark implements FlywheelIO {
     private boolean brakeModeEnabled = false;
 
     public FlywheelIOSpark() {
-        spark = new SparkMax(Ports.FLYWHEEL, MotorType.kBrushless);
+        spark = new SparkMax(Ports.FLYWHEEL_RIGHT, MotorType.kBrushless);
         encoder = spark.getEncoder();
         controller = spark.getClosedLoopController();
 
@@ -72,8 +72,8 @@ public class FlywheelIOSpark implements FlywheelIO {
     public void updateInputs(FlywheelIOInputs inputs) {
         ifOk(spark, new DoubleSupplier[] { spark::getAppliedOutput, spark::getBusVoltage },
                 (values) -> inputs.appliedVolts = values[0] * values[1]);
-        ifOk(spark, spark::getOutputCurrent, (values) -> inputs.statorCurrent = values);
-        ifOk(spark, spark::getMotorTemperature, (values) -> inputs.tempCelsius = values);
+        ifOk(spark, spark::getOutputCurrent, (values) -> inputs.statorCurrent[0] = values);
+        ifOk(spark, spark::getMotorTemperature, (values) -> inputs.tempCelsius[0] = values);
 
         ifOk(spark, encoder::getVelocity, (values) -> inputs.velocityRPM = values);
     }

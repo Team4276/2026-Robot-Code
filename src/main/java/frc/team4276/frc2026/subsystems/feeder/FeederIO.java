@@ -5,13 +5,13 @@ import org.littletonrobotics.junction.AutoLog;
 public interface FeederIO {
     @AutoLog
     public static class FeederIOInputs {
-        public boolean connected = true;
+        public boolean[] connected = {true, true};
 
-        public double appliedVolts = 0.0;
-        public double supplyCurrent = 0.0;
-        public double statorCurrent = 0.0;
+        public double[] appliedVolts = {0.0, 0.0};
+        public double[] supplyCurrent = {0.0, 0.0};
+        public double[] statorCurrent = {0.0, 0.0};
 
-        public double tempCelsius = 0.0;
+        public double[] tempCelsius = {0.0, 0.0};
     }
 
     public default void updateInputs(FeederIOInputs inputs) {

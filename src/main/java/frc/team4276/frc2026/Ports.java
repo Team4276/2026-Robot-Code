@@ -15,13 +15,15 @@ public class Ports {
 
     /* Intake */
     public static final int INTAKE_DEPLOY = 10;
-    public static final int INTAKE_ROLLERS = 20;
+    public static final int INTAKE_ROLLERS = 11;
 
     /* Feeder */
-    public static final int FEEDER = 12;
+    public static final int FEEDER_LEADER = 12;
+    public static final int FEEDER_FEEDER = 13;
 
     /* Shooter */
-    public static final int FLYWHEEL = 13;
+    public static final int FLYWHEEL_LEFT = 14;
+    public static final int FLYWHEEL_RIGHT = 15;
 
     /* Inputs */
 

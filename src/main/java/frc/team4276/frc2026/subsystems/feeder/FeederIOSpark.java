@@ -1,6 +1,7 @@
 package frc.team4276.frc2026.subsystems.feeder;
 
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkFlex;
 
 import static frc.team4276.lib.SparkUtil.*;
 
@@ -16,13 +17,15 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.team4276.frc2026.Ports;
 
 public class FeederIOSpark implements FeederIO {
-    private final SparkMax spark;
-    private final SparkMaxConfig config;
+    private final SparkBase leadingSpark;
+    private final SparkBase feedingSpark;
+    private final SparkBaseConfig config;
 
     private boolean brakeModeEnabled = false;
 
     public FeederIOSpark() {
-        spark = new SparkMax(Ports.FEEDER, MotorType.kBrushless);
+        leadingSpark = new SparkFlex(Ports.FEEDER_LEADER, MotorType.kBrushless);
+        feedingSpark = new SparkFlex(Ports.FEEDER_FEEDER, MotorType.kBrushless);
 
         config = new SparkMaxConfig();
         config.idleMode(IdleMode.kCoast)
@@ -36,9 +39,16 @@ public class FeederIOSpark implements FeederIO {
                 .busVoltagePeriodMs(20)
                 .outputCurrentPeriodMs(20);
         tryUntilOk(
-                spark,
+                leadingSpark,
                 5,
-                () -> spark.configure(
+                () -> leadingSpark.configure(
+                        config,
+                        ResetMode.kNoResetSafeParameters,
+                        PersistMode.kNoPersistParameters));
+        tryUntilOk(
+                feedingSpark,
+                5,
+                () -> feedingSpark.configure(
                         config,
                         ResetMode.kNoResetSafeParameters,
                         PersistMode.kNoPersistParameters));
@@ -46,15 +56,21 @@ public class FeederIOSpark implements FeederIO {
 
     @Override
     public void updateInputs(FeederIOInputs inputs) {
-        ifOk(spark, new DoubleSupplier[] { spark::getAppliedOutput, spark::getBusVoltage },
-                (values) -> inputs.appliedVolts = values[0] * values[1]);
-        ifOk(spark, spark::getOutputCurrent, (values) -> inputs.statorCurrent = values);
-        ifOk(spark, spark::getMotorTemperature, (values) -> inputs.tempCelsius = values);
+        ifOk(leadingSpark, new DoubleSupplier[] { leadingSpark::getAppliedOutput, leadingSpark::getBusVoltage },
+                (values) -> inputs.appliedVolts[0] = values[0] * values[1]);
+        ifOk(leadingSpark, leadingSpark::getOutputCurrent, (values) -> inputs.statorCurrent[0] = values);
+        ifOk(leadingSpark, leadingSpark::getMotorTemperature, (values) -> inputs.tempCelsius[0] = values);
+
+        ifOk(feedingSpark, new DoubleSupplier[] { feedingSpark::getAppliedOutput, feedingSpark::getBusVoltage },
+                (values) -> inputs.appliedVolts[1] = values[0] * values[1]);
+        ifOk(feedingSpark, feedingSpark::getOutputCurrent, (values) -> inputs.statorCurrent[1] = values);
+        ifOk(feedingSpark, feedingSpark::getMotorTemperature, (values) -> inputs.tempCelsius[1] = values);
     }
 
     @Override
     public void setOpenLoop(double voltage) {
-        spark.setVoltage(voltage);
+        leadingSpark.setVoltage(voltage);
+        feedingSpark.setVoltage(voltage);
     }
 
     @Override
@@ -65,9 +81,19 @@ public class FeederIOSpark implements FeederIO {
         new Thread(
                 () -> {
                     tryUntilOk(
-                            spark,
+                            leadingSpark,
                             5,
-                            () -> spark.configure(
+                            () -> leadingSpark.configure(
+                                    config.idleMode(
+                                            brakeModeEnabled
+                                                    ? SparkBaseConfig.IdleMode.kBrake
+                                                    : SparkBaseConfig.IdleMode.kCoast),
+                                    ResetMode.kNoResetSafeParameters,
+                                    PersistMode.kNoPersistParameters));
+                    tryUntilOk(
+                            feedingSpark,
+                            5,
+                            () -> feedingSpark.configure(
                                     config.idleMode(
                                             brakeModeEnabled
                                                     ? SparkBaseConfig.IdleMode.kBrake

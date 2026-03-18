@@ -5,11 +5,11 @@ import org.littletonrobotics.junction.AutoLog;
 public interface FlywheelIO {
     @AutoLog
     public static class FlywheelIOInputs {
-        public boolean connected = true;
+        public boolean[] connected = {true, true};
         public double appliedVolts = 0.0;
-        public double supplyCurrent = 0.0;
-        public double statorCurrent = 0.0;
-        public double tempCelsius = 0.0;
+        public double[] supplyCurrent = {0.0, 0.0};
+        public double[] statorCurrent = {0.0, 0.0};
+        public double[] tempCelsius = {0.0, 0.0};
 
         public double velocityRPM = 0.0;
     }
