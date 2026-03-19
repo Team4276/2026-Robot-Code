@@ -42,7 +42,7 @@ public class FlywheelIOTalon implements FlywheelIO {
     private boolean brakeModeEnabled = false;
 
     public FlywheelIOTalon() {
-        talon = TalonFXFactory.createDefaultTalon(Ports.FLYWHEEL_RIGHT, CanBus.CANIVORE);
+        talon = TalonFXFactory.createDefaultTalon(Ports.FLYWHEEL_RIGHT, CanBus.RIO);
         followerTalon = TalonFXFactory.createPermanentFollowerTalon(Ports.FLYWHEEL_LEFT, Ports.FLYWHEEL_RIGHT,
                 CanBus.CANIVORE, true);
 
