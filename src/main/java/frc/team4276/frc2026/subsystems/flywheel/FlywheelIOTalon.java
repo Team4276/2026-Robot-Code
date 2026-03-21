@@ -115,7 +115,7 @@ public class FlywheelIOTalon implements FlywheelIO {
                 temperatureFollower);
 
         inputs.appliedVolts = appliedVolts.getValueAsDouble();
-        inputs.velocityRPM = velocity.getValueAsDouble();
+        inputs.velocityRPM = velocity.getValueAsDouble() * 60.0;
 
         inputs.supplyCurrent[0] = supplyCurrentLeader.getValueAsDouble();
         inputs.statorCurrent[0] = statorCurrentLeader.getValueAsDouble();
@@ -139,7 +139,7 @@ public class FlywheelIOTalon implements FlywheelIO {
     @Override
     public void setRpm(double rpm, double feedforward) {
         talon.setControl(velocityVoltage
-                .withVelocity(rpm)
+                .withVelocity(rpm / 60.0)
                 .withFeedForward(feedforward));
     }
 

@@ -25,6 +25,7 @@ import frc.team4276.frc2026.subsystems.feeder.FeederIOSpark;
 import frc.team4276.frc2026.subsystems.flywheel.Flywheel;
 import frc.team4276.frc2026.subsystems.flywheel.FlywheelIO;
 import frc.team4276.frc2026.subsystems.flywheel.FlywheelIOSpark;
+import frc.team4276.frc2026.subsystems.flywheel.FlywheelIOTalon;
 import frc.team4276.frc2026.subsystems.intake.Intake;
 import frc.team4276.frc2026.subsystems.intake.IntakeDeployIO;
 import frc.team4276.frc2026.subsystems.intake.IntakeDeployIOSpark;
@@ -74,7 +75,7 @@ public class RobotContainer {
                             // }
                             new IntakeDeployIOSpark(), new IntakeRollerIOTalon());
                     feeder = new Feeder(new FeederIOSpark());
-                    flywheel = new Flywheel(new FlywheelIOSpark());
+                    flywheel = new Flywheel(new FlywheelIOTalon());
                     vision = new Vision(RobotState.getInstance()::addVisionMeasurement, new VisionIOPhotonVision(0));
                 }
 
