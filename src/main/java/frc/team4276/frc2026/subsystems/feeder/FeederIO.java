@@ -20,6 +20,9 @@ public interface FeederIO {
     public default void setOpenLoop(double voltage) {
     }
 
+    public default void setOpenLoop(double leaderVoltage, double followerVoltage) {
+    }
+
     public default void setBrakeMode(boolean enable) {
     }
 }

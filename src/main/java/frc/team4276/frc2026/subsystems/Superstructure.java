@@ -61,6 +61,8 @@ public class Superstructure extends SubsystemBase {
     private boolean isManual = false;
     private Debouncer inShootingToleranceDebounce = new Debouncer(0.25);
 
+    private boolean turnOnTheEngines = false;
+
     private final LoggedTunableNumber hubPrefireTime = new LoggedTunableNumber("Superstructure/HubPrefireTime", 1.0);
 
     public Superstructure(
@@ -98,26 +100,7 @@ public class Superstructure extends SubsystemBase {
             shootingParams = currPreset::getParams;
             feedState = FeedState.NO;
         }
-
-        if (inShootingToleranceDebounce.calculate(
-                shooterAtSetpoint())) {
-
-            if (feedState == FeedState.ACTIVE && (shouldShootHub() || getIsManual())) {
-                feeder.setSystemState(Feeder.SystemState.FEED);
-
-            } else if (feedState == FeedState.FERRY) {
-                feeder.setSystemState(Feeder.SystemState.FEED);
-
-            } else {
-                feeder.setSystemState(Feeder.SystemState.IDLE);
-
-            }
-
-        } else {
-            feeder.setSystemState(Feeder.SystemState.IDLE);
-
-        }
-
+        
         if (Constants.isTuning) {
             ShotCalculator.getInstance().getHubParameters();
         }
@@ -128,6 +111,40 @@ public class Superstructure extends SubsystemBase {
         } else {
             flywheel.setVelocity(shootingParams.get().flywheelSpeed());
 
+        }
+
+        if(feedState == FeedState.NO){
+            turnOnTheEngines = false;
+        }
+
+        if (inShootingToleranceDebounce.calculate(
+                shooterAtSetpoint())) {
+
+            if (feedState == FeedState.ACTIVE && (shouldShootHub() || getIsManual())) {
+                // feeder.setSystemState(Feeder.SystemState.FEED);
+                turnOnTheEngines = true;
+
+            } else if (feedState == FeedState.FERRY) {
+                // feeder.setSystemState(Feeder.SystemState.FEED);
+                turnOnTheEngines = true;
+
+            } else {
+                // feeder.setSystemState(Feeder.SystemState.IDLE);
+                // turnOnTheEngines = false;
+
+            }
+
+        } else {
+            // feeder.setSystemState(Feeder.SystemState.IDLE);
+
+        }
+
+        if(turnOnTheEngines){
+            feeder.setSystemState(Feeder.SystemState.FEED);
+        } else if(feedState == FeedState.ACTIVE || feedState == FeedState.FERRY){
+            feeder.setSystemState(Feeder.SystemState.SPINUP);
+        } else {
+            feeder.setSystemState(Feeder.SystemState.IDLE);
         }
 
         Logger.recordOutput("Superstructure/IsFirstActive", getIsFirstActive());

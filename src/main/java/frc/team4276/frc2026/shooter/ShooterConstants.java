@@ -16,21 +16,21 @@ public class ShooterConstants {
         // Shooting Presets
         SHOWER(Rotation2d.kZero,
                 0.0,
-                new LoggedTunableNumber("Shooter/Presets/ShowerRPM", 3000.0)),
+                new LoggedTunableNumber("Shooter/Presets/ShowerRPM", 2500.0)),
         SHUB(Rotation2d.kZero,
                 0.0,
-                new LoggedTunableNumber("Shooter/Presets/ShubRPM",3000.0)),
+                new LoggedTunableNumber("Shooter/Presets/ShubRPM",2150.0)),
         SHERRY(Rotation2d.kZero,
                 0.0,
-                new LoggedTunableNumber("Shooter/Presets/SherryRPM", 4000.0)),
+                new LoggedTunableNumber("Shooter/Presets/SherryRPM", 2500.0)),
 
         // Other
         STOW(Rotation2d.kZero,
                 0.0,
-                new LoggedTunableNumber("Shooter/Presets/StowRPM", 300.0)),
+                new LoggedTunableNumber("Shooter/Presets/StowRPM", 0.0)),
         TURTLE(Rotation2d.kZero,
                 0.0,
-                new LoggedTunableNumber("Shooter/Presets/TurtleRPM", 300.0));
+                new LoggedTunableNumber("Shooter/Presets/TurtleRPM", 0.0));
 
         private final Rotation2d robotHeading;
         private final double robotOmega;

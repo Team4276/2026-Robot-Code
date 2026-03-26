@@ -69,8 +69,13 @@ public class FeederIOSpark implements FeederIO {
 
     @Override
     public void setOpenLoop(double voltage) {
-        leadingSpark.setVoltage(voltage);
-        feedingSpark.setVoltage(voltage);
+        setOpenLoop(voltage, voltage);
+    }
+
+    @Override
+    public void setOpenLoop(double leaderVoltage, double feederVoltage) {
+        leadingSpark.setVoltage(leaderVoltage);
+        feedingSpark.setVoltage(feederVoltage);
     }
 
     @Override

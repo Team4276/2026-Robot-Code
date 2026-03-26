@@ -13,7 +13,8 @@ public class Feeder extends SubsystemBase {
     public enum SystemState {
         IDLE(new LoggedTunableNumber("Feeder/IdleVolts", -2.0)),
         STOPPED(() -> 0.0),
-        FEED(new LoggedTunableNumber("Feeder/FeedVolts", 12.0));
+        FEED(new LoggedTunableNumber("Feeder/FeedVolts", 4.0)),
+        SPINUP(() -> (SystemState.FEED.getVoltage()));
 
         private final DoubleSupplier voltage;
 
@@ -30,6 +31,8 @@ public class Feeder extends SubsystemBase {
 
     private final FeederIOInputsAutoLogged inputs = new FeederIOInputsAutoLogged();
     private final FeederIO io;
+
+    private final LoggedTunableNumber ratio = new LoggedTunableNumber("Feeder/Ratio", 2.0);
 
     private double directionFactor = 1.0;
     private final Timer directionSwap = new Timer();
@@ -48,22 +51,32 @@ public class Feeder extends SubsystemBase {
 
         double outputVoltage = systemState.getVoltage();
 
-        if(directionSwap.get() > directionSwapTime.getAsDouble()){
+        if (directionSwap.get() > directionSwapTime.getAsDouble()) {
             directionFactor *= -1.0;
             directionSwap.restart();
         }
 
-        if(systemState == SystemState.IDLE){
+        if (systemState == SystemState.IDLE) {
             // outputVoltage *= directionFactor;
         }
 
-        io.setOpenLoop(outputVoltage);
+        if (systemState == SystemState.SPINUP) {
+            io.setOpenLoop(0.0, outputVoltage * ratio.getAsDouble());
+
+        } else {
+            io.setOpenLoop(outputVoltage, outputVoltage * ratio.getAsDouble());
+
+        }
 
         Logger.recordOutput("Feeder/SystemState", systemState);
     }
 
     public void setSystemState(SystemState state) {
         systemState = state;
+    }
+
+    public SystemState getSystemState() {
+        return systemState;
     }
 
     public void setBrakeMode(boolean enabled) {

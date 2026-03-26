@@ -33,9 +33,9 @@ public class AutoSelector extends VirtualSubsystem {
         routineChooser.addOption("Vanilleft", () -> this.autoFactory.vanilla("Vanilleft"));
         routineChooser.addOption("Vaniright", () -> this.autoFactory.vanilla("Vaniright"));
         routineChooser.addOption("VanillaMintSwirl", () -> this.autoFactory.vanillaMintSwirl("Vanilleft"));
-        routineChooser.addOption("VanillaWithSprinkles", () -> this.autoFactory.vanillaWithSprinkles("Vaniright"));
-        routineChooser.addOption("VanillaMintSwirlWithSprinkles",
-                () -> this.autoFactory.vanillaMintSwirlWithSprinkles("Vanilleft"));
+        // routineChooser.addOption("VanillaWithSprinkles", () -> this.autoFactory.vanillaWithSprinkles("Vaniright"));
+        // routineChooser.addOption("VanillaMintSwirlWithSprinkles",
+        //         () -> this.autoFactory.vanillaMintSwirlWithSprinkles("Vanilleft"));
         routineChooser.addOption("RockyRoadRight", () -> this.autoFactory.rockyRoad(false, false));
         routineChooser.addOption("RockyRoadSwipeRight", () -> this.autoFactory.rockyRoad(false, true));
         routineChooser.addOption("RockyRoadLeft", () -> this.autoFactory.rockyRoad(true, false));
