@@ -54,8 +54,8 @@ public class FlywheelIOTalon implements FlywheelIO {
                 .withStatorCurrentLimit(80)
                 .withStatorCurrentLimitEnable(true);
 
-        config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
-        config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
+        // config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
+        // config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
