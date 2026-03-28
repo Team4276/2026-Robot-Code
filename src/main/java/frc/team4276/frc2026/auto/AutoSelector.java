@@ -104,4 +104,8 @@ public class AutoSelector extends VirtualSubsystem {
             autoCommand = null;
         }
     }
+
+    public boolean autoChanged(){
+        return autoChanged;
+    }
 }

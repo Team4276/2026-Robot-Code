@@ -24,13 +24,11 @@ import frc.team4276.frc2026.subsystems.feeder.FeederIO;
 import frc.team4276.frc2026.subsystems.feeder.FeederIOSpark;
 import frc.team4276.frc2026.subsystems.flywheel.Flywheel;
 import frc.team4276.frc2026.subsystems.flywheel.FlywheelIO;
-import frc.team4276.frc2026.subsystems.flywheel.FlywheelIOSpark;
 import frc.team4276.frc2026.subsystems.flywheel.FlywheelIOTalon;
 import frc.team4276.frc2026.subsystems.intake.Intake;
 import frc.team4276.frc2026.subsystems.intake.IntakeDeployIO;
 import frc.team4276.frc2026.subsystems.intake.IntakeDeployIOSpark;
 import frc.team4276.frc2026.subsystems.intake.IntakeRollerIO;
-import frc.team4276.frc2026.subsystems.intake.IntakeRollerIOSpark;
 import frc.team4276.frc2026.subsystems.intake.IntakeRollerIOTalon;
 import frc.team4276.frc2026.subsystems.vision.Vision;
 import frc.team4276.frc2026.subsystems.vision.VisionIO;
@@ -237,6 +235,11 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         return autoSelector.getCommand();
+        // return Commands.none();
+    }
+
+    public boolean autoChanged(){
+        return autoSelector.autoChanged();
     }
 
     public Drive getDrive() {

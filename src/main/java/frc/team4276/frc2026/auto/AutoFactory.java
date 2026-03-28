@@ -31,6 +31,10 @@ public class AutoFactory {
 
     private final LoggedTunableNumber sprinkleWaitTime = new LoggedTunableNumber("Auto/SprinkleWaitTime", 5.0);
 
+    private final LoggedTunableNumber intakeDeployTime = new LoggedTunableNumber("Auto/IntakeDeployTime", 0.5);
+
+    private final LoggedTunableNumber intakeDeployVoltage = new LoggedTunableNumber("Auto/IntakeDeployVoltage", -5.0);
+
     private RobotContainer robotContainer;
 
     public AutoFactory(RobotContainer robotContainer) {
@@ -51,7 +55,12 @@ public class AutoFactory {
         return resetPose(startPose)
                 .andThen(driveTrajectoryWithVisionState(traj, VisionState.ACCEPT)
                         .deadlineFor(waitUntilXCrossed(5.9, true)
-                                .andThen(robotContainer.getSuperstructure().deployIntake())))
+                                .andThen(robotContainer.getSuperstructure().deployIntake()
+                                        .alongWith(
+                                                Commands.runOnce(() -> robotContainer.getIntake()
+                                                        .setDeployVoltage(intakeDeployVoltage.getAsDouble()))
+                                                        .withDeadline(Commands
+                                                                .waitSeconds(intakeDeployTime.getAsDouble()))))))
                 .andThen(robotContainer.getSuperstructure().enableShooter())
                 .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
                 .andThen(robotContainer.getSuperstructure().disableShooter());

@@ -15,7 +15,7 @@ public class Intake extends SubsystemBase {
     private final IntakeDeployIOInputsAutoLogged deployInputs = new IntakeDeployIOInputsAutoLogged();
     private final IntakeRollerIOInputsAutoLogged rollerInputs = new IntakeRollerIOInputsAutoLogged();
 
-    private final LoggedTunableNumber absoluteEncoderZero = new LoggedTunableNumber("Intake/AbsoluteEncoderZero", 0.24);
+    private final LoggedTunableNumber absoluteEncoderZero = new LoggedTunableNumber("Intake/AbsoluteEncoderZero", 1.515);
 
     public enum WantedState {
         IDLE,
@@ -103,9 +103,9 @@ public class Intake extends SubsystemBase {
 
     public void setDeployed(boolean deployed){
         if(deployed){
-            deployIo.setPosition(deployPosition.getAsDouble());
+            deployIo.setPositionSetpoint(deployPosition.getAsDouble());
         } else {
-            deployIo.setPosition(retractPosition.getAsDouble());
+            deployIo.setPositionSetpoint(retractPosition.getAsDouble());
         }
     }
 
