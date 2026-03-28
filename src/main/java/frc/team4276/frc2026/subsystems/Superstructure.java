@@ -29,6 +29,7 @@ import frc.team4276.frc2026.subsystems.flywheel.Flywheel;
 import frc.team4276.frc2026.subsystems.intake.Intake;
 import frc.team4276.frc2026.subsystems.vision.Vision;
 import frc.team4276.lib.dashboard.LoggedTunableNumber;
+import frc.team4276.lib.geometry.AllianceFlipUtil;
 import frc.team4276.lib.hid.ViXController;
 
 public class Superstructure extends SubsystemBase {
@@ -100,20 +101,20 @@ public class Superstructure extends SubsystemBase {
             shootingParams = currPreset::getParams;
             feedState = FeedState.NO;
         }
-        
+
         if (Constants.isTuning) {
             ShotCalculator.getInstance().getHubParameters();
         }
 
         if (operator.a().getAsBoolean()) {
             flywheel.setVoltage(-12.0);
-            
+
         } else {
             flywheel.setVelocity(shootingParams.get().flywheelSpeed());
 
         }
 
-        if(feedState == FeedState.NO){
+        if (feedState == FeedState.NO) {
             turnOnTheEngines = false;
         }
 
@@ -139,9 +140,9 @@ public class Superstructure extends SubsystemBase {
 
         }
 
-        if(turnOnTheEngines){
+        if (turnOnTheEngines) {
             feeder.setSystemState(Feeder.SystemState.FEED);
-        } else if(feedState == FeedState.ACTIVE || feedState == FeedState.FERRY){
+        } else if (feedState == FeedState.ACTIVE || feedState == FeedState.FERRY) {
             feeder.setSystemState(Feeder.SystemState.SPINUP);
         } else {
             feeder.setSystemState(Feeder.SystemState.IDLE);
@@ -271,11 +272,12 @@ public class Superstructure extends SubsystemBase {
             if (RobotState.getInstance().getCurrentFieldZone() == FieldZone.ALLIANCE) {
                 shootingParams = ShotCalculator.getInstance()::getHubParameters;
                 drive.setVelocityScalar(DriveSpeedScalar.CRAWL);
-                if (isManual) {
+                if (isManual || DriverStation.isAutonomous()) {
                     drive.setHeadingAlignRotation(() -> shootingParams.get().robotHeading());
 
                 } else {
-                    drive.setAutoAlignPose(new Pose2d(2.9, FieldConstants.fieldWidth / 2.0, Rotation2d.kPi));
+                    drive.setAutoAlignPose(
+                            AllianceFlipUtil.apply(new Pose2d(2.9, FieldConstants.fieldWidth / 2.0, Rotation2d.kPi)));
 
                 }
 

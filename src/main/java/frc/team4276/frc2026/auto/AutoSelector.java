@@ -29,6 +29,9 @@ public class AutoSelector extends VirtualSubsystem {
         this.autoFactory = autoFactory;
 
         routineChooser.addDefaultOption("Do Nothing", () -> this.autoFactory.idle());
+        routineChooser.addOption("Yuzu Depot", () -> this.autoFactory.yuzu(true));
+        routineChooser.addOption("Yuzu Kobe", () -> this.autoFactory.yuzu(false));
+        routineChooser.addOption("Yuzu Mint", () -> this.autoFactory.mintYuzu());
         routineChooser.addOption("Vanilla", () -> this.autoFactory.vanilla("Vanilla"));
         routineChooser.addOption("Vanilleft", () -> this.autoFactory.vanilla("Vanilleft"));
         routineChooser.addOption("Vaniright", () -> this.autoFactory.vanilla("Vaniright"));
@@ -36,10 +39,10 @@ public class AutoSelector extends VirtualSubsystem {
         // routineChooser.addOption("VanillaWithSprinkles", () -> this.autoFactory.vanillaWithSprinkles("Vaniright"));
         // routineChooser.addOption("VanillaMintSwirlWithSprinkles",
         //         () -> this.autoFactory.vanillaMintSwirlWithSprinkles("Vanilleft"));
-        routineChooser.addOption("RockyRoadRight", () -> this.autoFactory.rockyRoad(false, false));
-        routineChooser.addOption("RockyRoadSwipeRight", () -> this.autoFactory.rockyRoad(false, true));
-        routineChooser.addOption("RockyRoadLeft", () -> this.autoFactory.rockyRoad(true, false));
-        routineChooser.addOption("RockyRoadSwipeLeft", () -> this.autoFactory.rockyRoad(true, true));
+        // routineChooser.addOption("RockyRoadRight", () -> this.autoFactory.rockyRoad(false, false));
+        // routineChooser.addOption("RockyRoadSwipeRight", () -> this.autoFactory.rockyRoad(false, true));
+        // routineChooser.addOption("RockyRoadLeft", () -> this.autoFactory.rockyRoad(true, false));
+        // routineChooser.addOption("RockyRoadSwipeLeft", () -> this.autoFactory.rockyRoad(true, true));
     }
 
     /** Returns the selected auto command with the inputted delay. */

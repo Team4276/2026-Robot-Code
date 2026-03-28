@@ -44,6 +44,24 @@ public class AutoFactory {
                         AllianceFlipUtil.apply(Rotation2d.kZero)));
     }
 
+    Command yuzu(boolean isDepotSide) {
+        var traj = ChoreoUtil.getChoreoTrajectory("Yuzu", isDepotSide);
+        var startPose = traj.getInitialPose(false).get();
+
+        return resetPose(startPose)
+                .andThen(driveTrajectoryWithVisionState(traj, VisionState.ACCEPT)
+                        .deadlineFor(waitUntilXCrossed(5.9, true)
+                                .andThen(robotContainer.getSuperstructure().deployIntake())))
+                .andThen(robotContainer.getSuperstructure().enableShooter())
+                .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
+                .andThen(robotContainer.getSuperstructure().disableShooter());
+    }
+
+    Command mintYuzu() {
+        return yuzu(true)
+                .andThen(mint());
+    }
+
     Command vanilla(String name) {
         var traj = ChoreoUtil.getChoreoTrajectory(name);
         var startPose = traj.getInitialPose(false).get();
@@ -51,7 +69,7 @@ public class AutoFactory {
         return resetPose(startPose)
                 .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT)
                         .raceWith(Commands.waitSeconds(3.0)))
-                .andThen(robotContainer.getSuperstructure().shootPreset(ParamPreset.SHUB))
+                .andThen(robotContainer.getSuperstructure().enableShooter())
                 .andThen(Commands.waitSeconds(preloadShotTime.getAsDouble()))
                 .andThen(robotContainer.getSuperstructure().disableShooter());
     }
