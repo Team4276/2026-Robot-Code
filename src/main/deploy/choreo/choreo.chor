@@ -3,7 +3,15 @@
  "version":2,
  "type":"Swerve",
  "variables":{
-  "expressions":{},
+  "expressions":{
+   "sideBump":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"1.5 m / s",
+     "val":1.5
+    }
+   }
+  },
   "poses":{}
  },
  "config":{
