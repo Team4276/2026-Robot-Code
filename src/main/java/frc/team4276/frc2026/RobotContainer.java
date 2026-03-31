@@ -13,6 +13,8 @@ import frc.team4276.frc2026.auto.AutoFactory;
 import frc.team4276.frc2026.auto.AutoSelector;
 import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.frc2026.subsystems.Superstructure;
+import frc.team4276.frc2026.subsystems.conveyor.Conveyor;
+import frc.team4276.frc2026.subsystems.conveyor.ConveyorIO;
 import frc.team4276.frc2026.subsystems.drive.Drive;
 import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIO;
 import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIOPigeon2;
@@ -40,6 +42,7 @@ import frc.team4276.lib.hid.ViXController;
 public class RobotContainer {
     private Drive drive;
     private Intake intake;
+    private Conveyor conveyor;
     private Feeder feeder;
     private Flywheel flywheel;
     private Vision vision;
@@ -72,6 +75,8 @@ public class RobotContainer {
 
                             // }
                             new IntakeDeployIOSpark(), new IntakeRollerIOTalon());
+                    conveyor = new Conveyor(new ConveyorIO() {
+                    });
                     feeder = new Feeder(new FeederIOSpark());
                     flywheel = new Flywheel(new FlywheelIOTalon());
                     vision = new Vision(RobotState.getInstance()::addVisionMeasurement, new VisionIOPhotonVision(0));
@@ -89,6 +94,8 @@ public class RobotContainer {
                             new ModuleIOSim());
                     intake = new Intake(new IntakeDeployIO() {
                     }, new IntakeRollerIO() {
+                    });
+                    conveyor = new Conveyor(new ConveyorIO() {
                     });
                     feeder = new Feeder(new FeederIO() {
                     });
@@ -118,6 +125,11 @@ public class RobotContainer {
         if (intake == null) {
             intake = new Intake(new IntakeDeployIO() {
             }, new IntakeRollerIO() {
+            });
+        }
+
+        if (conveyor == null) {
+            conveyor = new Conveyor(new ConveyorIO() {
             });
         }
 
@@ -238,7 +250,7 @@ public class RobotContainer {
         // return Commands.none();
     }
 
-    public boolean autoChanged(){
+    public boolean autoChanged() {
         return autoSelector.autoChanged();
     }
 

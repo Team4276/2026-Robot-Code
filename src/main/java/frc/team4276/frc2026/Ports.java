@@ -25,6 +25,9 @@ public class Ports {
     public static final int FLYWHEEL_LEFT = 14;
     public static final int FLYWHEEL_RIGHT = 15;
 
+    /* Conveyor */
+    public static final int CONVEYOR = 16;
+
     /* Inputs */
 
     /* Comp */

@@ -29,6 +29,8 @@ public class AutoSelector extends VirtualSubsystem {
         this.autoFactory = autoFactory;
 
         routineChooser.addDefaultOption("Do Nothing", () -> this.autoFactory.idle());
+        routineChooser.addOption("Chizu Depot", () -> this.autoFactory.chizu(true));
+        routineChooser.addOption("Chizu Kobe", () -> this.autoFactory.chizu(false));
         routineChooser.addOption("Yuzu Depot", () -> this.autoFactory.yuzu(true));
         routineChooser.addOption("Yuzu Kobe", () -> this.autoFactory.yuzu(false));
         routineChooser.addOption("Yuzu Mint", () -> this.autoFactory.mintYuzu());

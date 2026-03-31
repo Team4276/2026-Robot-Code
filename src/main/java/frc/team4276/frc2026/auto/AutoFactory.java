@@ -53,7 +53,7 @@ public class AutoFactory {
         var startPose = traj.getInitialPose(false).get();
 
         return resetPose(startPose)
-                .andThen(driveTrajectoryWithVisionState(traj, VisionState.ACCEPT)
+                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT)
                         .deadlineFor(waitUntilXCrossed(5.9, true)
                                 .andThen(robotContainer.getSuperstructure().deployIntake()
                                         .alongWith(
@@ -61,9 +61,27 @@ public class AutoFactory {
                                                         .setDeployVoltage(intakeDeployVoltage.getAsDouble()))
                                                         .withDeadline(Commands
                                                                 .waitSeconds(intakeDeployTime.getAsDouble()))))))
-                .andThen(robotContainer.getSuperstructure().enableShooter())
-                .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
-                .andThen(robotContainer.getSuperstructure().disableShooter());
+                .andThen(robotContainer.getSuperstructure().enableShooter());
+                // .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
+                // .andThen(robotContainer.getSuperstructure().disableShooter());
+    }
+
+    Command chizu(boolean isDepotSide) {
+        var traj = ChoreoUtil.getChoreoTrajectory("Chizu", isDepotSide);
+        var startPose = traj.getInitialPose(false).get();
+
+        return resetPose(startPose)
+                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT).withDeadline(Commands.waitSeconds(11.0))
+                        .deadlineFor(waitUntilXCrossed(5.9, true)
+                                .andThen(robotContainer.getSuperstructure().deployIntake()
+                                        .alongWith(
+                                                Commands.runOnce(() -> robotContainer.getIntake()
+                                                        .setDeployVoltage(intakeDeployVoltage.getAsDouble()))
+                                                        .withDeadline(Commands
+                                                                .waitSeconds(intakeDeployTime.getAsDouble()))))))
+                .andThen(robotContainer.getSuperstructure().enableShooter());
+                // .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
+                // .andThen(robotContainer.getSuperstructure().disableShooter());
     }
 
     Command mintYuzu() {
