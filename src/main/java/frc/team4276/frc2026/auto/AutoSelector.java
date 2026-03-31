@@ -9,6 +9,7 @@ import frc.team4276.lib.geometry.AllianceFlipUtil;
 
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class AutoSelector extends VirtualSubsystem {
@@ -19,61 +20,46 @@ public class AutoSelector extends VirtualSubsystem {
     private Supplier<Command> lastRoutine = () -> Commands.none();
     private String lastRoutineName = "";
 
-    private Command autoCommand;
-    private static boolean autoChanged = true;
+    private boolean shouldRefresh = false;
 
+    private boolean wasRed = false;
+
+    private final LoggedNetworkBoolean isDepotSideInput = new LoggedNetworkBoolean("Comp/Auto/isDepotSide", false);
+    private final LoggedNetworkBoolean isYumeInput = new LoggedNetworkBoolean("Comp/Auto/isYume", false);
     private final LoggedNetworkNumber delayInput = new LoggedNetworkNumber("Comp/Auto/Delay", 0.0);
+
+    private boolean prevIsDepotSideInput = false;
+    private boolean prevIsYumeInput = false;
     private double prevDelayInput = 0.0;
 
     public AutoSelector(AutoFactory autoFactory) {
         this.autoFactory = autoFactory;
 
         routineChooser.addDefaultOption("Do Nothing", () -> this.autoFactory.idle());
-        routineChooser.addOption("Chizu Depot", () -> this.autoFactory.chizu(true));
-        routineChooser.addOption("Chizu Kobe", () -> this.autoFactory.chizu(false));
-        routineChooser.addOption("Yuzu Depot", () -> this.autoFactory.yuzu(true));
-        routineChooser.addOption("Yuzu Kobe", () -> this.autoFactory.yuzu(false));
-        routineChooser.addOption("Yuzu Mint", () -> this.autoFactory.mintYuzu());
+        routineChooser.addOption("Chizu", () -> this.autoFactory.chizu(true));
+        routineChooser.addOption("Cheesu", () -> this.autoFactory.chizu(true));
+        routineChooser.addOption("Yuzu", () -> this.autoFactory.yuzu(true));
         routineChooser.addOption("Vanilla", () -> this.autoFactory.vanilla("Vanilla"));
         routineChooser.addOption("Vanilleft", () -> this.autoFactory.vanilla("Vanilleft"));
         routineChooser.addOption("Vaniright", () -> this.autoFactory.vanilla("Vaniright"));
         routineChooser.addOption("VanillaMintSwirl", () -> this.autoFactory.vanillaMintSwirl("Vanilleft"));
-        // routineChooser.addOption("VanillaWithSprinkles", () -> this.autoFactory.vanillaWithSprinkles("Vaniright"));
-        // routineChooser.addOption("VanillaMintSwirlWithSprinkles",
-        //         () -> this.autoFactory.vanillaMintSwirlWithSprinkles("Vanilleft"));
-        // routineChooser.addOption("RockyRoadRight", () -> this.autoFactory.rockyRoad(false, false));
-        // routineChooser.addOption("RockyRoadSwipeRight", () -> this.autoFactory.rockyRoad(false, true));
-        // routineChooser.addOption("RockyRoadLeft", () -> this.autoFactory.rockyRoad(true, false));
-        // routineChooser.addOption("RockyRoadSwipeLeft", () -> this.autoFactory.rockyRoad(true, true));
     }
 
     /** Returns the selected auto command with the inputted delay. */
     public Command getCommand() {
-        if (autoCommand == null) {
-            autoCommand = lastRoutine
-                    .get()
-                    .beforeStarting(Commands.waitSeconds(getDelayInput()))
-                    .finallyDo(() -> this.autoFactory.autoEnd());
-        }
-
-        return autoCommand;
+        return lastRoutine
+                .get()
+                .beforeStarting(Commands.waitSeconds(delayInput.getAsDouble()))
+                .finallyDo(() -> this.autoFactory.autoEnd());
     }
-
-    public double getDelayInput() {
-        return delayInput.get();
-    }
-
-    private boolean wasRed = false;
 
     public void periodic() {
         // Skip updates when actively running in auto
-        if (DriverStation.isAutonomousEnabled() && lastRoutine != null) {
+        if (DriverStation.isAutonomousEnabled()) {
             return;
         }
 
-        autoChanged = false;
-
-        SmartDashboard.putNumber("Comp/Auto/Delay Input Submitted ", getDelayInput());
+        SmartDashboard.putNumber("Comp/Auto/Delay Input Submitted ", delayInput.getAsDouble());
 
         // Update the list of questions
         var routineName = routineChooser.getSendableChooser().getSelected();
@@ -87,27 +73,43 @@ public class AutoSelector extends VirtualSubsystem {
 
             lastRoutine = selectedRoutine;
             lastRoutineName = routineName;
-            autoChanged = true;
+            shouldRefresh = true;
         }
 
         SmartDashboard.putString("Comp/Auto/Routine Submitted ", lastRoutineName);
 
         if (AllianceFlipUtil.shouldFlip() != wasRed) {
-            autoChanged = true;
+            shouldRefresh = true;
+
+            wasRed = AllianceFlipUtil.shouldFlip();
         }
 
-        if (getDelayInput() == prevDelayInput) {
-            autoChanged = true;
+        if (delayInput.getAsDouble() == prevDelayInput) {
+            shouldRefresh = true;
+
+            prevDelayInput = delayInput.getAsDouble();
         }
 
-        wasRed = AllianceFlipUtil.shouldFlip();
+        if (isDepotSideInput.getAsBoolean() == prevIsDepotSideInput) {
+            shouldRefresh = true;
 
-        if (autoChanged) {
-            autoCommand = null;
+            prevIsDepotSideInput = isDepotSideInput.getAsBoolean();
+        }
+
+        if (isYumeInput.getAsBoolean() == prevIsYumeInput) {
+            shouldRefresh = true;
+
+            prevIsYumeInput = isYumeInput.getAsBoolean();
         }
     }
 
-    public boolean autoChanged(){
-        return autoChanged;
+    public boolean shouldRefresh() {
+        if (shouldRefresh) {
+            shouldRefresh = false;
+            return true;
+
+        }
+
+        return false;
     }
 }

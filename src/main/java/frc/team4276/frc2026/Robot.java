@@ -63,8 +63,6 @@ public class Robot extends LoggedRobot {
                         // be added.
 
         robotContainer = new RobotContainer();
-
-        autonomousCommand = robotContainer.getAutonomousCommand();
     }
 
     @Override
@@ -101,7 +99,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void disabledPeriodic() {
-        if (robotContainer.autoChanged()) {
+        if (robotContainer.shouldRefresh()) {
             autonomousCommand = robotContainer.getAutonomousCommand();
         }
     }

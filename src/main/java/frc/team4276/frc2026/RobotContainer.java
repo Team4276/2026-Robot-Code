@@ -250,8 +250,8 @@ public class RobotContainer {
         // return Commands.none();
     }
 
-    public boolean autoChanged() {
-        return autoSelector.autoChanged();
+    public boolean shouldRefresh() {
+        return autoSelector.shouldRefresh();
     }
 
     public Drive getDrive() {

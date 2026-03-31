@@ -5,31 +5,46 @@ import choreo.trajectory.Trajectory;
 import frc.team4276.lib.path.ChoreoUtil;
 
 public class AutoPathFactory {
-    public static Trajectory<SwerveSample> getVanilla(){
-        return ChoreoUtil.getChoreoTrajectory("Vanilla");
+    public static Trajectory<SwerveSample> getChizu(boolean isDream, boolean mirrorLengthWise) {
+        if (isDream) {
+            return ChoreoUtil.getChoreoTrajectory("a_YumeChizu", mirrorLengthWise);
+
+        }
+
+        return ChoreoUtil.getChoreoTrajectory("a_Chizu", mirrorLengthWise);
     }
 
-    public static Trajectory<SwerveSample> getVanilleft(){
-        return ChoreoUtil.getChoreoTrajectory("Vanilleft");
+    public static Trajectory<SwerveSample> getCheesu(boolean isDream, boolean mirrorLengthWise) {
+        if (isDream) {
+            return ChoreoUtil.getChoreoTrajectory("b_YumeCheesu", mirrorLengthWise);
+
+        }
+
+        return ChoreoUtil.getChoreoTrajectory("b_Cheesu", mirrorLengthWise);
     }
 
-    public static Trajectory<SwerveSample> getVaniright(){
-        return ChoreoUtil.getChoreoTrajectory("Vaniright");
+    public static Trajectory<SwerveSample> getYOUzu(boolean isDream, boolean mirrorLengthWise) {
+        if (isDream) {
+            return ChoreoUtil.getChoreoTrajectory("c_YumeYOUzu", mirrorLengthWise);
+
+        }
+
+        return ChoreoUtil.getChoreoTrajectory("c_YOUzu", mirrorLengthWise);
     }
 
-    public static Trajectory<SwerveSample> getMint(){
-        return ChoreoUtil.getChoreoTrajectory("Mint");
+    public static Trajectory<SwerveSample> getVanilla() {
+        return ChoreoUtil.getChoreoTrajectory("d_Vanilla");
     }
 
-    public static Trajectory<SwerveSample> getSprinkle(){
-        return ChoreoUtil.getChoreoTrajectory("Sprinkle");
+    public static Trajectory<SwerveSample> getVanilleft() {
+        return ChoreoUtil.getChoreoTrajectory("d_Vanilleft");
     }
 
-    public static Trajectory<SwerveSample> getRockyRoadRight(){
-        return ChoreoUtil.getChoreoTrajectory("RockyRoadRight");
+    public static Trajectory<SwerveSample> getVaniright() {
+        return ChoreoUtil.getChoreoTrajectory("d_Vaniright");
     }
 
-    public static Trajectory<SwerveSample> getRockyRoadSwipeRight(){
-        return ChoreoUtil.getChoreoTrajectory("RockyRoadSwipeRight");
+    public static Trajectory<SwerveSample> getMint() {
+        return ChoreoUtil.getChoreoTrajectory("d_Mint");
     }
 }

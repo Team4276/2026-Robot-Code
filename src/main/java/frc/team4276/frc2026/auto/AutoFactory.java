@@ -47,25 +47,7 @@ public class AutoFactory {
                         RobotState.getInstance().getEstimatedPose().getTranslation(),
                         AllianceFlipUtil.apply(Rotation2d.kZero)));
     }
-
-    Command yuzu(boolean isDepotSide) {
-        var traj = ChoreoUtil.getChoreoTrajectory("Yuzu", isDepotSide);
-        var startPose = traj.getInitialPose(false).get();
-
-        return resetPose(startPose)
-                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT)
-                        .deadlineFor(waitUntilXCrossed(5.9, true)
-                                .andThen(robotContainer.getSuperstructure().deployIntake()
-                                        .alongWith(
-                                                Commands.runOnce(() -> robotContainer.getIntake()
-                                                        .setDeployVoltage(intakeDeployVoltage.getAsDouble()))
-                                                        .withDeadline(Commands
-                                                                .waitSeconds(intakeDeployTime.getAsDouble()))))))
-                .andThen(robotContainer.getSuperstructure().enableShooter());
-                // .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
-                // .andThen(robotContainer.getSuperstructure().disableShooter());
-    }
-
+    
     Command chizu(boolean isDepotSide) {
         var traj = ChoreoUtil.getChoreoTrajectory("Chizu", isDepotSide);
         var startPose = traj.getInitialPose(false).get();
@@ -84,9 +66,22 @@ public class AutoFactory {
                 // .andThen(robotContainer.getSuperstructure().disableShooter());
     }
 
-    Command mintYuzu() {
-        return yuzu(true)
-                .andThen(mint());
+    Command yuzu(boolean isDepotSide) {
+        var traj = ChoreoUtil.getChoreoTrajectory("Yuzu", isDepotSide);
+        var startPose = traj.getInitialPose(false).get();
+
+        return resetPose(startPose)
+                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT)
+                        .deadlineFor(waitUntilXCrossed(5.9, true)
+                                .andThen(robotContainer.getSuperstructure().deployIntake()
+                                        .alongWith(
+                                                Commands.runOnce(() -> robotContainer.getIntake()
+                                                        .setDeployVoltage(intakeDeployVoltage.getAsDouble()))
+                                                        .withDeadline(Commands
+                                                                .waitSeconds(intakeDeployTime.getAsDouble()))))))
+                .andThen(robotContainer.getSuperstructure().enableShooter());
+                // .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
+                // .andThen(robotContainer.getSuperstructure().disableShooter());
     }
 
     Command vanilla(String name) {
@@ -113,57 +108,9 @@ public class AutoFactory {
                 .andThen(robotContainer.getSuperstructure().disableShooter());
     }
 
-    // Append
-    Command sprinkles() {
-        var traj = AutoPathFactory.getSprinkle();
-        var afterShotPose = traj.getInitialPose(false).get();
-
-        var split1 = traj.getSplit(0).get();
-        var split2 = traj.getSplit(1).get();
-
-        return driveToPoint(afterShotPose)
-                .andThen(driveTrajectoryWithVisionState(split1, VisionState.REJECT))
-                .andThen(Commands.waitSeconds(sprinkleWaitTime.getAsDouble()))
-                .andThen(driveTrajectoryWithVisionState(split2, VisionState.REJECT))
-                .andThen(robotContainer.getSuperstructure().shootPreset(ParamPreset.SHUB))
-                .andThen(Commands.waitSeconds(refillShotTime.getAsDouble()))
-                .andThen(robotContainer.getSuperstructure().disableShooter());
-    }
-
     Command vanillaMintSwirl(String name) {
         return vanilla(name)
                 .andThen(mint());
-    }
-
-    Command vanillaWithSprinkles(String name) {
-        return vanilla(name)
-                .andThen(sprinkles());
-    }
-
-    Command vanillaMintSwirlWithSprinkles(String name) {
-        return vanilla(name)
-                .andThen(mint())
-                .andThen(sprinkles());
-    }
-
-    Command rockyRoad(boolean isLeft, boolean isSwipe) {
-        var traj = isSwipe ? AutoPathFactory.getRockyRoadSwipeRight() : AutoPathFactory.getRockyRoadRight();
-
-        if (isLeft) {
-            traj = ChoreoUtil.mirrorLengthwise(traj);
-        }
-
-        var startPose = traj.getInitialPose(false).get();
-
-        return resetPose(startPose)
-                .andThen(robotContainer.getSuperstructure().retractIntake())
-                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT)
-                        .alongWith(waitUntilXCrossed(5.9, true)
-                                .andThen(robotContainer.getSuperstructure().deployIntake())))
-                // .andThen(robotContainer.getSuperstructure().retractIntake())
-                .andThen(robotContainer.getSuperstructure().enableShooter())
-                .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
-                .andThen(robotContainer.getSuperstructure().disableShooter());
     }
 
     void autoEnd() {
