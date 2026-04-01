@@ -1,111 +1,106 @@
 package frc.team4276.frc2026.subsystems.conveyor;
 
-import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkFlex;
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import static frc.team4276.lib.SparkUtil.*;
-
-import java.util.function.DoubleSupplier;
-
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 import frc.team4276.frc2026.Ports;
+import frc.team4276.lib.PhoenixUtil;
+import frc.team4276.lib.TalonFXFactory;
+import frc.team4276.lib.TalonFXFactory.CanBus;
 
 public class ConveyorIOTalon implements ConveyorIO {
-    private final SparkBase leadingSpark;
-    private final SparkBase feedingSpark;
-    private final SparkBaseConfig config;
+    private final TalonFX talon;
+
+    private final StatusSignal<Voltage> appliedVolts;
+    private final StatusSignal<Current> supplyCurrent;
+    private final StatusSignal<Temperature> temperature;
+
+    private final VoltageOut voltageOut;
+
+    private final Debouncer connectedDebounce = new Debouncer(0.5);
 
     private boolean brakeModeEnabled = false;
 
     public ConveyorIOTalon() {
-        leadingSpark = new SparkFlex(Ports.FEEDER_LEADER, MotorType.kBrushless);
-        feedingSpark = new SparkFlex(Ports.FEEDER_FEEDER, MotorType.kBrushless);
+        talon = TalonFXFactory.createDefaultTalon(Ports.CONVEYOR, CanBus.CANIVORE);
 
-        config = new SparkMaxConfig();
-        config.idleMode(IdleMode.kCoast)
-                .smartCurrentLimit(80)
-                .voltageCompensation(12.0)
-                .inverted(true)
-                .openLoopRampRate(0.5)
-                .closedLoopRampRate(0.5);
-        config.signals
-                .appliedOutputPeriodMs(20)
-                .busVoltagePeriodMs(20)
-                .outputCurrentPeriodMs(20);
-        tryUntilOk(
-                leadingSpark,
-                5,
-                () -> leadingSpark.configure(
-                        config,
-                        ResetMode.kNoResetSafeParameters,
-                        PersistMode.kNoPersistParameters));
-        tryUntilOk(
-                feedingSpark,
-                5,
-                () -> feedingSpark.configure(
-                        config,
-                        ResetMode.kNoResetSafeParameters,
-                        PersistMode.kNoPersistParameters));
+        // Configure motor
+        var config = new TalonFXConfiguration();
+        config.CurrentLimits
+                .withSupplyCurrentLimit(40)
+                .withSupplyCurrentLimitEnable(true)
+                .withStatorCurrentLimit(40)
+                .withStatorCurrentLimitEnable(true);
+
+        config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        PhoenixUtil.tryUntilOk(5, () -> talon.getConfigurator().apply(config));
+
+        voltageOut = new VoltageOut(0.0).withUpdateFreqHz(0);
+
+        appliedVolts = talon.getMotorVoltage();
+        supplyCurrent = talon.getSupplyCurrent();
+        temperature = talon.getDeviceTemp();
+
+        BaseStatusSignal.setUpdateFrequencyForAll(
+                50,
+                appliedVolts,
+                supplyCurrent,
+                temperature);
+
+        BaseStatusSignal.setUpdateFrequencyForAll(50, talon.getFaultField());
+
+        talon.optimizeBusUtilization();
     }
 
     @Override
     public void updateInputs(ConveyorIOInputs inputs) {
-        ifOk(leadingSpark, new DoubleSupplier[] { leadingSpark::getAppliedOutput, leadingSpark::getBusVoltage },
-                (values) -> inputs.appliedVolts[0] = values[0] * values[1]);
-        ifOk(leadingSpark, leadingSpark::getOutputCurrent, (values) -> inputs.statorCurrent[0] = values);
-        ifOk(leadingSpark, leadingSpark::getMotorTemperature, (values) -> inputs.tempCelsius[0] = values);
+        // Update inputs
+        inputs.connected = connectedDebounce
+                .calculate(BaseStatusSignal.refreshAll(appliedVolts, supplyCurrent, temperature)
+                        .isOK());
 
-        ifOk(feedingSpark, new DoubleSupplier[] { feedingSpark::getAppliedOutput, feedingSpark::getBusVoltage },
-                (values) -> inputs.appliedVolts[1] = values[0] * values[1]);
-        ifOk(feedingSpark, feedingSpark::getOutputCurrent, (values) -> inputs.statorCurrent[1] = values);
-        ifOk(feedingSpark, feedingSpark::getMotorTemperature, (values) -> inputs.tempCelsius[1] = values);
+        BaseStatusSignal.refreshAll(appliedVolts, supplyCurrent, temperature);
+
+        inputs.appliedVolts = appliedVolts.getValueAsDouble();
+        inputs.supplyCurrent = supplyCurrent.getValueAsDouble();
+        inputs.tempCelsius = temperature.getValueAsDouble();
     }
 
     @Override
     public void setOpenLoop(double voltage) {
-        setOpenLoop(voltage, voltage);
-    }
-
-    @Override
-    public void setOpenLoop(double leaderVoltage, double feederVoltage) {
-        leadingSpark.setVoltage(leaderVoltage);
-        feedingSpark.setVoltage(feederVoltage);
+        talon.setControl(voltageOut.withOutput(voltage));
     }
 
     @Override
     public void setBrakeMode(boolean enabled) {
-        if (brakeModeEnabled == enabled)
-            return;
-        brakeModeEnabled = enabled;
-        new Thread(
-                () -> {
-                    tryUntilOk(
-                            leadingSpark,
-                            5,
-                            () -> leadingSpark.configure(
-                                    config.idleMode(
-                                            brakeModeEnabled
-                                                    ? SparkBaseConfig.IdleMode.kBrake
-                                                    : SparkBaseConfig.IdleMode.kCoast),
-                                    ResetMode.kNoResetSafeParameters,
-                                    PersistMode.kNoPersistParameters));
-                    tryUntilOk(
-                            feedingSpark,
-                            5,
-                            () -> feedingSpark.configure(
-                                    config.idleMode(
-                                            brakeModeEnabled
-                                                    ? SparkBaseConfig.IdleMode.kBrake
-                                                    : SparkBaseConfig.IdleMode.kCoast),
-                                    ResetMode.kNoResetSafeParameters,
-                                    PersistMode.kNoPersistParameters));
-                })
-                .start();
+        // if (brakeModeEnabled == enabled)
+        // return;
+        // brakeModeEnabled = enabled;
+        // new Thread(
+        // () -> {
+        // tryUntilOk(
+        // spark,
+        // 5,
+        // () -> spark.configure(
+        // config.idleMode(
+        // brakeModeEnabled
+        // ? SparkBaseConfig.IdleMode.kBrake
+        // : SparkBaseConfig.IdleMode.kCoast),
+        // ResetMode.kNoResetSafeParameters,
+        // PersistMode.kNoPersistParameters));
+        // })
+        // .start();
     }
 }

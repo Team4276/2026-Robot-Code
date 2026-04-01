@@ -15,6 +15,7 @@ import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.frc2026.subsystems.Superstructure;
 import frc.team4276.frc2026.subsystems.conveyor.Conveyor;
 import frc.team4276.frc2026.subsystems.conveyor.ConveyorIO;
+import frc.team4276.frc2026.subsystems.conveyor.ConveyorIOTalon;
 import frc.team4276.frc2026.subsystems.drive.Drive;
 import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIO;
 import frc.team4276.frc2026.subsystems.drive.Gyro.GyroIOPigeon2;
@@ -75,7 +76,7 @@ public class RobotContainer {
 
                             // }
                             new IntakeDeployIOSpark(), new IntakeRollerIOTalon());
-                    conveyor = new Conveyor(new ConveyorIO() {
+                    conveyor = new Conveyor(new ConveyorIOTalon() {
                     });
                     feeder = new Feeder(new FeederIOSpark());
                     flywheel = new Flywheel(new FlywheelIOTalon());
@@ -148,7 +149,7 @@ public class RobotContainer {
             });
         }
 
-        superstructure = new Superstructure(drive, intake, feeder, flywheel, vision, driver, operator);
+        superstructure = new Superstructure(drive, intake, conveyor, feeder, flywheel, vision, driver, operator);
 
         configureBindings();
 

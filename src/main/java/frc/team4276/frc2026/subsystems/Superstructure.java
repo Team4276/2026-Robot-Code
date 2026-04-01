@@ -21,6 +21,7 @@ import frc.team4276.frc2026.FieldConstants.FieldZone;
 import frc.team4276.frc2026.shooter.ShotCalculator;
 import frc.team4276.frc2026.shooter.ShooterConstants.ParamPreset;
 import frc.team4276.frc2026.shooter.ShotCalculator.ShootingParameters;
+import frc.team4276.frc2026.subsystems.conveyor.Conveyor;
 import frc.team4276.frc2026.subsystems.drive.Drive;
 import frc.team4276.frc2026.subsystems.drive.Drive.DriveSpeedScalar;
 import frc.team4276.frc2026.subsystems.drive.Drive.WantedState;
@@ -35,6 +36,7 @@ import frc.team4276.lib.hid.ViXController;
 public class Superstructure extends SubsystemBase {
     private final Drive drive;
     private final Intake intake;
+    private final Conveyor conveyor;
     private final Feeder feeder;
     private final Flywheel flywheel;
 
@@ -69,6 +71,7 @@ public class Superstructure extends SubsystemBase {
     public Superstructure(
             Drive drive,
             Intake intake,
+            Conveyor conveyor,
             Feeder feeder,
             Flywheel flywheel,
             Vision vision,
@@ -76,6 +79,7 @@ public class Superstructure extends SubsystemBase {
             ViXController operator) {
         this.drive = drive;
         this.intake = intake;
+        this.conveyor = conveyor;
         this.feeder = feeder;
         this.flywheel = flywheel;
         this.vision = vision;
@@ -142,10 +146,13 @@ public class Superstructure extends SubsystemBase {
 
         if (turnOnTheEngines) {
             feeder.setSystemState(Feeder.SystemState.FEED);
+            conveyor.setSystemState(Conveyor.SystemState.FEED);
         } else if (feedState == FeedState.ACTIVE || feedState == FeedState.FERRY) {
             feeder.setSystemState(Feeder.SystemState.SPINUP);
+            conveyor.setSystemState(Conveyor.SystemState.IDLE);
         } else {
             feeder.setSystemState(Feeder.SystemState.IDLE);
+            conveyor.setSystemState(Conveyor.SystemState.IDLE);
         }
 
         Logger.recordOutput("Superstructure/IsFirstActive", getIsFirstActive());

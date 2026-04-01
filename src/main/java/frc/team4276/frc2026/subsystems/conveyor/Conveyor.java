@@ -11,10 +11,9 @@ import frc.team4276.lib.dashboard.LoggedTunableNumber;
 
 public class Conveyor extends SubsystemBase {
     public enum SystemState {
-        IDLE(new LoggedTunableNumber("Conveyor/IdleVolts", -2.0)),
+        IDLE(new LoggedTunableNumber("Conveyor/IdleVolts", 0.0)),
         STOPPED(() -> 0.0),
-        FEED(new LoggedTunableNumber("Conveyor/FeedVolts", 4.0)),
-        SPINUP(() -> (SystemState.FEED.getVoltage()));
+        FEED(new LoggedTunableNumber("Conveyor/FeedVolts", 12.0));
 
         private final DoubleSupplier voltage;
 
@@ -45,7 +44,7 @@ public class Conveyor extends SubsystemBase {
     @Override
     public void periodic() {
         io.updateInputs(inputs);
-        Logger.processInputs("Feeder", inputs);
+        Logger.processInputs("Conveyor", inputs);
 
         double outputVoltage = systemState.getVoltage();
 
@@ -58,13 +57,7 @@ public class Conveyor extends SubsystemBase {
             // outputVoltage *= directionFactor;
         }
 
-        if (systemState == SystemState.SPINUP) {
-            io.setOpenLoop(0.0, outputVoltage);
-
-        } else {
-            io.setOpenLoop(outputVoltage, outputVoltage);
-
-        }
+        io.setOpenLoop(outputVoltage);
 
         Logger.recordOutput("Conveyor/SystemState", systemState);
     }
