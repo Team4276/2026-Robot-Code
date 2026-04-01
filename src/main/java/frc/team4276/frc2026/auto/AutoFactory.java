@@ -49,7 +49,6 @@ public class AutoFactory {
     }
     
     Command nihonAuto(Trajectory<SwerveSample> traj) {
-        // var traj = ChoreoUtil.getChoreoTrajectory(name, isDepotSide);
         var startPose = traj.getInitialPose(false).get();
         var time = traj.getTotalTime();
 

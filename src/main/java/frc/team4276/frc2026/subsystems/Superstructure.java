@@ -54,7 +54,8 @@ public class Superstructure extends SubsystemBase {
     private enum FeedState {
         NO,
         FERRY,
-        ACTIVE
+        ACTIVE,
+        EXHAUST
     }
 
     private FeedState feedState = FeedState.NO;
@@ -150,6 +151,9 @@ public class Superstructure extends SubsystemBase {
         } else if (feedState == FeedState.ACTIVE || feedState == FeedState.FERRY) {
             feeder.setSystemState(Feeder.SystemState.SPINUP);
             conveyor.setSystemState(Conveyor.SystemState.IDLE);
+        } else if (feedState == FeedState.EXHAUST){
+            feeder.setSystemState(Feeder.SystemState.EXHAUST);
+            conveyor.setSystemState(Conveyor.SystemState.EXHAUST);
         } else {
             feeder.setSystemState(Feeder.SystemState.IDLE);
             conveyor.setSystemState(Conveyor.SystemState.IDLE);
@@ -279,14 +283,15 @@ public class Superstructure extends SubsystemBase {
             if (RobotState.getInstance().getCurrentFieldZone() == FieldZone.ALLIANCE) {
                 shootingParams = ShotCalculator.getInstance()::getHubParameters;
                 drive.setVelocityScalar(DriveSpeedScalar.CRAWL);
-                if (isManual || DriverStation.isAutonomous()) {
+
+                // if (isManual || DriverStation.isAutonomous()) {
                     drive.setHeadingAlignRotation(() -> shootingParams.get().robotHeading());
 
-                } else {
-                    drive.setAutoAlignPose(
-                            AllianceFlipUtil.apply(new Pose2d(2.9, FieldConstants.fieldWidth / 2.0, Rotation2d.kPi)));
+                // } else {
+                //     drive.setAutoAlignPose(
+                //             AllianceFlipUtil.apply(new Pose2d(2.9, FieldConstants.fieldWidth / 2.0, Rotation2d.kPi)));
 
-                }
+                // }
 
                 feedState = FeedState.ACTIVE;
 

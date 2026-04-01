@@ -13,7 +13,8 @@ public class Conveyor extends SubsystemBase {
     public enum SystemState {
         IDLE(new LoggedTunableNumber("Conveyor/IdleVolts", 0.0)),
         STOPPED(() -> 0.0),
-        FEED(new LoggedTunableNumber("Conveyor/FeedVolts", 12.0));
+        FEED(new LoggedTunableNumber("Conveyor/FeedVolts", 12.0)),
+        EXHAUST(new LoggedTunableNumber("Conveyor/ExhaustVolts", -12.0));
 
         private final DoubleSupplier voltage;
 
