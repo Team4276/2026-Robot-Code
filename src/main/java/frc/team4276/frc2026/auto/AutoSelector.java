@@ -121,19 +121,19 @@ public class AutoSelector extends VirtualSubsystem {
             wasRed = AllianceFlipUtil.shouldFlip();
         }
 
-        if (delayInput.getAsDouble() == prevDelayInput) {
+        if (delayInput.getAsDouble() != prevDelayInput) {
             shouldRefresh = true;
 
             prevDelayInput = delayInput.getAsDouble();
         }
 
-        if (isDepotSideInput.getAsBoolean() == prevIsDepotSideInput) {
+        if (isDepotSideInput.getAsBoolean() != prevIsDepotSideInput) {
             shouldRefresh = true;
 
             prevIsDepotSideInput = isDepotSideInput.getAsBoolean();
         }
 
-        if (isYumeInput.getAsBoolean() == prevIsYumeInput) {
+        if (isYumeInput.getAsBoolean() != prevIsYumeInput) {
             shouldRefresh = true;
 
             prevIsYumeInput = isYumeInput.getAsBoolean();

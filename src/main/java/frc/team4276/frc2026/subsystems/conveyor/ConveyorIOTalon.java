@@ -31,7 +31,7 @@ public class ConveyorIOTalon implements ConveyorIO {
     private boolean brakeModeEnabled = false;
 
     public ConveyorIOTalon() {
-        talon = TalonFXFactory.createDefaultTalon(Ports.CONVEYOR, CanBus.CANIVORE);
+        talon = TalonFXFactory.createDefaultTalon(Ports.CONVEYOR, CanBus.RIO);
 
         // Configure motor
         var config = new TalonFXConfiguration();
