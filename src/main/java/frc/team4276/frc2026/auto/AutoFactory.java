@@ -48,30 +48,13 @@ public class AutoFactory {
                         AllianceFlipUtil.apply(Rotation2d.kZero)));
     }
     
-    Command chizu(boolean isDepotSide) {
-        var traj = ChoreoUtil.getChoreoTrajectory("Chizu", isDepotSide);
+    Command nihonAuto(Trajectory<SwerveSample> traj) {
+        // var traj = ChoreoUtil.getChoreoTrajectory(name, isDepotSide);
         var startPose = traj.getInitialPose(false).get();
+        var time = traj.getTotalTime();
 
         return resetPose(startPose)
-                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT).withDeadline(Commands.waitSeconds(11.0))
-                        .deadlineFor(waitUntilXCrossed(5.9, true)
-                                .andThen(robotContainer.getSuperstructure().deployIntake()
-                                        .alongWith(
-                                                Commands.runOnce(() -> robotContainer.getIntake()
-                                                        .setDeployVoltage(intakeDeployVoltage.getAsDouble()))
-                                                        .withDeadline(Commands
-                                                                .waitSeconds(intakeDeployTime.getAsDouble()))))))
-                .andThen(robotContainer.getSuperstructure().enableShooter());
-                // .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
-                // .andThen(robotContainer.getSuperstructure().disableShooter());
-    }
-
-    Command yuzu(boolean isDepotSide) {
-        var traj = ChoreoUtil.getChoreoTrajectory("Yuzu", isDepotSide);
-        var startPose = traj.getInitialPose(false).get();
-
-        return resetPose(startPose)
-                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT)
+                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT).withDeadline(Commands.waitSeconds(time + 0.25))
                         .deadlineFor(waitUntilXCrossed(5.9, true)
                                 .andThen(robotContainer.getSuperstructure().deployIntake()
                                         .alongWith(

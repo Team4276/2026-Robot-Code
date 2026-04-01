@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.team4276.lib.VirtualSubsystem;
 import frc.team4276.lib.geometry.AllianceFlipUtil;
 
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
@@ -15,9 +14,19 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 public class AutoSelector extends VirtualSubsystem {
     private final AutoFactory autoFactory;
 
-    private final LoggedDashboardChooser<Supplier<Command>> routineChooser = new LoggedDashboardChooser<>(
+    public enum AutoMode {
+        DO_NOTHING,
+        CHIZU,
+        CHEESU,
+        YUZU,
+        VANILLA,
+        VANILLEFT,
+        VANIRIGHT,
+        VANILLAMINTSWIRL
+    }
+
+    private final LoggedDashboardChooser<AutoMode> routineChooser = new LoggedDashboardChooser<>(
             "Comp/Auto/RoutineChooser");
-    private Supplier<Command> lastRoutine = () -> Commands.none();
     private String lastRoutineName = "";
 
     private boolean shouldRefresh = false;
@@ -35,20 +44,49 @@ public class AutoSelector extends VirtualSubsystem {
     public AutoSelector(AutoFactory autoFactory) {
         this.autoFactory = autoFactory;
 
-        routineChooser.addDefaultOption("Do Nothing", () -> this.autoFactory.idle());
-        routineChooser.addOption("Chizu", () -> this.autoFactory.chizu(true));
-        routineChooser.addOption("Cheesu", () -> this.autoFactory.chizu(true));
-        routineChooser.addOption("Yuzu", () -> this.autoFactory.yuzu(true));
-        routineChooser.addOption("Vanilla", () -> this.autoFactory.vanilla("Vanilla"));
-        routineChooser.addOption("Vanilleft", () -> this.autoFactory.vanilla("Vanilleft"));
-        routineChooser.addOption("Vaniright", () -> this.autoFactory.vanilla("Vaniright"));
-        routineChooser.addOption("VanillaMintSwirl", () -> this.autoFactory.vanillaMintSwirl("Vanilleft"));
+        routineChooser.addDefaultOption("Do Nothing", AutoMode.DO_NOTHING);
+        routineChooser.addOption("Chizu", AutoMode.CHIZU);
+        routineChooser.addOption("Cheesu", AutoMode.CHEESU);
+        routineChooser.addOption("Yuzu", AutoMode.YUZU);
+        routineChooser.addOption("Vanilla", AutoMode.VANILLA);
+        routineChooser.addOption("Vanilleft", AutoMode.VANILLEFT);
+        routineChooser.addOption("Vaniright", AutoMode.VANIRIGHT);
+        routineChooser.addOption("VanillaMintSwirl", AutoMode.VANILLAMINTSWIRL);
     }
 
     /** Returns the selected auto command with the inputted delay. */
     public Command getCommand() {
-        return lastRoutine
-                .get()
+        var command = switch (routineChooser.get()) {
+            case CHIZU:
+                yield autoFactory.nihonAuto(
+                        AutoPathFactory.getChizu(isYumeInput.getAsBoolean(), isDepotSideInput.getAsBoolean()));
+
+            case CHEESU:
+                yield autoFactory.nihonAuto(
+                        AutoPathFactory.getCheesu(isYumeInput.getAsBoolean(), isDepotSideInput.getAsBoolean()));
+
+            case YUZU:
+                yield autoFactory.nihonAuto(
+                        AutoPathFactory.getYOUzu(isYumeInput.getAsBoolean(), isDepotSideInput.getAsBoolean()));
+
+            case VANILLA:
+                yield autoFactory.vanilla("Vanilla");
+
+            case VANILLEFT:
+                yield autoFactory.vanilla("Vanilleft");
+
+            case VANIRIGHT:
+                yield autoFactory.vanilla("Vaniright");
+
+            case VANILLAMINTSWIRL:
+                yield autoFactory.vanillaMintSwirl("Vanilleft");
+
+            default:
+                yield Commands.none();
+
+        };
+
+        return command
                 .beforeStarting(Commands.waitSeconds(delayInput.getAsDouble()))
                 .finallyDo(() -> this.autoFactory.autoEnd());
     }
@@ -71,7 +109,6 @@ public class AutoSelector extends VirtualSubsystem {
                 return;
             }
 
-            lastRoutine = selectedRoutine;
             lastRoutineName = routineName;
             shouldRefresh = true;
         }

@@ -357,32 +357,6 @@
               "period": 0.06,
               "data_type": "double"
             }
-          },
-          {
-            "title": "TempCelsius",
-            "x": 1024.0,
-            "y": 352.0,
-            "width": 128.0,
-            "height": 160.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/Intake/Deploy/TempCelsius",
-              "period": 0.06,
-              "data_type": "double"
-            }
-          },
-          {
-            "title": "TempCelsius",
-            "x": 1024.0,
-            "y": 512.0,
-            "width": 128.0,
-            "height": 160.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/Intake/Roller/TempCelsius",
-              "period": 0.06,
-              "data_type": "double"
-            }
           }
         ]
       }
@@ -404,6 +378,19 @@
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": true
+            }
+          },
+          {
+            "title": "RoutineChooser",
+            "x": 1152.0,
+            "y": 288.0,
+            "width": 384.0,
+            "height": 160.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Comp/Auto/RoutineChooser",
+              "period": 0.06,
+              "sort_options": false
             }
           },
           {
@@ -466,16 +453,29 @@
             }
           },
           {
-            "title": "RoutineChooser",
+            "title": "isDepotSide",
             "x": 1152.0,
-            "y": 288.0,
+            "y": 448.0,
             "width": 384.0,
             "height": 128.0,
-            "type": "ComboBox Chooser",
+            "type": "Toggle Button",
             "properties": {
-              "topic": "/SmartDashboard/Comp/Auto/RoutineChooser",
+              "topic": "Comp/Auto/isDepotSide",
               "period": 0.06,
-              "sort_options": false
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "isYume",
+            "x": 1152.0,
+            "y": 576.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Toggle Button",
+            "properties": {
+              "topic": "Comp/Auto/isYume",
+              "period": 0.06,
+              "data_type": "boolean"
             }
           }
         ]
@@ -582,14 +582,14 @@
             }
           },
           {
-            "title": "ShouldShootHub",
+            "title": "IsHubActive",
             "x": 0.0,
             "y": 0.0,
             "width": 1536.0,
             "height": 160.0,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Superstructure/ShouldShootHub",
+              "topic": "/AdvantageKit/RealOutputs/Superstructure/IsHubActive",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,
@@ -721,7 +721,7 @@
         "layouts": [
           {
             "title": "AutoTranslation",
-            "x": 1280.0,
+            "x": 1088.0,
             "y": 0.0,
             "width": 256.0,
             "height": 352.0,
@@ -790,7 +790,7 @@
           },
           {
             "title": "HeadingAlign",
-            "x": 768.0,
+            "x": 576.0,
             "y": 352.0,
             "width": 256.0,
             "height": 352.0,
@@ -859,7 +859,7 @@
           },
           {
             "title": "Trajectory Rotation",
-            "x": 1024.0,
+            "x": 832.0,
             "y": 352.0,
             "width": 256.0,
             "height": 352.0,
@@ -928,7 +928,7 @@
           },
           {
             "title": "Trajectory Translation",
-            "x": 1024.0,
+            "x": 832.0,
             "y": 0.0,
             "width": 256.0,
             "height": 352.0,
@@ -997,7 +997,7 @@
           },
           {
             "title": "TeleopTranslation",
-            "x": 768.0,
+            "x": 576.0,
             "y": 0.0,
             "width": 256.0,
             "height": 352.0,
@@ -1065,9 +1065,50 @@
             ]
           },
           {
+            "title": "Feeder",
+            "x": 256.0,
+            "y": 448.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "FeedVolts",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Feeder/FeedVolts",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "IdleVolts",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "SmartDashboard/TunableNumbers/Feeder/IdleVolts",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          },
+          {
             "title": "Flywheel",
             "x": 0.0,
-            "y": 352.0,
+            "y": 384.0,
             "width": 256.0,
             "height": 256.0,
             "type": "List Layout",
@@ -1124,7 +1165,7 @@
             "x": 0.0,
             "y": 0.0,
             "width": 256.0,
-            "height": 352.0,
+            "height": 384.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1298,136 +1339,12 @@
                 }
               }
             ]
-          },
-          {
-            "title": "Auto",
-            "x": 512.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 320.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "FullShotTime",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "SmartDashboard/TunableNumbers/Auto/FullShotTime",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              },
-              {
-                "title": "PreloadShotTime",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "SmartDashboard/TunableNumbers/Auto/PreloadShotTime",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              },
-              {
-                "title": "RefillShotTime",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "SmartDashboard/TunableNumbers/Auto/RefillShotTime",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              },
-              {
-                "title": "SprinkleWaitTime",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "SmartDashboard/TunableNumbers/Auto/SprinkleWaitTime",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              }
-            ]
-          },
-          {
-            "title": "Feeder",
-            "x": 256.0,
-            "y": 448.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "DirectionSwapTime",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "SmartDashboard/TunableNumbers/Feeder/DirectionSwapTime",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              },
-              {
-                "title": "FeedVolts",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "SmartDashboard/TunableNumbers/Feeder/FeedVolts",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              },
-              {
-                "title": "IdleVolts",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "SmartDashboard/TunableNumbers/Feeder/IdleVolts",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": true
-                }
-              }
-            ]
           }
         ],
         "containers": [
           {
             "title": "Trajectory maxError",
-            "x": 1280.0,
+            "x": 1088.0,
             "y": 576.0,
             "width": 256.0,
             "height": 128.0,
@@ -1441,29 +1358,15 @@
           },
           {
             "title": "TurretToTargetDistance",
-            "x": 0.0,
-            "y": 608.0,
+            "x": 1088.0,
+            "y": 416.0,
             "width": 256.0,
-            "height": 128.0,
+            "height": 160.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/ShotCalculator/TurretToTargetDistance",
               "period": 0.06,
               "data_type": "double"
-            }
-          },
-          {
-            "title": "DeployIdleVolts",
-            "x": 512.0,
-            "y": 320.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "SmartDashboard/TunableNumbers/Intake/DeployIdleVolts",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": true
             }
           }
         ]
@@ -1485,6 +1388,126 @@
               "topic": "/SmartDashboard/Sim/OverrideFlip",
               "period": 0.02,
               "data_type": "boolean"
+            }
+          },
+          {
+            "title": "RelativePosition",
+            "x": 960.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/RelativePosition",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "OutputVoltage",
+            "x": 960.0,
+            "y": 320.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/OutputVoltage",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "OutputCurrent",
+            "x": 960.0,
+            "y": 192.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/OutputCurrent",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "MotorTemp",
+            "x": 960.0,
+            "y": 64.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/MotorTemp",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "JoystickScaling",
+            "x": 672.0,
+            "y": 64.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/JoystickScaling",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "IsMaxMotion",
+            "x": 672.0,
+            "y": 192.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Button",
+            "properties": {
+              "topic": "/SmartDashboard/IsMaxMotion",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "CustomPosition",
+            "x": 672.0,
+            "y": 320.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/CustomPosition",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "ArbFF",
+            "x": 672.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/ArbFF",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "AbsolutePosition",
+            "x": 960.0,
+            "y": 576.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/AbsolutePosition",
+              "period": 0.06,
+              "data_type": "double"
             }
           }
         ]
