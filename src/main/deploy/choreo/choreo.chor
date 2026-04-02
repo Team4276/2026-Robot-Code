@@ -4,6 +4,13 @@
  "type":"Swerve",
  "variables":{
   "expressions":{
+   "cheeseLine":{
+    "dimension":"Length",
+    "var":{
+     "exp":"8.5 m",
+     "val":8.5
+    }
+   },
    "sideBump":{
     "dimension":"LinVel",
     "var":{

@@ -56,12 +56,16 @@ public class ShotCalculator {
         // maxDistance = 5.60;
         phaseDelay = 0.03;
 
-        shotFlywheelSpeedMap.put(2.0, 2150.0);
-        shotFlywheelSpeedMap.put(2.25, 2350.0);
-        shotFlywheelSpeedMap.put(2.5, 2500.0);
-        shotFlywheelSpeedMap.put(2.75, 2600.0);
-        shotFlywheelSpeedMap.put(3.0, 2700.0);
-        shotFlywheelSpeedMap.put(3.5, 3000.0);
+        shotFlywheelSpeedMap.put(1.4, 2150.0);
+        shotFlywheelSpeedMap.put(1.5, 2200.0);
+        shotFlywheelSpeedMap.put(1.75, 2350.0);
+        shotFlywheelSpeedMap.put(2.0, 2500.0);
+        shotFlywheelSpeedMap.put(2.25, 2750.0);
+        shotFlywheelSpeedMap.put(2.5, 2875.0);
+        shotFlywheelSpeedMap.put(2.75, 3000.0);
+        shotFlywheelSpeedMap.put(3.0, 3150.0);
+        shotFlywheelSpeedMap.put(3.25, 3200.0);
+        shotFlywheelSpeedMap.put(3.5, 3300.0);
 
         timeOfFlightMap.put(5.60, 0.001);
         timeOfFlightMap.put(1.34, 0.001);

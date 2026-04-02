@@ -47,23 +47,26 @@ public class AutoFactory {
                         RobotState.getInstance().getEstimatedPose().getTranslation(),
                         AllianceFlipUtil.apply(Rotation2d.kZero)));
     }
-    
+
     Command nihonAuto(Trajectory<SwerveSample> traj) {
         var startPose = traj.getInitialPose(false).get();
         var time = traj.getTotalTime();
 
         return resetPose(startPose)
-                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT).withDeadline(Commands.waitSeconds(time + 0.25))
+                .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT)
+                        .withDeadline(Commands.waitSeconds(time + 0.25))
                         .deadlineFor(waitUntilXCrossed(5.9, true)
                                 .andThen(robotContainer.getSuperstructure().deployIntake()
                                         .alongWith(
                                                 Commands.runOnce(() -> robotContainer.getIntake()
                                                         .setDeployVoltage(intakeDeployVoltage.getAsDouble()))
                                                         .withDeadline(Commands
-                                                                .waitSeconds(intakeDeployTime.getAsDouble()))))))
+                                                                .waitSeconds(intakeDeployTime.getAsDouble()))
+                                                        .finallyDo(() -> robotContainer.getIntake()
+                                                                .setDeployVoltage(0.0))))))
                 .andThen(robotContainer.getSuperstructure().enableShooter());
-                // .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
-                // .andThen(robotContainer.getSuperstructure().disableShooter());
+        // .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
+        // .andThen(robotContainer.getSuperstructure().disableShooter());
     }
 
     Command vanilla(String name) {
@@ -93,6 +96,15 @@ public class AutoFactory {
     Command vanillaMintSwirl(String name) {
         return vanilla(name)
                 .andThen(mint());
+    }
+
+    private Command jumpIntake() {
+        return Commands.waitUntil(() -> robotContainer.getIntake().isStalling())
+                .andThen(Commands.runOnce(() -> robotContainer.getIntake()
+                        .setDeployVoltage(-intakeDeployVoltage.getAsDouble()))
+                        .withDeadline(Commands
+                                .waitSeconds(intakeDeployTime.getAsDouble())))
+                .finallyDo(() -> robotContainer.getIntake().setDeployVoltage(0.0));
     }
 
     void autoEnd() {

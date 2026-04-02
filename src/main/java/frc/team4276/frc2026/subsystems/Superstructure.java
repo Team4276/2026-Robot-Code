@@ -150,7 +150,7 @@ public class Superstructure extends SubsystemBase {
             conveyor.setSystemState(Conveyor.SystemState.FEED);
         } else if (feedState == FeedState.ACTIVE || feedState == FeedState.FERRY) {
             feeder.setSystemState(Feeder.SystemState.SPINUP);
-            conveyor.setSystemState(Conveyor.SystemState.IDLE);
+            conveyor.setSystemState(Conveyor.SystemState.SPINUP);
         } else if (feedState == FeedState.EXHAUST){
             feeder.setSystemState(Feeder.SystemState.EXHAUST);
             conveyor.setSystemState(Conveyor.SystemState.EXHAUST);

@@ -7,15 +7,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team4276.lib.dashboard.LoggedTunableNumber;
 
 public class Flywheel extends SubsystemBase {
-    private final LoggedTunableNumber tolerance = new LoggedTunableNumber("Flywheel/ToleranceRPM", 300);
+    private final LoggedTunableNumber tolerance = new LoggedTunableNumber("Flywheel/ToleranceRPM", 100);
 
     private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
     private final FlywheelIO io;
 
     private double rpmSetpoint = 0.0;
 
-    private LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.2);
-    private LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 12.0 / 5676.0);
+    private LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.1);
+    private LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 0.00195);
 
     public Flywheel(FlywheelIO io) {
         this.io = io;
@@ -43,6 +43,7 @@ public class Flywheel extends SubsystemBase {
         rpmSetpoint = RPM;
 
         Logger.recordOutput("Flywheel/VelocityFeedforward", velocityFeedforward);
+        Logger.recordOutput("Flywheel/rpmSetpoint", rpmSetpoint);
     }
 
     public void setVoltage(double volts){

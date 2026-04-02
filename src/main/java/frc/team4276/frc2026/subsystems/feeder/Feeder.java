@@ -62,7 +62,7 @@ public class Feeder extends SubsystemBase {
         }
 
         if (systemState == SystemState.SPINUP) {
-            io.setOpenLoop(0.0, outputVoltage * ratio.getAsDouble());
+            io.setOpenLoop(-outputVoltage, outputVoltage * ratio.getAsDouble());
 
         } else {
             io.setOpenLoop(outputVoltage, outputVoltage * ratio.getAsDouble());

@@ -5,6 +5,8 @@ import static frc.team4276.frc2026.subsystems.intake.IntakeConstants.*;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team4276.lib.dashboard.LoggedTunableNumber;
@@ -35,6 +37,8 @@ public class Intake extends SubsystemBase {
 
     private WantedState wantedState = WantedState.IDLE;
     private SystemState systemState = SystemState.IDLING;
+
+    private Debouncer currentDebounce = new Debouncer(0.25, DebounceType.kRising);
 
     public Intake(IntakeDeployIO deployIo, IntakeRollerIO rollerIo) {
         this.deployIo = deployIo;
@@ -95,6 +99,10 @@ public class Intake extends SubsystemBase {
 
                 break;
         }
+    }
+
+    public boolean isStalling(){
+        return currentDebounce.calculate(rollerInputs.statorCurrent >= 40.0);
     }
 
     public void setDeployVoltage(double voltage){
