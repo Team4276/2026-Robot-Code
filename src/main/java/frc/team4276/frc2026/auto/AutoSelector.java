@@ -16,6 +16,7 @@ public class AutoSelector extends VirtualSubsystem {
 
     public enum AutoMode {
         DO_NOTHING,
+        CHIZURU,
         CHIZU,
         CHEESU,
         YUZU,
@@ -45,6 +46,7 @@ public class AutoSelector extends VirtualSubsystem {
         this.autoFactory = autoFactory;
 
         routineChooser.addDefaultOption("Do Nothing", AutoMode.DO_NOTHING);
+        routineChooser.addOption("Chizuru", AutoMode.CHIZURU);
         routineChooser.addOption("Chizu", AutoMode.CHIZU);
         routineChooser.addOption("Cheesu", AutoMode.CHEESU);
         routineChooser.addOption("Yuzu", AutoMode.YUZU);
@@ -57,6 +59,10 @@ public class AutoSelector extends VirtualSubsystem {
     /** Returns the selected auto command with the inputted delay. */
     public Command getCommand() {
         var command = switch (routineChooser.get()) {
+            case CHIZURU:
+                yield autoFactory.nihonAuto(
+                        AutoPathFactory.getChizuru(isDepotSideInput.getAsBoolean()));
+
             case CHIZU:
                 yield autoFactory.nihonAuto(
                         AutoPathFactory.getChizu(isYumeInput.getAsBoolean(), isDepotSideInput.getAsBoolean()));
