@@ -345,7 +345,7 @@ public class Superstructure extends SubsystemBase {
             drive.setWantedState(WantedState.TELEOP);
             currPreset = ParamPreset.TURTLE;
             shootingParams = currPreset::getParams;
-            feedState = FeedState.NO;
+            feedState = FeedState.EXHAUST;
         });
     }
 }

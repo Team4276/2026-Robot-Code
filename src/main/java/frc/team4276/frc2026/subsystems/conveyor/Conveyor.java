@@ -11,7 +11,7 @@ import frc.team4276.lib.dashboard.LoggedTunableNumber;
 
 public class Conveyor extends SubsystemBase {
     public enum SystemState {
-        IDLE(new LoggedTunableNumber("Conveyor/IdleVolts", 0.0)),
+        IDLE(new LoggedTunableNumber("Conveyor/IdleVolts", -6.0)),
         STOPPED(() -> 0.0),
         SPINUP(new LoggedTunableNumber("Conveyor/SpinupVolts", -12.0)),
         FEED(new LoggedTunableNumber("Conveyor/FeedVolts", 12.0)),

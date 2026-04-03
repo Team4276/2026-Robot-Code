@@ -11,9 +11,9 @@ import frc.team4276.lib.dashboard.LoggedTunableNumber;
 
 public class Feeder extends SubsystemBase {
     public enum SystemState {
-        IDLE(new LoggedTunableNumber("Feeder/IdleVolts", -2.0)),
+        IDLE(new LoggedTunableNumber("Feeder/IdleVolts", 0.0)),
         STOPPED(() -> 0.0),
-        EXHAUST(new LoggedTunableNumber("Feeder/ExhaustVolts", -6.0)),
+        EXHAUST(new LoggedTunableNumber("Feeder/ExhaustVolts", -12.0)),
         FEED(new LoggedTunableNumber("Feeder/FeedVolts", 6.0)),
         SPINUP(() -> (SystemState.FEED.getVoltage()));
 
@@ -63,6 +63,9 @@ public class Feeder extends SubsystemBase {
 
         if (systemState == SystemState.SPINUP) {
             io.setOpenLoop(-outputVoltage, outputVoltage * ratio.getAsDouble());
+
+        } else if(systemState == SystemState.EXHAUST){
+            io.setOpenLoop(outputVoltage, outputVoltage);
 
         } else {
             io.setOpenLoop(outputVoltage, outputVoltage * ratio.getAsDouble());

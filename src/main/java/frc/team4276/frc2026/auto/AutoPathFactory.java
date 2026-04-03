@@ -6,7 +6,7 @@ import frc.team4276.lib.path.ChoreoUtil;
 
 public class AutoPathFactory {
     public static Trajectory<SwerveSample> getChizuru(boolean mirrorLengthWise) {
-        return ChoreoUtil.getChoreoTrajectory("e_Chizu", mirrorLengthWise);
+        return ChoreoUtil.getChoreoTrajectory("e_Chizuru", mirrorLengthWise);
     }
 
     public static Trajectory<SwerveSample> getChizu(boolean isDream, boolean mirrorLengthWise) {
