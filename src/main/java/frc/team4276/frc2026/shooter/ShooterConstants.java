@@ -22,7 +22,7 @@ public class ShooterConstants {
                 new LoggedTunableNumber("Shooter/Presets/ShubRPM",2500.0)),
         SHERRY(Rotation2d.kZero,
                 0.0,
-                new LoggedTunableNumber("Shooter/Presets/SherryRPM", 3000.0)),
+                new LoggedTunableNumber("Shooter/Presets/SherryRPM", 1250.0)),
 
         // Other
         STOW(Rotation2d.kZero,
