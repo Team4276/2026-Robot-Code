@@ -16,13 +16,13 @@ public class ShooterConstants {
         // Shooting Presets
         SHOWER(Rotation2d.kZero,
                 0.0,
-                new LoggedTunableNumber("Shooter/Presets/ShowerRPM", 2500.0)),
+                new LoggedTunableNumber("Shooter/Presets/ShowerRPM", 2700.0)),
         SHUB(Rotation2d.kZero,
                 0.0,
-                new LoggedTunableNumber("Shooter/Presets/ShubRPM",2150.0)),
+                new LoggedTunableNumber("Shooter/Presets/ShubRPM",2500.0)),
         SHERRY(Rotation2d.kZero,
                 0.0,
-                new LoggedTunableNumber("Shooter/Presets/SherryRPM", 2500.0)),
+                new LoggedTunableNumber("Shooter/Presets/SherryRPM", 3000.0)),
 
         // Other
         STOW(Rotation2d.kZero,

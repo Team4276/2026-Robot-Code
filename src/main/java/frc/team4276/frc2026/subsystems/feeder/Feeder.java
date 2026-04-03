@@ -13,8 +13,8 @@ public class Feeder extends SubsystemBase {
     public enum SystemState {
         IDLE(new LoggedTunableNumber("Feeder/IdleVolts", -2.0)),
         STOPPED(() -> 0.0),
-        EXHAUST(new LoggedTunableNumber("Feeder/ExhaustVolts", -4.0)),
-        FEED(new LoggedTunableNumber("Feeder/FeedVolts", 4.0)),
+        EXHAUST(new LoggedTunableNumber("Feeder/ExhaustVolts", -6.0)),
+        FEED(new LoggedTunableNumber("Feeder/FeedVolts", 6.0)),
         SPINUP(() -> (SystemState.FEED.getVoltage()));
 
         private final DoubleSupplier voltage;
