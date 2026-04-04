@@ -66,6 +66,7 @@ public class RobotState {
         REJECT
     }
 
+    @AutoLogOutput
     private VisionState visionState = VisionState.ACCEPT;
 
     private double lastUsedVisionPoseEstimateTimestamp = 0.0;

@@ -77,6 +77,14 @@ public class AutoFactory {
                 .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT)
                         .raceWith(Commands.waitSeconds(3.0)))
                 .andThen(robotContainer.getSuperstructure().enableShooter())
+                .andThen(robotContainer.getSuperstructure().deployIntake()
+                        .alongWith(
+                                Commands.runOnce(() -> robotContainer.getIntake()
+                                        .setDeployVoltage(intakeDeployVoltage.getAsDouble()))
+                                        .withDeadline(Commands
+                                                .waitSeconds(intakeDeployTime.getAsDouble()))
+                                        .finallyDo(() -> robotContainer.getIntake()
+                                                .setDeployVoltage(0.0))))
                 .andThen(Commands.waitSeconds(preloadShotTime.getAsDouble()))
                 .andThen(robotContainer.getSuperstructure().disableShooter());
     }

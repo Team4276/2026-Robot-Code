@@ -14,7 +14,7 @@ public class Feeder extends SubsystemBase {
         IDLE(new LoggedTunableNumber("Feeder/IdleVolts", 0.0)),
         STOPPED(() -> 0.0),
         EXHAUST(new LoggedTunableNumber("Feeder/ExhaustVolts", -12.0)),
-        FEED(new LoggedTunableNumber("Feeder/FeedVolts", 6.0)),
+        FEED(new LoggedTunableNumber("Feeder/FeedVolts", 8.0)),
         SPINUP(() -> (SystemState.FEED.getVoltage()));
 
         private final DoubleSupplier voltage;
@@ -33,7 +33,7 @@ public class Feeder extends SubsystemBase {
     private final FeederIOInputsAutoLogged inputs = new FeederIOInputsAutoLogged();
     private final FeederIO io;
 
-    private final LoggedTunableNumber ratio = new LoggedTunableNumber("Feeder/Ratio", 2.0);
+    private final LoggedTunableNumber ratio = new LoggedTunableNumber("Feeder/Ratio", 1.5);
 
     private double directionFactor = 1.0;
     private final Timer directionSwap = new Timer();

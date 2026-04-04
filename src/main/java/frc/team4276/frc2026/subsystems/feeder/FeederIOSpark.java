@@ -32,8 +32,8 @@ public class FeederIOSpark implements FeederIO {
                 .smartCurrentLimit(80)
                 .voltageCompensation(12.0)
                 .inverted(true)
-                .openLoopRampRate(0.5)
-                .closedLoopRampRate(0.5);
+                .openLoopRampRate(1.0)
+                .closedLoopRampRate(1.0);
         config.signals
                 .appliedOutputPeriodMs(20)
                 .busVoltagePeriodMs(20)
