@@ -64,6 +64,7 @@ public class AutoFactory {
                                                                 .waitSeconds(intakeDeployTime.getAsDouble()))
                                                         .finallyDo(() -> robotContainer.getIntake()
                                                                 .setDeployVoltage(0.0))))))
+                .andThen(Commands.runOnce(() -> RobotState.getInstance().setVisionState(VisionState.ACCEPT)))
                 .andThen(robotContainer.getSuperstructure().enableShooter());
         // .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
         // .andThen(robotContainer.getSuperstructure().disableShooter());
@@ -72,6 +73,7 @@ public class AutoFactory {
     Command vanilla(String name) {
         var traj = ChoreoUtil.getChoreoTrajectory(name);
         var startPose = traj.getInitialPose(false).get();
+        // .orElse(Pose2d.kZero);
 
         return resetPose(startPose)
                 .andThen(driveTrajectoryWithVisionState(traj, VisionState.REJECT)

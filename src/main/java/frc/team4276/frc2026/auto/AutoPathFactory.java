@@ -5,6 +5,10 @@ import choreo.trajectory.Trajectory;
 import frc.team4276.lib.path.ChoreoUtil;
 
 public class AutoPathFactory {
+    public static Trajectory<SwerveSample> getMizu(boolean mirrorLengthWise) {
+        return ChoreoUtil.getChoreoTrajectory("e_Mizu", mirrorLengthWise);
+    }
+
     public static Trajectory<SwerveSample> getChizuru(boolean mirrorLengthWise) {
         return ChoreoUtil.getChoreoTrajectory("e_Chizuru", mirrorLengthWise);
     }
