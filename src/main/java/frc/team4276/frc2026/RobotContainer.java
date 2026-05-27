@@ -181,10 +181,6 @@ public class RobotContainer {
                 .onTrue(superstructure.deployIntake());
 
         driver
-                .leftBumper()
-                .onTrue(superstructure.retractIntake());
-
-        driver
                 .y()
                 .onTrue(superstructure.shootPreset(ParamPreset.SHUB));
 
@@ -219,25 +215,13 @@ public class RobotContainer {
                 .povLeft()
                 .onTrue(Commands.runOnce(() -> superstructure.setIsManual(true))
                         .ignoringDisable(true));
-
-        operator
-                .rightBumper()
-                .and(operator.leftTrigger())
-                .and(operator.rightTrigger().negate())
-                .onTrue(Commands.runOnce(() -> intake.setDeployed(true)));
-
-        operator
-                .leftBumper()
-                .and(operator.leftTrigger())
-                .and(operator.rightTrigger().negate())
-                .onTrue(Commands.runOnce(() -> intake.setDeployed(false)));
     }
 
     public void periodic() {
         if (operator.rightTrigger().getAsBoolean()) {
-            intake.setDeployVoltage(6.0 * operator.getRightY());
+            intake.setManualDeploy(6.0 * operator.getRightY());
         } else if (!operator.leftTrigger().getAsBoolean()) {
-            intake.setDeployVoltage(0.0);
+            intake.setManualDeploy(0.0);
         }
     }
 

@@ -59,11 +59,11 @@ public class AutoFactory {
                                 .andThen(robotContainer.getSuperstructure().deployIntake()
                                         .alongWith(
                                                 Commands.runOnce(() -> robotContainer.getIntake()
-                                                        .setDeployVoltage(intakeDeployVoltage.getAsDouble()))
+                                                        .setManualDeploy(intakeDeployVoltage.getAsDouble()))
                                                         .withDeadline(Commands
                                                                 .waitSeconds(intakeDeployTime.getAsDouble()))
                                                         .finallyDo(() -> robotContainer.getIntake()
-                                                                .setDeployVoltage(0.0))))))
+                                                                .setManualDeploy(0.0))))))
                 .andThen(Commands.runOnce(() -> RobotState.getInstance().setVisionState(VisionState.ACCEPT)))
                 .andThen(robotContainer.getSuperstructure().enableShooter());
         // .andThen(Commands.waitSeconds(fullShotTime.getAsDouble()))
@@ -82,11 +82,11 @@ public class AutoFactory {
                 .andThen(robotContainer.getSuperstructure().deployIntake()
                         .alongWith(
                                 Commands.runOnce(() -> robotContainer.getIntake()
-                                        .setDeployVoltage(intakeDeployVoltage.getAsDouble()))
+                                        .setManualDeploy(intakeDeployVoltage.getAsDouble()))
                                         .withDeadline(Commands
                                                 .waitSeconds(intakeDeployTime.getAsDouble()))
                                         .finallyDo(() -> robotContainer.getIntake()
-                                                .setDeployVoltage(0.0))))
+                                                .setManualDeploy(0.0))))
                 .andThen(Commands.waitSeconds(preloadShotTime.getAsDouble()))
                 .andThen(robotContainer.getSuperstructure().disableShooter());
     }
@@ -111,10 +111,10 @@ public class AutoFactory {
     private Command jumpIntake() {
         return Commands.waitUntil(() -> robotContainer.getIntake().isStalling())
                 .andThen(Commands.runOnce(() -> robotContainer.getIntake()
-                        .setDeployVoltage(-intakeDeployVoltage.getAsDouble()))
+                        .setManualDeploy(-intakeDeployVoltage.getAsDouble()))
                         .withDeadline(Commands
                                 .waitSeconds(intakeDeployTime.getAsDouble())))
-                .finallyDo(() -> robotContainer.getIntake().setDeployVoltage(0.0));
+                .finallyDo(() -> robotContainer.getIntake().setManualDeploy(0.0));
     }
 
     void autoEnd() {

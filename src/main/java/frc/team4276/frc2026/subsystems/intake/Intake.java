@@ -19,26 +19,25 @@ public class Intake extends SubsystemBase {
 
     private final LoggedTunableNumber absoluteEncoderZero = new LoggedTunableNumber("Intake/AbsoluteEncoderZero", 1.515);
 
-    public enum WantedState {
+    public enum DeployState {
         IDLE,
-        RETRACT,
-        INTAKE,
-        EXHAUST
+        MANUAL
     }
 
-    public enum SystemState {
-        IDLING,
-        RETRACTED,
+    public enum RollerState {
+        IDLE,
         INTAKING,
         EXHAUSTING
     }
 
+    private DeployState deployState = DeployState.IDLE;
+    private RollerState rollerState = RollerState.IDLE;
+
+    private double manualDeployVoltage = 0.0;
+
     private boolean isDisabled = false;
 
-    private WantedState wantedState = WantedState.IDLE;
-    private SystemState systemState = SystemState.IDLING;
-
-    private Debouncer currentDebounce = new Debouncer(0.25, DebounceType.kRising);
+    private final Debouncer currentDebounce = new Debouncer(0.25, DebounceType.kRising);
 
     public Intake(IntakeDeployIO deployIo, IntakeRollerIO rollerIo) {
         this.deployIo = deployIo;
@@ -52,73 +51,80 @@ public class Intake extends SubsystemBase {
         Logger.processInputs("Intake/Deploy", deployInputs);
         Logger.processInputs("Intake/Roller", rollerInputs);
 
-        systemState = handleStateTransition();
-        applyState();
-
-        if(isDisabled && DriverStation.isEnabled()){
-            deployIo.setPosition(MathUtil.inputModulus(deployInputs.absolutePositionRad - absoluteEncoderZero.getAsDouble(), -1.0, 1.0) / motorToEncoderReduction);
+        // Re-zero encoder on enable
+        if (isDisabled && DriverStation.isEnabled()) {
+            deployIo.setPosition(
+                MathUtil.inputModulus(
+                    deployInputs.absolutePositionRad - absoluteEncoderZero.getAsDouble(),
+                    -1.0, 1.0)
+                / motorToEncoderReduction);
         }
-
         isDisabled = DriverStation.isDisabled();
 
-        Logger.recordOutput("Intake/SystemState", systemState);
-        Logger.recordOutput("Intake/DesiredState", wantedState);
+        applyDeployState();
+        applyRollerState();
+
+        Logger.recordOutput("Intake/DeployState", deployState);
+        Logger.recordOutput("Intake/RollerState", rollerState);
+        Logger.recordOutput("Intake/ManualDeployVoltage", manualDeployVoltage);
     }
 
-    private SystemState handleStateTransition() {
-        return switch (wantedState) {
-            case IDLE -> SystemState.IDLING;
-            case RETRACT -> SystemState.RETRACTED;
-            case INTAKE -> SystemState.INTAKING;
-            case EXHAUST -> SystemState.EXHAUSTING;
-        };
-    }
+    // -------------------------------------------------------------------------
+    // Deploy
+    // -------------------------------------------------------------------------
 
-    private void applyState() {
-        switch (systemState) {
-            case IDLING:
-                rollerIo.setOpenLoop(idleVolts.getAsDouble());
-                // deployIo.setOpenLoop(deployIdleVolts.getAsDouble());
-
+    private void applyDeployState() {
+        switch (deployState) {
+            case IDLE:
+                deployIo.setOpenLoop(0.0);
                 break;
 
-            case RETRACTED:
-                rollerIo.setOpenLoop(idleVolts.getAsDouble());
-                // deployIo.setPositionSetpoint(retractPosition.getAsDouble());
+            case MANUAL:
+                deployIo.setOpenLoop(manualDeployVoltage);
+                break;
+        }
+    }
 
+    /**
+     * Set open-loop voltage for the deploy arm.
+     * Pass 0.0 to return to IDLE (motors off).
+     */
+    public void setManualDeploy(double voltage) {
+        manualDeployVoltage = voltage;
+        deployState = (voltage != 0.0) ? DeployState.MANUAL : DeployState.IDLE;
+    }
+
+    // -------------------------------------------------------------------------
+    // Roller
+    // -------------------------------------------------------------------------
+
+    private void applyRollerState() {
+        switch (rollerState) {
+            case IDLE:
+                rollerIo.setOpenLoop(idleVolts.getAsDouble());
                 break;
 
             case INTAKING:
                 rollerIo.setOpenLoop(intakeVolts.getAsDouble());
-                // deployIo.setPositionSetpoint(deployPosition.getAsDouble());
-
                 break;
+
             case EXHAUSTING:
                 rollerIo.setOpenLoop(exhaustVolts.getAsDouble());
-                // deployIo.setPositionSetpoint(deployPosition.getAsDouble());
-
                 break;
         }
     }
 
-    public boolean isStalling(){
+    public void setRollerState(RollerState state) {
+        rollerState = state;
+    }
+
+    // -------------------------------------------------------------------------
+    // Shared utilities
+    // -------------------------------------------------------------------------
+
+    /** True when the roller is drawing enough current to indicate a stall (note held). */
+    public boolean isStalling() {
         return currentDebounce.calculate(rollerInputs.statorCurrent >= 40.0);
-    }
-
-    public void setDeployVoltage(double voltage){
-        deployIo.setOpenLoop(voltage);
-    }
-
-    public void setDeployed(boolean deployed){
-        if(deployed){
-            deployIo.setPositionSetpoint(deployPosition.getAsDouble());
-        } else {
-            deployIo.setPositionSetpoint(retractPosition.getAsDouble());
-        }
-    }
-
-    public void setWantedState(WantedState state) {
-        wantedState = state;
     }
 
     public void setBrakeMode(boolean enabled) {
